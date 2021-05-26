@@ -412,7 +412,7 @@ class Validate_Data {
         $result = $wpdb->get_var(
             $wpdb->prepare(
                 'SELECT COUNT(*) FROM %s as emp LEFT JOIN %s as users ON emp.user_id=users.id WHERE %s=%s',
-                $wpdb->get_blog_prefix() . 'erp_hr_employees', $wpdb->get_blog_prefix() . 'users', $column, $value
+                $wpdb->get_blog_prefix() . 'erp_hr_employees', $wpdb->users, $column, $value
             )
         );
 
