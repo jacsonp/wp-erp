@@ -82,10 +82,10 @@ function erp_hr_get_employees( $args = [] ) {
         $employee_tbl = $wpdb->get_blog_prefix() . 'erp_hr_employees';
         $employees    = \WeDevs\ERP\HRM\Models\Employee::select( [ $employee_tbl . '.user_id', 'display_name' ] )
             ->leftJoin( $wpdb->users, $employee_tbl . '.user_id', '=', $wpdb->users . '.ID' )
-            ->leftJoin( "{$wpdb->get_blog_prefix()}usermeta as gender", function ( $join ) use ( $employee_tbl ) {
+            ->leftJoin( "{$wpdb->usermeta} as gender", function ( $join ) use ( $employee_tbl ) {
                 $join->on( $employee_tbl . '.user_id', '=', 'gender.user_id' )->where( 'gender.meta_key', '=', 'gender' );
             } )
-            ->leftJoin( "{$wpdb->get_blog_prefix()}usermeta as marital_status", function ( $join ) use ( $employee_tbl ) {
+            ->leftJoin( "{$wpdb->usermeta} as marital_status", function ( $join ) use ( $employee_tbl ) {
                 $join->on( $employee_tbl . '.user_id', '=', 'marital_status.user_id' )->where( 'marital_status.meta_key', '=', 'marital_status' );
             } );
 
