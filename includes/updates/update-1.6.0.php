@@ -32,23 +32,23 @@ class ERP_1_6_0 {
         global $wpdb;
 
         $this->db_tables = [
-            "{$wpdb->prefix}erp_hr_leaves"                     => "{$wpdb->prefix}erp_hr_leaves_new",
-            "{$wpdb->prefix}erp_hr_leave_policies"             => "{$wpdb->prefix}erp_hr_leave_policies_new",
-            "{$wpdb->prefix}erp_hr_leave_policies_segregation" => "{$wpdb->prefix}erp_hr_leave_policies_segregation_new",
-            "{$wpdb->prefix}erp_hr_leave_entitlements"         => "{$wpdb->prefix}erp_hr_leave_entitlements_new",
-            "{$wpdb->prefix}erp_hr_leave_requests"             => "{$wpdb->prefix}erp_hr_leave_requests_new",
-            "{$wpdb->prefix}erp_hr_leave_request_details"      => "{$wpdb->prefix}erp_hr_leave_request_details_new",
-            "{$wpdb->prefix}erp_hr_leave_approval_status"      => "{$wpdb->prefix}erp_hr_leave_approval_status_new",
-            "{$wpdb->prefix}erp_hr_leave_encashment_requests"  => "{$wpdb->prefix}erp_hr_leave_encashment_requests_new",
-            "{$wpdb->prefix}erp_hr_leaves_unpaid"              => "{$wpdb->prefix}erp_hr_leaves_unpaid_new",
-            "{$wpdb->prefix}erp_hr_financial_years"            => "{$wpdb->prefix}erp_hr_financial_years_new",
+            "{$wpdb->get_blog_prefix()}erp_hr_leaves"                     => "{$wpdb->get_blog_prefix()}erp_hr_leaves_new",
+            "{$wpdb->get_blog_prefix()}erp_hr_leave_policies"             => "{$wpdb->get_blog_prefix()}erp_hr_leave_policies_new",
+            "{$wpdb->get_blog_prefix()}erp_hr_leave_policies_segregation" => "{$wpdb->get_blog_prefix()}erp_hr_leave_policies_segregation_new",
+            "{$wpdb->get_blog_prefix()}erp_hr_leave_entitlements"         => "{$wpdb->get_blog_prefix()}erp_hr_leave_entitlements_new",
+            "{$wpdb->get_blog_prefix()}erp_hr_leave_requests"             => "{$wpdb->get_blog_prefix()}erp_hr_leave_requests_new",
+            "{$wpdb->get_blog_prefix()}erp_hr_leave_request_details"      => "{$wpdb->get_blog_prefix()}erp_hr_leave_request_details_new",
+            "{$wpdb->get_blog_prefix()}erp_hr_leave_approval_status"      => "{$wpdb->get_blog_prefix()}erp_hr_leave_approval_status_new",
+            "{$wpdb->get_blog_prefix()}erp_hr_leave_encashment_requests"  => "{$wpdb->get_blog_prefix()}erp_hr_leave_encashment_requests_new",
+            "{$wpdb->get_blog_prefix()}erp_hr_leaves_unpaid"              => "{$wpdb->get_blog_prefix()}erp_hr_leaves_unpaid_new",
+            "{$wpdb->get_blog_prefix()}erp_hr_financial_years"            => "{$wpdb->get_blog_prefix()}erp_hr_financial_years_new",
         ];
 
         $this->db_tables_old = [
-            "{$wpdb->prefix}erp_hr_leave_entitlements"  => "{$wpdb->prefix}erp_hr_leave_entitlements_old",
-            "{$wpdb->prefix}erp_hr_leave_policies"      => "{$wpdb->prefix}erp_hr_leave_policies_old",
-            "{$wpdb->prefix}erp_hr_leave_requests"      => "{$wpdb->prefix}erp_hr_leave_requests_old",
-            "{$wpdb->prefix}erp_hr_leaves"              => "{$wpdb->prefix}erp_hr_leaves_old",
+            "{$wpdb->get_blog_prefix()}erp_hr_leave_entitlements"  => "{$wpdb->get_blog_prefix()}erp_hr_leave_entitlements_old",
+            "{$wpdb->get_blog_prefix()}erp_hr_leave_policies"      => "{$wpdb->get_blog_prefix()}erp_hr_leave_policies_old",
+            "{$wpdb->get_blog_prefix()}erp_hr_leave_requests"      => "{$wpdb->get_blog_prefix()}erp_hr_leave_requests_old",
+            "{$wpdb->get_blog_prefix()}erp_hr_leaves"              => "{$wpdb->get_blog_prefix()}erp_hr_leaves_old",
         ];
     }
 
@@ -68,7 +68,7 @@ class ERP_1_6_0 {
         $charset_collate = $charset . ' ' . $collate;
 
         $table_schema = [
-            "CREATE TABLE {$wpdb->prefix}erp_hr_leaves_new (
+            "CREATE TABLE {$wpdb->get_blog_prefix()}erp_hr_leaves_new (
                   id smallint(6) NOT NULL AUTO_INCREMENT,
                   name varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                   description text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -77,7 +77,7 @@ class ERP_1_6_0 {
                   PRIMARY KEY  (id)
               ) $charset_collate;",
 
-            "CREATE TABLE {$wpdb->prefix}erp_hr_leave_policies_new (
+            "CREATE TABLE {$wpdb->get_blog_prefix()}erp_hr_leave_policies_new (
                   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                   leave_id smallint(5) UNSIGNED NOT NULL,
                   old_policy_id int(11) UNSIGNED DEFAULT NULL,
@@ -109,7 +109,7 @@ class ERP_1_6_0 {
                   KEY f_year (f_year)
             ) $charset_collate;",
 
-            "CREATE TABLE {$wpdb->prefix}erp_hr_leave_policies_segregation_new (
+            "CREATE TABLE {$wpdb->get_blog_prefix()}erp_hr_leave_policies_segregation_new (
                   id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
                   leave_policy_id bigint(20) UNSIGNED NOT NULL,
                   jan tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
@@ -130,7 +130,7 @@ class ERP_1_6_0 {
                   KEY leave_policy_id (leave_policy_id)
             ) $charset_collate;",
 
-            "CREATE TABLE {$wpdb->prefix}erp_hr_leave_entitlements_new (
+            "CREATE TABLE {$wpdb->get_blog_prefix()}erp_hr_leave_entitlements_new (
                   id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
                   user_id bigint(20) UNSIGNED NOT NULL,
                   leave_id smallint(6) UNSIGNED NOT NULL,
@@ -149,7 +149,7 @@ class ERP_1_6_0 {
                   KEY leave_id (leave_id)
             ) $charset_collate;",
 
-            "CREATE TABLE {$wpdb->prefix}erp_hr_leave_requests_new (
+            "CREATE TABLE {$wpdb->get_blog_prefix()}erp_hr_leave_requests_new (
                   id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
                   user_id bigint(20) UNSIGNED NOT NULL,
                   leave_id smallint(6) UNSIGNED NOT NULL,
@@ -171,7 +171,7 @@ class ERP_1_6_0 {
                   KEY leave_entitlement_id (leave_entitlement_id)
             ) $charset_collate;",
 
-            "CREATE TABLE {$wpdb->prefix}erp_hr_leave_approval_status_new (
+            "CREATE TABLE {$wpdb->get_blog_prefix()}erp_hr_leave_approval_status_new (
                   id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
                   leave_request_id bigint(20) UNSIGNED NOT NULL,
                   approval_status_id tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
@@ -184,7 +184,7 @@ class ERP_1_6_0 {
                   KEY approval_status_id (approval_status_id)
             ) $charset_collate;",
 
-            "CREATE TABLE {$wpdb->prefix}erp_hr_leave_request_details_new (
+            "CREATE TABLE {$wpdb->get_blog_prefix()}erp_hr_leave_request_details_new (
                   id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
                   leave_request_id bigint(20) UNSIGNED NOT NULL,
                   leave_approval_status_id bigint(20) UNSIGNED NOT NULL,
@@ -200,7 +200,7 @@ class ERP_1_6_0 {
                   KEY user_fyear_leave (user_id,f_year,leave_date)
             ) $charset_collate;",
 
-            "CREATE TABLE {$wpdb->prefix}erp_hr_leave_encashment_requests_new (
+            "CREATE TABLE {$wpdb->get_blog_prefix()}erp_hr_leave_encashment_requests_new (
                   id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
                   user_id bigint(20) UNSIGNED NOT NULL,
                   leave_id smallint(6) UNSIGNED NOT NULL,
@@ -219,7 +219,7 @@ class ERP_1_6_0 {
                   KEY f_year (f_year)
             ) $charset_collate;",
 
-            "CREATE TABLE {$wpdb->prefix}erp_hr_leaves_unpaid_new (
+            "CREATE TABLE {$wpdb->get_blog_prefix()}erp_hr_leaves_unpaid_new (
                   id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
                   leave_id smallint(6) UNSIGNED NOT NULL,
                   leave_request_id bigint(20) UNSIGNED NOT NULL,
@@ -239,7 +239,7 @@ class ERP_1_6_0 {
                   KEY leave_approval_status_id (leave_approval_status_id)
             ) $charset_collate;",
 
-            "CREATE TABLE {$wpdb->prefix}erp_hr_financial_years_new (
+            "CREATE TABLE {$wpdb->get_blog_prefix()}erp_hr_financial_years_new (
                   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
                   fy_name varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
                   start_date int(11) DEFAULT NULL,
@@ -286,7 +286,7 @@ class ERP_1_6_0 {
         /**
          * Get all leave entitlements from old db and add them to process queue.
          */
-        $entitlement_ids = $wpdb->get_col( "SELECT id FROM {$wpdb->prefix}erp_hr_leave_entitlements ORDER BY id ASC" );
+        $entitlement_ids = $wpdb->get_col( "SELECT id FROM {$wpdb->get_blog_prefix()}erp_hr_leave_entitlements ORDER BY id ASC" );
 
         if ( is_array( $entitlement_ids ) && ! empty( $entitlement_ids ) ) {
             foreach ( $entitlement_ids as $entitlement_id ) {
@@ -310,7 +310,7 @@ class ERP_1_6_0 {
         /**
          * Get all leave requests from old db and add them to process queue
          */
-        $request_ids = $wpdb->get_col( "SELECT id FROM {$wpdb->prefix}erp_hr_leave_requests ORDER BY id ASC" );
+        $request_ids = $wpdb->get_col( "SELECT id FROM {$wpdb->get_blog_prefix()}erp_hr_leave_requests ORDER BY id ASC" );
 
         if ( is_array( $request_ids ) && ! empty( $request_ids ) ) {
             foreach ( $request_ids as $request_id ) {

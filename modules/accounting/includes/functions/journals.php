@@ -51,7 +51,7 @@ function erp_acct_get_all_journals( $args = [] ) {
             $sql .= ' journal.*';
         }
 
-        $sql .= " FROM {$wpdb->prefix}erp_acct_journals AS journal LEFT JOIN {$wpdb->prefix}erp_acct_journal_details AS journal_detail";
+        $sql .= " FROM {$wpdb->get_blog_prefix()}erp_acct_journals AS journal LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_journal_details AS journal_detail";
         $sql .= " ON journal.voucher_no = journal_detail.trn_no {$where} GROUP BY journal.voucher_no ORDER BY journal.{$args['orderby']} {$args['order']} {$limit}";
 
         if ( $args['count'] ) {
@@ -98,8 +98,8 @@ function erp_acct_get_journal( $journal_no ) {
     journal.updated_at,
     journal.updated_by
 
-    FROM {$wpdb->prefix}erp_acct_journals as journal
-    LEFT JOIN {$wpdb->prefix}erp_acct_journal_details as journal_detail ON journal.voucher_no = journal_detail.trn_no
+    FROM {$wpdb->get_blog_prefix()}erp_acct_journals as journal
+    LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_journal_details as journal_detail ON journal.voucher_no = journal_detail.trn_no
     WHERE journal.voucher_no = {$journal_no} LIMIT 1";
 
     $row                = $wpdb->get_row( $sql, ARRAY_A );
@@ -130,7 +130,7 @@ function erp_acct_insert_journal( $data ) {
         $wpdb->query( 'START TRANSACTION' );
 
         $wpdb->insert(
-            $wpdb->prefix . 'erp_acct_voucher_no',
+            $wpdb->get_blog_prefix() . 'erp_acct_voucher_no',
             [
                 'type'       => 'journal',
                 'currency'   => $currency,
@@ -146,7 +146,7 @@ function erp_acct_insert_journal( $data ) {
         $journal_data = erp_acct_get_formatted_journal_data( $data, $voucher_no );
 
         $wpdb->insert(
-            $wpdb->prefix . 'erp_acct_journals',
+            $wpdb->get_blog_prefix() . 'erp_acct_journals',
             [
                 'voucher_no'     => $voucher_no,
                 'trn_date'       => $journal_data['trn_date'],
@@ -165,7 +165,7 @@ function erp_acct_insert_journal( $data ) {
 
         foreach ( $items as $key => $item ) {
             $wpdb->insert(
-                $wpdb->prefix . 'erp_acct_journal_details',
+                $wpdb->get_blog_prefix() . 'erp_acct_journal_details',
                 [
                     'trn_no'      => $voucher_no,
                     'ledger_id'   => $item['ledger_id'],
@@ -180,7 +180,7 @@ function erp_acct_insert_journal( $data ) {
             );
 
             $wpdb->insert(
-                $wpdb->prefix . 'erp_acct_ledger_details',
+                $wpdb->get_blog_prefix() . 'erp_acct_ledger_details',
                 [
                     'ledger_id'   => $item['ledger_id'],
                     'trn_no'      => $voucher_no,
@@ -228,7 +228,7 @@ function erp_acct_update_journal( $data, $journal_no ) {
         $journal_data = erp_acct_get_formatted_journal_data( $data, $journal_no );
 
         $wpdb->update(
-            $wpdb->prefix . 'erp_acct_journals',
+            $wpdb->get_blog_prefix() . 'erp_acct_journals',
             [
                 'trn_date'       => $journal_data['trn_date'],
                 'ref'            => $journal_data['ref'],
@@ -249,7 +249,7 @@ function erp_acct_update_journal( $data, $journal_no ) {
 
         foreach ( $items as $key => $item ) {
             $wpdb->update(
-                $wpdb->prefix . 'erp_acct_journal_details',
+                $wpdb->get_blog_prefix() . 'erp_acct_journal_details',
                 [
                     'ledger_id'   => $item['ledger_id'],
                     'particulars' => empty( $item['particulars'] ) ? $journal_data['particulars'] : $item['particulars'],
@@ -266,7 +266,7 @@ function erp_acct_update_journal( $data, $journal_no ) {
             );
 
             $wpdb->update(
-                $wpdb->prefix . 'erp_acct_ledger_details',
+                $wpdb->get_blog_prefix() . 'erp_acct_ledger_details',
                 [
                     'ledger_id'   => $item['ledger_id'],
                     'particulars' => empty( $item['particulars'] ) ? $journal_data['particulars'] : $item['particulars'],
@@ -343,8 +343,8 @@ function erp_acct_format_journal_data( $item, $journal_no ) {
     journal_detail.debit,
     journal_detail.credit
 
-    FROM {$wpdb->prefix}erp_acct_journals as journal
-    LEFT JOIN {$wpdb->prefix}erp_acct_journal_details as journal_detail ON journal.voucher_no = journal_detail.trn_no
+    FROM {$wpdb->get_blog_prefix()}erp_acct_journals as journal
+    LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_journal_details as journal_detail ON journal.voucher_no = journal_detail.trn_no
     WHERE journal.voucher_no = {$journal_no}";
 
     $rows       = $wpdb->get_results( $sql, ARRAY_A );

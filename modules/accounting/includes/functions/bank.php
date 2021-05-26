@@ -21,7 +21,7 @@ function erp_acct_get_banks( $show_balance = false, $with_cash = false, $no_bank
     $args['start_date'] = $closest_fy_date['start_date'];
     $args['end_date']   = $closest_fy_date['end_date'];
 
-    $ledgers   = $wpdb->prefix . 'erp_acct_ledgers';
+    $ledgers   = $wpdb->get_blog_prefix() . 'erp_acct_ledgers';
     $show_all  = false;
     $cash_only = false;
     $bank_only = false;
@@ -56,7 +56,7 @@ function erp_acct_get_banks( $show_balance = false, $with_cash = false, $no_bank
     }
 
     $sub_query      = "SELECT id FROM $ledgers" . $where . $cash_ledger;
-    $ledger_details = $wpdb->prefix . 'erp_acct_ledger_details';
+    $ledger_details = $wpdb->get_blog_prefix() . 'erp_acct_ledger_details';
     $query          = "Select l.id, ld.ledger_id, l.code, l.name, SUM(ld.debit - ld.credit) as balance
               From $ledger_details as ld
               LEFT JOIN $ledgers as l ON l.id = ld.ledger_id
@@ -175,7 +175,7 @@ function erp_acct_get_dashboard_banks() {
 function erp_acct_get_bank( $bank_no ) {
     global $wpdb;
 
-    $row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}erp_acct_cash_at_banks WHERE ledger_id = %d", $bank_no ), ARRAY_A );
+    $row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->get_blog_prefix()}erp_acct_cash_at_banks WHERE ledger_id = %d", $bank_no ), ARRAY_A );
 
     return $row;
 }
@@ -197,7 +197,7 @@ function erp_acct_insert_bank( $data ) {
         $wpdb->query( 'START TRANSACTION' );
 
         $wpdb->insert(
-            $wpdb->prefix . 'erp_acct_cash_at_banks',
+            $wpdb->get_blog_prefix() . 'erp_acct_cash_at_banks',
             [
                 'ledger_id' => $bank_data['ledger_id'],
             ]
@@ -225,7 +225,7 @@ function erp_acct_delete_bank( $id ) {
 
     try {
         $wpdb->query( 'START TRANSACTION' );
-        $wpdb->delete( $wpdb->prefix . 'erp_acct_cash_at_banks', [ 'ledger_id' => $id ] );
+        $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_cash_at_banks', [ 'ledger_id' => $id ] );
         $wpdb->query( 'COMMIT' );
     } catch ( Exception $e ) {
         $wpdb->query( 'ROLLBACK' );
@@ -258,7 +258,7 @@ function erp_acct_get_formatted_bank_data( $bank_data ) {
 function erp_acct_get_single_account_balance( $ledger_id ) {
     global $wpdb;
 
-    $result = $wpdb->get_row( $wpdb->prepare( "SELECT ledger_id, SUM(credit) - SUM(debit) AS 'balance' FROM {$wpdb->prefix}erp_acct_ledger_details WHERE ledger_id = %d", $ledger_id ), ARRAY_A );
+    $result = $wpdb->get_row( $wpdb->prepare( "SELECT ledger_id, SUM(credit) - SUM(debit) AS 'balance' FROM {$wpdb->get_blog_prefix()}erp_acct_ledger_details WHERE ledger_id = %d", $ledger_id ), ARRAY_A );
 
     return $result;
 }
@@ -272,8 +272,8 @@ function erp_acct_get_account_debit_credit( $ledger_id ) {
     global $wpdb;
     $dr_cr = [];
 
-    $dr_cr['debit']  = $wpdb->get_var( $wpdb->prepare( "SELECT SUM(debit) FROM {$wpdb->prefix}erp_acct_ledger_details WHERE ledger_id = %d", $ledger_id ) );
-    $dr_cr['credit'] = $wpdb->get_var( $wpdb->prepare( "SELECT SUM(credit) FROM {$wpdb->prefix}erp_acct_ledger_details WHERE ledger_id = %d", $ledger_id ) );
+    $dr_cr['debit']  = $wpdb->get_var( $wpdb->prepare( "SELECT SUM(debit) FROM {$wpdb->get_blog_prefix()}erp_acct_ledger_details WHERE ledger_id = %d", $ledger_id ) );
+    $dr_cr['credit'] = $wpdb->get_var( $wpdb->prepare( "SELECT SUM(credit) FROM {$wpdb->get_blog_prefix()}erp_acct_ledger_details WHERE ledger_id = %d", $ledger_id ) );
 
     return $dr_cr;
 }
@@ -295,7 +295,7 @@ function erp_acct_perform_transfer( $item ) {
         $wpdb->query( 'START TRANSACTION' );
 
         $wpdb->insert(
-            $wpdb->prefix . 'erp_acct_voucher_no',
+            $wpdb->get_blog_prefix() . 'erp_acct_voucher_no',
             [
                 'type'       => 'transfer_voucher',
                 'currency'   => $currency,
@@ -310,7 +310,7 @@ function erp_acct_perform_transfer( $item ) {
 
         // Inset transfer amount in ledger_details
         $wpdb->insert(
-            $wpdb->prefix . 'erp_acct_ledger_details',
+            $wpdb->get_blog_prefix() . 'erp_acct_ledger_details',
             [
                 'ledger_id'   => $item['from_account_id'],
                 'trn_no'      => $voucher_no,
@@ -326,7 +326,7 @@ function erp_acct_perform_transfer( $item ) {
         );
 
         $wpdb->insert(
-            $wpdb->prefix . 'erp_acct_ledger_details',
+            $wpdb->get_blog_prefix() . 'erp_acct_ledger_details',
             [
                 'ledger_id'   => $item['to_account_id'],
                 'trn_no'      => $voucher_no,
@@ -342,7 +342,7 @@ function erp_acct_perform_transfer( $item ) {
         );
 
         $wpdb->insert(
-            $wpdb->prefix . 'erp_acct_transfer_voucher',
+            $wpdb->get_blog_prefix() . 'erp_acct_transfer_voucher',
             [
                 'voucher_no'  => $voucher_no,
                 'amount'      => $item['amount'],
@@ -375,7 +375,7 @@ function erp_acct_sync_dashboard_accounts() {
 
     foreach ( $accounts as $account ) {
         $wpdb->update(
-            $wpdb->prefix . 'erp_acct_cash_at_banks',
+            $wpdb->get_blog_prefix() . 'erp_acct_cash_at_banks',
             [
                 'balance' => $account['balance'],
             ],
@@ -422,7 +422,7 @@ function erp_acct_get_transfer_vouchers( $args = [] ) {
         $limit = "LIMIT {$args['number']} OFFSET {$args['offset']}";
     }
 
-    $result = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}erp_acct_transfer_voucher ORDER BY %s %s %s", $args['order_by'], $args['order'], $limit ), ARRAY_A );
+    $result = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->get_blog_prefix()}erp_acct_transfer_voucher ORDER BY %s %s %s", $args['order_by'], $args['order'], $limit ), ARRAY_A );
 
     return $result;
 }
@@ -441,7 +441,7 @@ function erp_acct_get_single_voucher( $id ) {
         return;
     }
 
-    $result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}erp_acct_transfer_voucher WHERE id = %d", $id ) );
+    $result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->get_blog_prefix()}erp_acct_transfer_voucher WHERE id = %d", $id ) );
 
     return $result;
 }
@@ -459,7 +459,7 @@ function erp_acct_get_balance_by_ledger( $id ) {
     }
 
     global $wpdb;
-    $table_name = $wpdb->prefix . 'erp_acct_ledger_details';
+    $table_name = $wpdb->get_blog_prefix() . 'erp_acct_ledger_details';
     $query      = "Select ld.ledger_id,SUM(ld.debit - ld.credit) as balance From $table_name as ld Where ld.ledger_id IN ($id) Group BY ld.ledger_id ";
     $result     = $wpdb->get_results( $query, ARRAY_A );
 

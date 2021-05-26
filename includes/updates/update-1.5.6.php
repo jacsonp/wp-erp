@@ -4,7 +4,7 @@ function erp_updater_acct_add_ref_column_to_invoice_receipt() {
     global $wpdb;
 
     $wpdb->query(
-        "ALTER TABLE {$wpdb->prefix}erp_acct_invoice_receipts ADD COLUMN `ref` VARCHAR(255) DEFAULT NULL AFTER amount"
+        "ALTER TABLE {$wpdb->get_blog_prefix()}erp_acct_invoice_receipts ADD COLUMN `ref` VARCHAR(255) DEFAULT NULL AFTER amount"
     );
 }
 
@@ -12,7 +12,7 @@ function erp_updater_acct_add_billing_column_to_purchase() {
     global $wpdb;
 
     $wpdb->query(
-        "ALTER TABLE {$wpdb->prefix}erp_acct_purchase ADD COLUMN `billing_address` VARCHAR(255) DEFAULT NULL AFTER vendor_name"
+        "ALTER TABLE {$wpdb->get_blog_prefix()}erp_acct_purchase ADD COLUMN `billing_address` VARCHAR(255) DEFAULT NULL AFTER vendor_name"
     );
 }
 

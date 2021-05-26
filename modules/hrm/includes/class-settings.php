@@ -145,7 +145,7 @@ class Settings extends ERP_Settings_Page {
     public function get_hr_financial_years() {
         global $wpdb;
 
-        $f_years = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}erp_hr_financial_years", ARRAY_A );
+        $f_years = $wpdb->get_results( "SELECT * FROM {$wpdb->get_blog_prefix()}erp_hr_financial_years", ARRAY_A );
 
         require_once WPERP_HRM_VIEWS . '/settings/fyear.php';
     }

@@ -6,12 +6,12 @@
 function erp_acct_alter_table_erp_hr_education_1_8_3() {
     global $wpdb;
 
-    $cols = $wpdb->get_col( "DESC {$wpdb->prefix}erp_hr_education" );
+    $cols = $wpdb->get_col( "DESC {$wpdb->get_blog_prefix()}erp_hr_education" );
 
     if ( ! in_array( 'result', $cols ) ) {
         $wpdb->query(
             $wpdb->prepare(
-                "ALTER TABLE `{$wpdb->prefix}erp_hr_education` ADD `result` JSON NULL DEFAULT NULL AFTER `field`;"
+                "ALTER TABLE `{$wpdb->get_blog_prefix()}erp_hr_education` ADD `result` JSON NULL DEFAULT NULL AFTER `field`;"
             )
         );
     }
@@ -19,7 +19,7 @@ function erp_acct_alter_table_erp_hr_education_1_8_3() {
     if ( ! in_array( 'result_type', $cols ) ) {
         $wpdb->query(
             $wpdb->prepare(
-                "ALTER TABLE `{$wpdb->prefix}erp_hr_education` ADD `result_type` ENUM('grade','percentage') NULL DEFAULT NULL AFTER `result`;"
+                "ALTER TABLE `{$wpdb->get_blog_prefix()}erp_hr_education` ADD `result_type` ENUM('grade','percentage') NULL DEFAULT NULL AFTER `result`;"
             )
         );
     }

@@ -9,7 +9,7 @@
 function erp_accounting_update_table_1_2_1() {
     global $wpdb;
 
-    $table = $wpdb->prefix . 'erp_ac_transaction_items';
+    $table = $wpdb->get_blog_prefix() . 'erp_ac_transaction_items';
     $cols  = $wpdb->get_col( "DESC $table" );
 
     if ( in_array( 'qty', $cols ) ) {

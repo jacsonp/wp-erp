@@ -19,7 +19,7 @@ function erp_acct_updater_create_people_trn_details_table() {
     $charset_collate = $charset . ' ' . $collate;
 
     $table = [
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_people_trn_details` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_people_trn_details` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `people_id` varchar(255) DEFAULT NULL,
             `voucher_no` int(11) DEFAULT NULL,
@@ -52,7 +52,7 @@ function erp_acct_updater_populate_people_transactions() {
     // get ledger details
     //=======================================
     $vouchers = $wpdb->get_results(
-        "SELECT voucher.id, voucher.type FROM {$wpdb->prefix}erp_acct_voucher_no AS voucher
+        "SELECT voucher.id, voucher.type FROM {$wpdb->get_blog_prefix()}erp_acct_voucher_no AS voucher
         WHERE voucher.type = 'invoice' OR voucher.type = 'payment' OR
         voucher.type = 'expense' OR voucher.type = 'check' OR voucher.type = 'bill' OR
         voucher.type = 'pay_bill' OR voucher.type = 'purchase' OR voucher.type = 'pay_purchase' OR
@@ -76,12 +76,12 @@ function erp_acct_updater_populate_people_transactions() {
 function erp_acct_updater_missing_pay_purchase_trn_by_ledger_id() {
     global $wpdb;
 
-    $pay_purchase_ids = $wpdb->get_results( "SELECT voucher_no FROM {$wpdb->prefix}erp_acct_pay_purchase", ARRAY_A );
+    $pay_purchase_ids = $wpdb->get_results( "SELECT voucher_no FROM {$wpdb->get_blog_prefix()}erp_acct_pay_purchase", ARRAY_A );
 
     for ( $idx = 0; $idx < count( $pay_purchase_ids ); $idx++ ) {
-        $ledger_id = $wpdb->get_row( "SELECT ledger_id FROM {$wpdb->prefix}erp_acct_ledger_details WHERE trn_no={$pay_purchase_ids[$idx]['voucher_no']}" );
+        $ledger_id = $wpdb->get_row( "SELECT ledger_id FROM {$wpdb->get_blog_prefix()}erp_acct_ledger_details WHERE trn_no={$pay_purchase_ids[$idx]['voucher_no']}" );
 
-        $wpdb->update( $wpdb->prefix . 'erp_acct_pay_purchase',
+        $wpdb->update( $wpdb->get_blog_prefix() . 'erp_acct_pay_purchase',
             [
                 'trn_by_ledger_id' => $ledger_id->ledger_id,
             ],

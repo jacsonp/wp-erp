@@ -199,8 +199,8 @@ class HRM_Reports_Controller extends REST_Controller {
         } else {
             global $wpdb;
 
-            $user_ids = $wpdb->get_col( "SELECT user_id FROM {$wpdb->prefix}erp_hr_employees LIMIT {$args['number']} OFFSET {$args['offset']}" );
-            $total    = (int) $wpdb->get_var( "SELECT count(*) FROM {$wpdb->prefix}erp_hr_employees" );
+            $user_ids = $wpdb->get_col( "SELECT user_id FROM {$wpdb->get_blog_prefix()}erp_hr_employees LIMIT {$args['number']} OFFSET {$args['offset']}" );
+            $total    = (int) $wpdb->get_var( "SELECT count(*) FROM {$wpdb->get_blog_prefix()}erp_hr_employees" );
 
             foreach ( $user_ids as $user_id ) {
                 $data                = [];
@@ -238,8 +238,8 @@ class HRM_Reports_Controller extends REST_Controller {
 
         global $wpdb;
 
-        $user_ids    = $wpdb->get_col( "SELECT user_id FROM {$wpdb->prefix}erp_hr_employees LIMIT {$args['number']} OFFSET {$args['offset']}" );
-        $total_items = (int) $wpdb->get_var( "SELECT count(*) FROM {$wpdb->prefix}erp_hr_employees" );
+        $user_ids    = $wpdb->get_col( "SELECT user_id FROM {$wpdb->get_blog_prefix()}erp_hr_employees LIMIT {$args['number']} OFFSET {$args['offset']}" );
+        $total_items = (int) $wpdb->get_var( "SELECT count(*) FROM {$wpdb->get_blog_prefix()}erp_hr_employees" );
 
         $date_format = get_option( 'date_format' );
 
@@ -289,9 +289,9 @@ class HRM_Reports_Controller extends REST_Controller {
 
         global $wpdb;
 
-        $user_ids = $wpdb->get_col( "SELECT user_id FROM {$wpdb->prefix}erp_hr_employees WHERE status = 'active' LIMIT {$args['number']} OFFSET {$args['offset']}" );
+        $user_ids = $wpdb->get_col( "SELECT user_id FROM {$wpdb->get_blog_prefix()}erp_hr_employees WHERE status = 'active' LIMIT {$args['number']} OFFSET {$args['offset']}" );
 
-        $total_items = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}erp_hr_employees WHERE status = 'active'" );
+        $total_items = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->get_blog_prefix()}erp_hr_employees WHERE status = 'active'" );
 
         $hire_data = [];
 

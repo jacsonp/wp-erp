@@ -51,7 +51,7 @@ class Rejected_Leave_Request extends Email {
 
         $reason = $wpdb->get_var(
             $wpdb->prepare(
-                "SELECT message FROM {$wpdb->prefix}erp_hr_leave_approval_status WHERE leave_request_id = %d ORDER BY id DESC LIMIT 1",
+                "SELECT message FROM {$wpdb->get_blog_prefix()}erp_hr_leave_approval_status WHERE leave_request_id = %d ORDER BY id DESC LIMIT 1",
                 [ $request->id ]
             )
         );

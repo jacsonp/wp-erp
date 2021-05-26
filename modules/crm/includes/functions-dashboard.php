@@ -381,7 +381,7 @@ function customer_statics() {
 
     if ( false == get_transient( 'erp_customer_countries_widget' ) ) {
         global $wpdb;
-        $countries = $wpdb->get_results( 'SELECT country FROM ' . $wpdb->prefix . 'erp_peoples', OBJECT );
+        $countries = $wpdb->get_results( 'SELECT country FROM ' . $wpdb->get_blog_prefix() . 'erp_peoples', OBJECT );
 
         $codes     = [];
 

@@ -9,7 +9,7 @@
 function erp_crm_contact_group_add_private_column_1_2_2() {
     global $wpdb;
 
-    $table = $wpdb->prefix . 'erp_crm_contact_group';
+    $table = $wpdb->get_blog_prefix() . 'erp_crm_contact_group';
     $cols  = $wpdb->get_col( "DESC $table" );
 
     if ( ! in_array( 'private', $cols ) ) {
@@ -29,11 +29,11 @@ erp_crm_contact_group_add_private_column_1_2_2();
 function erp_crm_contact_subscriber_get_hashes_1_2_2() {
     global $wpdb;
 
-    $table = $wpdb->prefix . 'erp_crm_contact_subscriber';
+    $table = $wpdb->get_blog_prefix() . 'erp_crm_contact_subscriber';
     $cols  = $wpdb->get_col( "DESC $table" );
 
     if ( in_array( 'hash', $cols ) ) {
-        $subscribers = $wpdb->get_results( "SELECT user_id, hash from {$wpdb->prefix}erp_crm_contact_subscriber GROUP BY user_id" );
+        $subscribers = $wpdb->get_results( "SELECT user_id, hash from {$wpdb->get_blog_prefix()}erp_crm_contact_subscriber GROUP BY user_id" );
 
         if ( ! empty( $subscribers ) ) {
             foreach ( $subscribers as $subscriber ) {

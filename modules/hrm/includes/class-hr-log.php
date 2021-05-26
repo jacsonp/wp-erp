@@ -363,7 +363,7 @@ class Hr_Log {
 
         global $wpdb;
         $query = "SELECT user_id
-                    FROM {$wpdb->prefix}erp_hr_employee_history
+                    FROM {$wpdb->get_blog_prefix()}erp_hr_employee_history
                     WHERE id=" . $history_id;
         $user_id = $wpdb->get_var( $query );
 
@@ -412,7 +412,7 @@ class Hr_Log {
 
         global $wpdb;
         $query = "SELECT user_id
-                    FROM {$wpdb->prefix}erp_hr_employee_history
+                    FROM {$wpdb->get_blog_prefix()}erp_hr_employee_history
                     WHERE id=" . $history_id;
         $user_id = $wpdb->get_var( $query );
 
@@ -461,7 +461,7 @@ class Hr_Log {
 
         global $wpdb;
         $query = "SELECT user_id
-                    FROM {$wpdb->prefix}erp_hr_employee_history
+                    FROM {$wpdb->get_blog_prefix()}erp_hr_employee_history
                     WHERE id=" . $history_id;
         $user_id = $wpdb->get_var( $query );
 

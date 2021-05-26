@@ -114,7 +114,7 @@ class ERP_HR_Leave_Request extends WP_Background_Process {
         // get leave request data
         $leave_request_data = $wpdb->get_row(
             $wpdb->prepare(
-                "SELECT * FROM {$wpdb->prefix}erp_hr_leave_requests WHERE id = %d",
+                "SELECT * FROM {$wpdb->get_blog_prefix()}erp_hr_leave_requests WHERE id = %d",
                 [ $this->request_data['id'] ]
             ),
             ARRAY_A
@@ -145,7 +145,7 @@ class ERP_HR_Leave_Request extends WP_Background_Process {
             // check f_year already exist for given date range
             $f_year_id = $wpdb->get_var(
                 $wpdb->prepare(
-                    "SELECT id FROM {$wpdb->prefix}erp_hr_financial_years_new WHERE start_date >= %d AND end_date <= %d LIMIT 1",
+                    "SELECT id FROM {$wpdb->get_blog_prefix()}erp_hr_financial_years_new WHERE start_date >= %d AND end_date <= %d LIMIT 1",
                     [ $start_date->getTimestamp(), $end_date->getTimestamp() ]
                 )
             );
@@ -171,7 +171,7 @@ class ERP_HR_Leave_Request extends WP_Background_Process {
             // now get data from new leave policy table.
             $policy_data = $wpdb->get_row(
                 $wpdb->prepare(
-                    "SELECT leave_id FROM {$wpdb->prefix}erp_hr_leave_policies_new WHERE old_policy_id = %d AND f_year = %d",
+                    "SELECT leave_id FROM {$wpdb->get_blog_prefix()}erp_hr_leave_policies_new WHERE old_policy_id = %d AND f_year = %d",
                     [ $this->request_data['policy_id'], $f_year_id ]
                 ),
                 ARRAY_A
@@ -195,7 +195,7 @@ class ERP_HR_Leave_Request extends WP_Background_Process {
                 // get entitlement id for current request
                 $entitlement_id = $wpdb->get_var(
                     $wpdb->prepare(
-                        "SELECT id FROM {$wpdb->prefix}erp_hr_leave_entitlements_new WHERE trn_type = %s AND user_id = %d AND leave_id = %d AND f_year = %d",
+                        "SELECT id FROM {$wpdb->get_blog_prefix()}erp_hr_leave_entitlements_new WHERE trn_type = %s AND user_id = %d AND leave_id = %d AND f_year = %d",
                         [
                             'leave_policies',
                             $this->request_data['user_id'],
@@ -238,7 +238,7 @@ class ERP_HR_Leave_Request extends WP_Background_Process {
                     '%d',
                 ];
 
-                if ( $wpdb->insert( "{$wpdb->prefix}erp_hr_leave_requests_new", $table_data, $table_format ) === false ) {
+                if ( $wpdb->insert( "{$wpdb->get_blog_prefix()}erp_hr_leave_requests_new", $table_data, $table_format ) === false ) {
                     error_log(
                         print_r(
                             [
@@ -292,7 +292,7 @@ class ERP_HR_Leave_Request extends WP_Background_Process {
                 $table_format[]        = '%s';
             }
 
-            if ( $wpdb->insert( "{$wpdb->prefix}erp_hr_leave_approval_status_new", $table_data, $table_format ) === false ) {
+            if ( $wpdb->insert( "{$wpdb->get_blog_prefix()}erp_hr_leave_approval_status_new", $table_data, $table_format ) === false ) {
                 error_log(
                     print_r(
                         [
@@ -344,7 +344,7 @@ class ERP_HR_Leave_Request extends WP_Background_Process {
                 '%d',
             ];
 
-            if ( $wpdb->insert( "{$wpdb->prefix}erp_hr_leave_entitlements_new", $table_data, $table_format ) === false ) {
+            if ( $wpdb->insert( "{$wpdb->get_blog_prefix()}erp_hr_leave_entitlements_new", $table_data, $table_format ) === false ) {
                 error_log(
                     print_r(
                         [
@@ -362,14 +362,14 @@ class ERP_HR_Leave_Request extends WP_Background_Process {
                 // now get days data from new leave policy table.
                 $policy_days = $wpdb->get_var(
                     $wpdb->prepare(
-                        "SELECT days FROM {$wpdb->prefix}erp_hr_leave_policies_new WHERE old_policy_id = %d AND f_year = %d",
+                        "SELECT days FROM {$wpdb->get_blog_prefix()}erp_hr_leave_policies_new WHERE old_policy_id = %d AND f_year = %d",
                         [ $this->request_data['policy_id'], $this->request_data['f_year'] ]
                     )
                 );
 
                 $days_count = $wpdb->get_var(
                     $wpdb->prepare(
-                        "SELECT SUM(days) FROM {$wpdb->prefix}erp_hr_leave_requests_new WHERE leave_entitlement_id = %d and user_id = %d and id <= %d and last_status = 1",
+                        "SELECT SUM(days) FROM {$wpdb->get_blog_prefix()}erp_hr_leave_requests_new WHERE leave_entitlement_id = %d and user_id = %d and id <= %d and last_status = 1",
                         [ $this->request_data['leave_policy_id'], $this->request_data['user_id'], $this->request_data['leave_request_id'] ]
                     )
                 );
@@ -379,7 +379,7 @@ class ERP_HR_Leave_Request extends WP_Background_Process {
                     // already got extra leaves ?
                     $extra_days_count = $wpdb->get_var(
                         $wpdb->prepare(
-                            "SELECT SUM(days) FROM {$wpdb->prefix}erp_hr_leaves_unpaid_new WHERE leave_id = %d and user_id = %d and f_year = %d and leave_request_id < %d",
+                            "SELECT SUM(days) FROM {$wpdb->get_blog_prefix()}erp_hr_leaves_unpaid_new WHERE leave_id = %d and user_id = %d and f_year = %d and leave_request_id < %d",
                             [ $this->request_data['leave_id'], $this->request_data['user_id'], $this->request_data['f_year'], $this->request_data['leave_request_id'] ]
                         )
                     );
@@ -413,7 +413,7 @@ class ERP_HR_Leave_Request extends WP_Background_Process {
                         '%d',
                     ];
 
-                    if ( $wpdb->insert( "{$wpdb->prefix}erp_hr_leaves_unpaid_new", $table_data, $table_format ) === false ) {
+                    if ( $wpdb->insert( "{$wpdb->get_blog_prefix()}erp_hr_leaves_unpaid_new", $table_data, $table_format ) === false ) {
                         error_log(
                             print_r(
                                 [
@@ -453,7 +453,7 @@ class ERP_HR_Leave_Request extends WP_Background_Process {
                             '%d',
                         ];
 
-                        if ( $wpdb->insert( "{$wpdb->prefix}erp_hr_leave_entitlements_new", $table_data, $table_format ) === false ) {
+                        if ( $wpdb->insert( "{$wpdb->get_blog_prefix()}erp_hr_leave_entitlements_new", $table_data, $table_format ) === false ) {
                             error_log(
                                 print_r(
                                     [
@@ -487,7 +487,7 @@ class ERP_HR_Leave_Request extends WP_Background_Process {
             global $wpdb;
             $hr_leaves_data = $wpdb->get_col(
                 $wpdb->prepare(
-                    "SELECT `date` FROM {$wpdb->prefix}erp_hr_leaves WHERE request_id = %d",
+                    "SELECT `date` FROM {$wpdb->get_blog_prefix()}erp_hr_leaves WHERE request_id = %d",
                     [ $this->request_data['id'] ]
                 )
             );
@@ -509,7 +509,7 @@ class ERP_HR_Leave_Request extends WP_Background_Process {
                 }
 
                 if ( ! empty( $table_rows ) ) {
-                    if ( erp_wp_insert_rows( $table_rows, "{$wpdb->prefix}erp_hr_leave_request_details_new" ) === false ) {
+                    if ( erp_wp_insert_rows( $table_rows, "{$wpdb->get_blog_prefix()}erp_hr_leave_request_details_new" ) === false ) {
                         error_log(
                             print_r(
                                 [

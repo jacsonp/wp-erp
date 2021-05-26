@@ -11,7 +11,7 @@ function erp_updater_db_collate() {
     $db_name = DB_NAME;
 
     $tables = $wpdb->get_results(
-        "SELECT table_name FROM information_schema.tables where table_schema = '{$db_name}' and table_name like '{$wpdb->prefix}erp_%'",
+        "SELECT table_name FROM information_schema.tables where table_schema = '{$db_name}' and table_name like '{$wpdb->get_blog_prefix()}erp_%'",
         ARRAY_A
     );
 
@@ -41,7 +41,7 @@ function erp_updater_generate_holiday_leave_tables() {
     $charset_collate = $charset . ' ' . $collate;
 
     $table_schema = [
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_holidays_indv` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_holidays_indv` (
             `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
             `holiday_id` int(11) DEFAULT NULL,
             `title` varchar(255) DEFAULT NULL,
@@ -51,7 +51,7 @@ function erp_updater_generate_holiday_leave_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_user_leaves` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_user_leaves` (
             `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
             `user_id` int(11) DEFAULT NULL,
             `request_id` int(11) DEFAULT NULL,
@@ -78,8 +78,8 @@ function erp_updater_generate_holiday_leave_tables() {
 function erp_acct_updater_estimate_order_status() {
     global $wpdb;
 
-    $wpdb->query( "UPDATE {$wpdb->prefix}erp_acct_invoices SET status = 3 WHERE estimate = 1" );
-    $wpdb->query( "UPDATE {$wpdb->prefix}erp_acct_purchase SET status = 3 WHERE purchase_order = 1" );
+    $wpdb->query( "UPDATE {$wpdb->get_blog_prefix()}erp_acct_invoices SET status = 3 WHERE estimate = 1" );
+    $wpdb->query( "UPDATE {$wpdb->get_blog_prefix()}erp_acct_purchase SET status = 3 WHERE purchase_order = 1" );
 }
 
 /**
@@ -95,9 +95,9 @@ function erp_acct_populate_charts_ledgers_155() {
 
     $o_ledgers = $wpdb->get_results( "SELECT
         ledger.code, ledger.id, ledger.system, chart_cat.id category_id, chart.id as chart_id, ledger.name
-        FROM {$wpdb->prefix}erp_ac_ledger as ledger
-        LEFT JOIN {$wpdb->prefix}erp_ac_chart_types AS chart_cat ON ledger.type_id = chart_cat.id
-        LEFT JOIN {$wpdb->prefix}erp_ac_chart_classes AS chart ON chart_cat.class_id = chart.id ORDER BY chart_id", ARRAY_A );
+        FROM {$wpdb->get_blog_prefix()}erp_ac_ledger as ledger
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_ac_chart_types AS chart_cat ON ledger.type_id = chart_cat.id
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_ac_chart_classes AS chart ON chart_cat.class_id = chart.id ORDER BY chart_id", ARRAY_A );
 
     if ( ! empty( $o_ledgers ) ) {
         for ( $i = 0; $i < count( $o_ledgers ); $i++ ) {
@@ -111,9 +111,9 @@ function erp_acct_populate_charts_ledgers_155() {
     }
 
     $old_banks = $wpdb->get_results( "SELECT	ledger_id, account_number as code, bank_name as name
-        FROM {$wpdb->prefix}erp_ac_banks WHERE ledger_id <> 7", ARRAY_A );
+        FROM {$wpdb->get_blog_prefix()}erp_ac_banks WHERE ledger_id <> 7", ARRAY_A );
 
-    $wpdb->query( 'TRUNCATE TABLE ' . $wpdb->prefix . 'erp_acct_ledgers' );
+    $wpdb->query( 'TRUNCATE TABLE ' . $wpdb->get_blog_prefix() . 'erp_acct_ledgers' );
 
     foreach ( $old_ledgers as $old_ledger ) {
         if ( '120' == $old_ledger['code'] || '200' == $old_ledger['code'] ) {
@@ -121,7 +121,7 @@ function erp_acct_populate_charts_ledgers_155() {
         }
 
         $wpdb->insert(
-            "{$wpdb->prefix}erp_acct_ledgers",
+            "{$wpdb->get_blog_prefix()}erp_acct_ledgers",
             [
                 'id'       => $old_ledger['id'],
                 'chart_id' => $old_ledger['chart_id'],
@@ -137,7 +137,7 @@ function erp_acct_populate_charts_ledgers_155() {
     foreach ( array_keys( $ledgers ) as $array_key ) {
         foreach ( $ledgers[$array_key] as $value ) {
             $wpdb->insert(
-                "{$wpdb->prefix}erp_acct_ledgers",
+                "{$wpdb->get_blog_prefix()}erp_acct_ledgers",
                 [
                     'chart_id' => erp_acct_get_chart_id_by_slug( $array_key ),
                     'name'     => $value['name'],
@@ -151,7 +151,7 @@ function erp_acct_populate_charts_ledgers_155() {
 
     foreach ( $old_banks as $old_bank ) {
         $wpdb->insert(
-            "{$wpdb->prefix}erp_acct_ledgers",
+            "{$wpdb->get_blog_prefix()}erp_acct_ledgers",
             [
                 'chart_id' => 7,
                 'name'     => $old_bank['name'],
@@ -175,7 +175,7 @@ function erp_acct_rename_petty_cash() {
     // get chart_id for expenses
     $petty_cash_chart_id = $wpdb->get_var(
         $wpdb->prepare(
-            "SELECT id FROM {$wpdb->prefix}erp_acct_ledgers WHERE code = %d",
+            "SELECT id FROM {$wpdb->get_blog_prefix()}erp_acct_ledgers WHERE code = %d",
             [ 90 ]
         )
     );
@@ -184,7 +184,7 @@ function erp_acct_rename_petty_cash() {
     if ( null !== $petty_cash_chart_id && $petty_cash_chart_id > 0 ) {
         $wpdb->query(
             $wpdb->prepare(
-                "UPDATE {$wpdb->prefix}erp_acct_ledgers SET name = %s, slug = %s WHERE id = %d",
+                "UPDATE {$wpdb->get_blog_prefix()}erp_acct_ledgers SET name = %s, slug = %s WHERE id = %d",
                 [ 'Cash', slugify( 'Cash' ), $petty_cash_chart_id ]
             )
         );

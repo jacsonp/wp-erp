@@ -39,7 +39,7 @@ function erp_acct_get_all_tax_rates( $args = [] ) {
 
         $sql  = 'SELECT';
         $sql .= $args['count'] ? ' COUNT( DISTINCT tax.id ) as total_number ' : ' DISTINCT tax.id, tax.tax_rate_name, tax.tax_number, tax.default ';
-        $sql .= "FROM {$wpdb->prefix}erp_acct_taxes AS tax INNER JOIN {$wpdb->prefix}erp_acct_tax_cat_agency as cat_agency on tax.id = cat_agency.tax_id ORDER BY {$args['orderby']} {$args['order']} {$limit}";
+        $sql .= "FROM {$wpdb->get_blog_prefix()}erp_acct_taxes AS tax INNER JOIN {$wpdb->get_blog_prefix()}erp_acct_tax_cat_agency as cat_agency on tax.id = cat_agency.tax_id ORDER BY {$args['orderby']} {$args['order']} {$limit}";
 
         if ( $args['count'] ) {
             $tax_rates_count = $wpdb->get_var( $sql );
@@ -85,8 +85,8 @@ function erp_acct_get_tax_rate( $tax_no ) {
     tax_item.agency_id,
     tax_item.tax_cat_id
 
-    FROM {$wpdb->prefix}erp_acct_taxes AS tax
-    LEFT JOIN {$wpdb->prefix}erp_acct_tax_cat_agency AS tax_item ON tax.id = tax_item.tax_id
+    FROM {$wpdb->get_blog_prefix()}erp_acct_taxes AS tax
+    LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_tax_cat_agency AS tax_item ON tax.id = tax_item.tax_id
 
     WHERE tax.id = {$tax_no} LIMIT 1";
 
@@ -127,7 +127,7 @@ function erp_acct_insert_tax_rate( $data ) {
 
     foreach ( $items as $key => $item ) {
         $wpdb->insert(
-            $wpdb->prefix . 'erp_acct_tax_cat_agency',
+            $wpdb->get_blog_prefix() . 'erp_acct_tax_cat_agency',
             [
                 'tax_id'         => $tax_id,
                 'component_name' => $item['component_name'],
@@ -164,7 +164,7 @@ function erp_acct_update_tax_rate( $data, $id ) {
     $tax_data = erp_acct_get_formatted_tax_data( $data );
 
     $wpdb->update(
-        $wpdb->prefix . 'erp_acct_taxes',
+        $wpdb->get_blog_prefix() . 'erp_acct_taxes',
         [
             'tax_rate_id' => $tax_data['tax_rate_id'],
             'tax_number'  => $tax_data['tax_number'],
@@ -180,14 +180,14 @@ function erp_acct_update_tax_rate( $data, $id ) {
     );
 
     if ( ! empty( $tax_data['default'] ) && $tax_data['default'] ) {
-        $results = $wpdb->get_results( 'UPDATE ' . $wpdb->prefix . 'erp_acct_taxes' . ' SET `default`=0' );
+        $results = $wpdb->get_results( 'UPDATE ' . $wpdb->get_blog_prefix() . 'erp_acct_taxes' . ' SET `default`=0' );
     }
 
     $items = $data['tax_components'];
 
     foreach ( $items as $key => $item ) {
         $wpdb->update(
-            $wpdb->prefix . 'erp_acct_tax_cat_agency',
+            $wpdb->get_blog_prefix() . 'erp_acct_tax_cat_agency',
             [
                 'component_name' => $item['component_name'],
                 'tax_cat_id'     => $item['tax_cat_id'],
@@ -226,11 +226,11 @@ function erp_acct_quick_edit_tax_rate( $data, $id ) {
     $tax_data = erp_acct_get_formatted_tax_data( $data );
 
     if ( ! empty( $tax_data['default'] ) && 1 === $tax_data['default'] ) {
-        $results = $wpdb->get_results( 'UPDATE ' . $wpdb->prefix . 'erp_acct_taxes' . ' SET `default`=0' );
+        $results = $wpdb->get_results( 'UPDATE ' . $wpdb->get_blog_prefix() . 'erp_acct_taxes' . ' SET `default`=0' );
     }
 
     $wpdb->update(
-        $wpdb->prefix . 'erp_acct_taxes',
+        $wpdb->get_blog_prefix() . 'erp_acct_taxes',
         [
             'tax_number' => $tax_data['tax_number'],
             'default'    => $tax_data['default'],
@@ -264,7 +264,7 @@ function erp_acct_add_tax_rate_line( $data ) {
     $tax_data = erp_acct_get_formatted_tax_line_data( $data );
 
     $wpdb->insert(
-        $wpdb->prefix . 'erp_acct_tax_cat_agency',
+        $wpdb->get_blog_prefix() . 'erp_acct_tax_cat_agency',
         [
             'tax_id'         => $tax_data['tax_id'],
             'component_name' => $tax_data['component_name'],
@@ -300,7 +300,7 @@ function erp_acct_edit_tax_rate_line( $data ) {
     $tax_data = erp_acct_get_formatted_tax_line_data( $data );
 
     $wpdb->update(
-        $wpdb->prefix . 'erp_acct_tax_cat_agency',
+        $wpdb->get_blog_prefix() . 'erp_acct_tax_cat_agency',
         [
             'component_name' => $tax_data['component_name'],
             'tax_cat_id'     => $tax_data['tax_cat_id'],
@@ -331,7 +331,7 @@ function erp_acct_edit_tax_rate_line( $data ) {
 function erp_acct_delete_tax_rate_line( $line_no ) {
     global $wpdb;
 
-    $wpdb->delete( $wpdb->prefix . 'erp_acct_tax_cat_agency', [ 'id' => $line_no ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_tax_cat_agency', [ 'id' => $line_no ] );
 
     erp_acct_purge_cache( ['list' => 'tax_rates'] );
 
@@ -348,7 +348,7 @@ function erp_acct_delete_tax_rate_line( $line_no ) {
 function erp_acct_delete_tax_rate( $tax_no ) {
     global $wpdb;
 
-    $wpdb->delete( $wpdb->prefix . 'erp_acct_taxes', [ 'id' => $tax_no ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_taxes', [ 'id' => $tax_no ] );
 
     erp_acct_purge_cache( ['list' => 'tax_rates'] );
 
@@ -391,7 +391,7 @@ function erp_acct_get_tax_pay_records( $args = [] ) {
 
         $sql  = 'SELECT';
         $sql .= $args['count'] ? ' COUNT( id ) as total_number ' : ' * ';
-        $sql .= "FROM {$wpdb->prefix}erp_acct_tax_pay ORDER BY {$args['orderby']} {$args['order']} {$limit}";
+        $sql .= "FROM {$wpdb->get_blog_prefix()}erp_acct_tax_pay ORDER BY {$args['orderby']} {$args['order']} {$limit}";
 
         if ( $args['count'] ) {
             $tax_pay_count = $wpdb->get_var( $sql );
@@ -432,7 +432,7 @@ function erp_acct_get_tax_pay_record( $voucher_no ) {
             tax.agency_id,
             tax.ledger_id,
             tax.created_at
-            FROM {$wpdb->prefix}erp_acct_tax_pay AS tax
+            FROM {$wpdb->get_blog_prefix()}erp_acct_tax_pay AS tax
             WHERE tax.voucher_no = %d LIMIT 1",
             $voucher_no
         ),
@@ -458,7 +458,7 @@ function erp_acct_pay_tax( $data ) {
     $currency           = erp_get_currency( true );
 
     $wpdb->insert(
-        $wpdb->prefix . 'erp_acct_voucher_no',
+        $wpdb->get_blog_prefix() . 'erp_acct_voucher_no',
         [
             'type'       => 'tax_payment',
             'currency'   => $currency,
@@ -474,7 +474,7 @@ function erp_acct_pay_tax( $data ) {
     $tax_data = erp_acct_get_formatted_tax_data( $data );
 
     $wpdb->insert(
-        $wpdb->prefix . 'erp_acct_tax_pay',
+        $wpdb->get_blog_prefix() . 'erp_acct_tax_pay',
         [
             'voucher_no'   => $voucher_no,
             'trn_date'     => $tax_data['trn_date'],
@@ -500,9 +500,9 @@ function erp_acct_pay_tax( $data ) {
         $credit = $tax_data['amount'];
     }
 
-    // insert data into {$wpdb->prefix}erp_acct_tax_agency_details
+    // insert data into {$wpdb->get_blog_prefix()}erp_acct_tax_agency_details
     $wpdb->insert(
-        $wpdb->prefix . 'erp_acct_tax_agency_details',
+        $wpdb->get_blog_prefix() . 'erp_acct_tax_agency_details',
         [
             'agency_id'   => $tax_data['agency_id'],
             'trn_no'      => $voucher_no,
@@ -547,7 +547,7 @@ function erp_acct_insert_tax_pay_data_into_ledger( $tax_data ) {
 
     // Insert amount in ledger_details
     $wpdb->insert(
-        $wpdb->prefix . 'erp_acct_ledger_details',
+        $wpdb->get_blog_prefix() . 'erp_acct_ledger_details',
         [
             'ledger_id'   => $tax_data['ledger_id'],
             'trn_no'      => $tax_data['voucher_no'],
@@ -582,7 +582,7 @@ function erp_acct_format_tax_line_items( $tax = 'all' ) {
     } else {
         $tax_sql = 'WHERE tax_id = ' . $tax;
     }
-    $sql .= " FROM {$wpdb->prefix}erp_acct_tax_cat_agency {$tax_sql} ORDER BY tax_id";
+    $sql .= " FROM {$wpdb->get_blog_prefix()}erp_acct_tax_cat_agency {$tax_sql} ORDER BY tax_id";
 
     $results = $wpdb->get_results( $sql, ARRAY_A );
 
@@ -665,8 +665,8 @@ function erp_acct_tax_summary() {
         tax.default,
         tca.tax_cat_id,
         sum(tca.tax_rate) AS tax_rate
-        FROM {$wpdb->prefix}erp_acct_tax_cat_agency AS tca
-        INNER JOIN {$wpdb->prefix}erp_acct_taxes AS tax ON tax.id = tca.tax_id
+        FROM {$wpdb->get_blog_prefix()}erp_acct_tax_cat_agency AS tca
+        INNER JOIN {$wpdb->get_blog_prefix()}erp_acct_taxes AS tax ON tax.id = tca.tax_id
         GROUP BY tca.tax_cat_id, tax.id order by tax_cat_id",
         ARRAY_A
     );
@@ -678,5 +678,5 @@ function erp_acct_tax_summary() {
 function erp_acct_get_default_tax_rate_name_id() {
     global $wpdb;
 
-    return $wpdb->get_var( "SELECT id FROM {$wpdb->prefix}erp_acct_taxes WHERE `default` = 1" );
+    return $wpdb->get_var( "SELECT id FROM {$wpdb->get_blog_prefix()}erp_acct_taxes WHERE `default` = 1" );
 }

@@ -9,7 +9,7 @@
 function erp_ac_table_update_1_1_1() {
     global $wpdb;
 
-    $table = $wpdb->prefix . 'erp_ac_transactions';
+    $table = $wpdb->get_blog_prefix() . 'erp_ac_transactions';
     $cols  = $wpdb->get_col( 'DESC ' . $table );
 
     if ( ! in_array( 'invoice_number', $cols ) ) {
@@ -27,11 +27,11 @@ function erp_ac_table_update_1_1_1() {
 function erp_crm_update_1_1_1_table_column() {
     global $wpdb;
 
-    $activity_tb        = $wpdb->prefix . 'erp_crm_customer_activities';
+    $activity_tb        = $wpdb->get_blog_prefix() . 'erp_crm_customer_activities';
     $activity_tb_col    = $wpdb->get_col( 'DESC ' . $activity_tb );
 
     if ( ! in_array( 'sent_notification', $activity_tb_col ) ) {
-        $wpdb->query( "ALTER TABLE {$wpdb->prefix}erp_crm_customer_activities ADD `sent_notification` TINYINT(4) DEFAULT '0' AFTER `extra`" );
+        $wpdb->query( "ALTER TABLE {$wpdb->get_blog_prefix()}erp_crm_customer_activities ADD `sent_notification` TINYINT(4) DEFAULT '0' AFTER `extra`" );
     }
 }
 

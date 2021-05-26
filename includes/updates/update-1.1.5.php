@@ -24,7 +24,7 @@ function erp_ac_update_holiday_table_1_1_5() {
  */
 function erp_ac_update_location_table_1_1_5() {
     global $wpdb;
-    $table_name = $wpdb->prefix . 'erp_company_locations';
+    $table_name = $wpdb->get_blog_prefix() . 'erp_company_locations';
     $wpdb->query( "ALTER TABLE $table_name CHANGE `zip` `zip` VARCHAR(10) NULL DEFAULT NULL;" );
 }
 

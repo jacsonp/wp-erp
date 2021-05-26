@@ -459,11 +459,11 @@ class Admin {
             }
         }
 
-        $wpdb->query( 'TRUNCATE TABLE ' . $wpdb->prefix . 'erp_acct_financial_years' );
+        $wpdb->query( 'TRUNCATE TABLE ' . $wpdb->get_blog_prefix() . 'erp_acct_financial_years' );
 
         for ( $i = 0; $i < count( $ob_names ); $i++ ) {
             $wpdb->insert(
-                $wpdb->prefix . 'erp_acct_financial_years',
+                $wpdb->get_blog_prefix() . 'erp_acct_financial_years',
                 [
                     'name'       => $fin_years['ob_names'][ $i ],
                     'start_date' => $fin_years['ob_starts'][ $i ],

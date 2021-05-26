@@ -31,7 +31,7 @@ function erp_acct_get_payments( $args = [] ) {
 
     $sql  = 'SELECT';
     $sql .= $args['count'] ? ' COUNT( id ) as total_number ' : ' * ';
-    $sql .= "FROM {$wpdb->prefix}erp_acct_invoice_receipts ORDER BY {$args['orderby']} {$args['order']} {$limit}";
+    $sql .= "FROM {$wpdb->get_blog_prefix()}erp_acct_invoice_receipts ORDER BY {$args['orderby']} {$args['order']} {$limit}";
 
     if ( $args['count'] ) {
         return $wpdb->get_var( $sql );
@@ -76,10 +76,10 @@ function erp_acct_get_payment( $invoice_no ) {
     ledger_detail.debit,
     ledger_detail.credit
 
-    from {$wpdb->prefix}erp_acct_invoice_receipts as pay_inv
+    from {$wpdb->get_blog_prefix()}erp_acct_invoice_receipts as pay_inv
 
-    LEFT JOIN {$wpdb->prefix}erp_acct_invoice_receipts_details as pay_inv_detail ON pay_inv.voucher_no = pay_inv_detail.voucher_no
-    LEFT JOIN {$wpdb->prefix}erp_acct_ledger_details as ledger_detail ON pay_inv.voucher_no = ledger_detail.trn_no
+    LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_invoice_receipts_details as pay_inv_detail ON pay_inv.voucher_no = pay_inv_detail.voucher_no
+    LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_ledger_details as ledger_detail ON pay_inv.voucher_no = ledger_detail.trn_no
 
     WHERE pay_inv.voucher_no = {$invoice_no}";
 
@@ -117,7 +117,7 @@ function erp_acct_insert_payment( $data ) {
         }
 
         $wpdb->insert(
-            $wpdb->prefix . 'erp_acct_voucher_no',
+            $wpdb->get_blog_prefix() . 'erp_acct_voucher_no',
             [
                 'type'       => $trn_type,
                 'currency'   => $currency,
@@ -140,7 +140,7 @@ function erp_acct_insert_payment( $data ) {
         }
 
         $wpdb->insert(
-            $wpdb->prefix . 'erp_acct_invoice_receipts',
+            $wpdb->get_blog_prefix() . 'erp_acct_invoice_receipts',
             [
                 'voucher_no'         => $voucher_no,
                 'customer_id'        => $payment_data['customer_id'],
@@ -236,7 +236,7 @@ function erp_acct_insert_payment_line_items( $data, $item, $voucher_no ) {
     $payment_data['created_by'] = $created_by;
 
     $wpdb->insert(
-        $wpdb->prefix . 'erp_acct_invoice_receipts_details',
+        $wpdb->get_blog_prefix() . 'erp_acct_invoice_receipts_details',
         [
             'voucher_no' => $voucher_no,
             'invoice_no' => $item['invoice_no'],
@@ -262,7 +262,7 @@ function erp_acct_insert_payment_line_items( $data, $item, $voucher_no ) {
     }
 
     $wpdb->insert(
-        $wpdb->prefix . 'erp_acct_invoice_account_details',
+        $wpdb->get_blog_prefix() . 'erp_acct_invoice_account_details',
         [
             'invoice_no'  => $item['invoice_no'],
             'trn_no'      => $voucher_no,
@@ -303,7 +303,7 @@ function erp_acct_update_payment( $data, $voucher_no ) {
         $payment_data = erp_acct_get_formatted_payment_data( $data, $voucher_no );
 
         $wpdb->update(
-            $wpdb->prefix . 'erp_acct_invoice_receipts',
+            $wpdb->get_blog_prefix() . 'erp_acct_invoice_receipts',
             [
                 'trn_date'         => $payment_data['trn_date'],
                 'particulars'      => $payment_data['particulars'],
@@ -367,7 +367,7 @@ function erp_acct_update_payment_line_items( $data, $invoice_no, $voucher_no ) {
     $payment_data = erp_acct_get_formatted_payment_data( $data, $voucher_no, $invoice_no );
 
     $wpdb->update(
-        $wpdb->prefix . 'erp_acct_invoice_receipts_details',
+        $wpdb->get_blog_prefix() . 'erp_acct_invoice_receipts_details',
         [
             'voucher_no' => $voucher_no,
             'amount'     => abs( $payment_data['amount'] ),
@@ -395,7 +395,7 @@ function erp_acct_update_payment_line_items( $data, $invoice_no, $voucher_no ) {
     }
 
     $wpdb->update(
-        $wpdb->prefix . 'erp_acct_invoice_account_details',
+        $wpdb->get_blog_prefix() . 'erp_acct_invoice_account_details',
         [
             'trn_no'      => $voucher_no,
             'particulars' => $payment_data['particulars'],
@@ -473,9 +473,9 @@ function erp_acct_get_formatted_payment_data( $data, $voucher_no, $invoice_no = 
 function erp_acct_delete_payment( $id ) {
     global $wpdb;
 
-    $wpdb->delete( $wpdb->prefix . 'erp_acct_invoice_receipts', [ 'voucher_no' => $id ] );
-    $wpdb->delete( $wpdb->prefix . 'erp_acct_invoice_receipts_details', [ 'voucher_no' => $id ] );
-    $wpdb->delete( $wpdb->prefix . 'erp_acct_invoice_account_details', [ 'invoice_no' => $id ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_invoice_receipts', [ 'voucher_no' => $id ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_invoice_receipts_details', [ 'voucher_no' => $id ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_invoice_account_details', [ 'invoice_no' => $id ] );
 }
 
 /**
@@ -493,15 +493,15 @@ function erp_acct_void_payment( $id ) {
     }
 
     $wpdb->update(
-        $wpdb->prefix . 'erp_acct_invoice_receipts',
+        $wpdb->get_blog_prefix() . 'erp_acct_invoice_receipts',
         [
             'status' => 8,
         ],
         [ 'voucher_no' => $id ]
     );
 
-    $wpdb->delete( $wpdb->prefix . 'erp_acct_ledger_details', [ 'trn_no' => $id ] );
-    $wpdb->delete( $wpdb->prefix . 'erp_acct_invoice_account_details', [ 'trn_no' => $id ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_ledger_details', [ 'trn_no' => $id ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_invoice_account_details', [ 'trn_no' => $id ] );
 }
 
 /**
@@ -518,7 +518,7 @@ function erp_acct_change_invoice_status( $invoice_no ) {
 
     if ( 0.00 === $due ) {
         $wpdb->update(
-            $wpdb->prefix . 'erp_acct_invoices',
+            $wpdb->get_blog_prefix() . 'erp_acct_invoices',
             [
                 'status' => 4,
             ],
@@ -526,7 +526,7 @@ function erp_acct_change_invoice_status( $invoice_no ) {
         );
     } else {
         $wpdb->update(
-            $wpdb->prefix . 'erp_acct_invoices',
+            $wpdb->get_blog_prefix() . 'erp_acct_invoices',
             [
                 'status' => 5,
             ],
@@ -560,7 +560,7 @@ function erp_acct_insert_payment_data_into_ledger( $payment_data ) {
 
     // Insert amount in ledger_details
     $wpdb->insert(
-        $wpdb->prefix . 'erp_acct_ledger_details',
+        $wpdb->get_blog_prefix() . 'erp_acct_ledger_details',
         [
             'ledger_id'   => $payment_data['trn_by_ledger_id'],
             'trn_no'      => $payment_data['voucher_no'],
@@ -602,7 +602,7 @@ function erp_acct_update_payment_data_in_ledger( $payment_data, $invoice_no ) {
 
     // Update amount in ledger_details
     $wpdb->update(
-        $wpdb->prefix . 'erp_acct_ledger_details',
+        $wpdb->get_blog_prefix() . 'erp_acct_ledger_details',
         [
             'ledger_id'   => $payment_data['trn_by_ledger_id'],
             'particulars' => $payment_data['particulars'],
@@ -628,7 +628,7 @@ function erp_acct_update_payment_data_in_ledger( $payment_data, $invoice_no ) {
 function erp_acct_get_payment_count() {
     global $wpdb;
 
-    $row = $wpdb->get_row( 'SELECT COUNT(*) as count FROM ' . $wpdb->prefix . 'erp_acct_invoice_receipts' );
+    $row = $wpdb->get_row( 'SELECT COUNT(*) as count FROM ' . $wpdb->get_blog_prefix() . 'erp_acct_invoice_receipts' );
 
     return $row->count;
 }
@@ -650,8 +650,8 @@ function erp_acct_format_payment_line_items( $invoice = 'all' ) {
     } else {
         $invoice_sql = 'WHERE voucher_no = ' . $invoice;
     }
-    $sql .= "FROM {$wpdb->prefix}erp_acct_invoice_receipts_details AS inv_rec_detail
-            LEFT JOIN {$wpdb->prefix}erp_acct_voucher_no AS voucher
+    $sql .= "FROM {$wpdb->get_blog_prefix()}erp_acct_invoice_receipts_details AS inv_rec_detail
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_voucher_no AS voucher
             ON inv_rec_detail.voucher_no = voucher.id
             {$invoice_sql}";
 

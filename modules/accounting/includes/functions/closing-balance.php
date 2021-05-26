@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 function erp_acct_clsbl_get_closest_next_fn_year( $date ) {
     global $wpdb;
 
-    return $wpdb->get_row( $wpdb->prepare( "SELECT id, start_date, end_date FROM {$wpdb->prefix}erp_acct_financial_years WHERE start_date > '%s' ORDER BY start_date ASC LIMIT 1", $date ) );
+    return $wpdb->get_row( $wpdb->prepare( "SELECT id, start_date, end_date FROM {$wpdb->get_blog_prefix()}erp_acct_financial_years WHERE start_date > '%s' ORDER BY start_date ASC LIMIT 1", $date ) );
 }
 
 /**
@@ -36,7 +36,7 @@ function erp_acct_clsbl_close_balance_sheet_now( $args ) {
     // remove next financial year data if exists
     $wpdb->query(
         $wpdb->prepare(
-            "DELETE FROM {$wpdb->prefix}erp_acct_opening_balances
+            "DELETE FROM {$wpdb->get_blog_prefix()}erp_acct_opening_balances
     WHERE financial_year_id = %d",
             $next_f_year_id
         )
@@ -45,7 +45,7 @@ function erp_acct_clsbl_close_balance_sheet_now( $args ) {
     $ledger_map = \WeDevs\ERP\Accounting\Includes\Classes\Ledger_Map::get_instance();
 
     // ledgers
-    $sql     = "SELECT id, chart_id, name, slug FROM {$wpdb->prefix}erp_acct_ledgers";
+    $sql     = "SELECT id, chart_id, name, slug FROM {$wpdb->get_blog_prefix()}erp_acct_ledgers";
     $ledgers = $wpdb->get_results( $sql, ARRAY_A );
 
     foreach ( $ledgers as $ledger ) {
@@ -259,7 +259,7 @@ function erp_acct_clsbl_insert_into_opening_balance( $f_year_id, $chart_id, $led
     global $wpdb;
 
     $wpdb->insert(
-        "{$wpdb->prefix}erp_acct_opening_balances",
+        "{$wpdb->get_blog_prefix()}erp_acct_opening_balances",
         [
             'financial_year_id' => $f_year_id,
             'chart_id'          => $chart_id,
@@ -285,8 +285,8 @@ function erp_acct_clsbl_get_accounts_receivable_balance_with_people( $args ) {
 
     // mainly ( debit - credit )
     $sql = "SELECT invoice.customer_id AS id, SUM( debit - credit ) AS balance
-        FROM {$wpdb->prefix}erp_acct_invoice_account_details AS invoice_acd
-        LEFT JOIN {$wpdb->prefix}erp_acct_invoices AS invoice ON invoice_acd.invoice_no = invoice.voucher_no
+        FROM {$wpdb->get_blog_prefix()}erp_acct_invoice_account_details AS invoice_acd
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_invoices AS invoice ON invoice_acd.invoice_no = invoice.voucher_no
         WHERE invoice_acd.trn_date BETWEEN '%s' AND '%s' GROUP BY invoice_acd.invoice_no HAVING balance > 0";
 
     $data = $wpdb->get_results( $wpdb->prepare( $sql, $args['start_date'], $args['end_date'] ), ARRAY_A );
@@ -305,13 +305,13 @@ function erp_acct_clsbl_get_accounts_payable_balance_with_people( $args ) {
     global $wpdb;
 
     $bill_sql = "SELECT bill.vendor_id AS id, SUM( debit - credit ) AS balance
-        FROM {$wpdb->prefix}erp_acct_bill_account_details AS bill_acd
-        LEFT JOIN {$wpdb->prefix}erp_acct_bills AS bill ON bill_acd.bill_no = bill.voucher_no
+        FROM {$wpdb->get_blog_prefix()}erp_acct_bill_account_details AS bill_acd
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_bills AS bill ON bill_acd.bill_no = bill.voucher_no
         WHERE bill_acd.trn_date BETWEEN '%s' AND '%s' GROUP BY bill_acd.bill_no HAVING balance < 0";
 
     $purchase_sql = "SELECT purchase.vendor_id AS id, SUM( debit - credit ) AS balance
-        FROM {$wpdb->prefix}erp_acct_purchase_account_details AS purchase_acd
-        LEFT JOIN {$wpdb->prefix}erp_acct_purchase AS purchase ON purchase_acd.purchase_no = purchase.voucher_no
+        FROM {$wpdb->get_blog_prefix()}erp_acct_purchase_account_details AS purchase_acd
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_purchase AS purchase ON purchase_acd.purchase_no = purchase.voucher_no
         WHERE purchase_acd.trn_date BETWEEN '%s' AND '%s' GROUP BY purchase_acd.purchase_no HAVING balance < 0";
 
     $bill_data     = $wpdb->get_results( $wpdb->prepare( $bill_sql, $args['start_date'], $args['end_date'] ), ARRAY_A );
@@ -395,7 +395,7 @@ function erp_acct_clsbl_customer_ar_opening_balance_by_fn_year_id( $id ) {
     global $wpdb;
 
     $sql = "SELECT ledger_id AS id, SUM( debit - credit ) AS balance
-        FROM {$wpdb->prefix}erp_acct_opening_balances
+        FROM {$wpdb->get_blog_prefix()}erp_acct_opening_balances
         WHERE financial_year_id = %d AND type = 'people' GROUP BY ledger_id HAVING balance > 0";
 
     return $wpdb->get_results( $wpdb->prepare( $sql, $id ), ARRAY_A );
@@ -412,7 +412,7 @@ function erp_acct_clsbl_vendor_ap_opening_balance_by_fn_year_id( $id ) {
     global $wpdb;
 
     $sql = "SELECT ledger_id AS id, SUM( debit - credit ) AS balance
-        FROM {$wpdb->prefix}erp_acct_opening_balances
+        FROM {$wpdb->get_blog_prefix()}erp_acct_opening_balances
         WHERE financial_year_id = %d AND type = 'people' GROUP BY ledger_id HAVING balance < 0";
 
     return $wpdb->get_results( $wpdb->prepare( $sql, $id ), ARRAY_A );
@@ -463,7 +463,7 @@ function erp_acct_clsbl_sales_tax_agency( $args, $type ) {
         $having = 'HAVING balance > 0';
     }
 
-    $sql = "SELECT agency_id AS id, SUM( debit - credit ) AS balance FROM {$wpdb->prefix}erp_acct_tax_agency_details
+    $sql = "SELECT agency_id AS id, SUM( debit - credit ) AS balance FROM {$wpdb->get_blog_prefix()}erp_acct_tax_agency_details
         WHERE trn_date BETWEEN '%s' AND '%s'
         GROUP BY agency_id {$having}";
 
@@ -528,7 +528,7 @@ function erp_acct_clsbl_sales_tax_agency_opening_balance_by_fn_year_id( $id, $ty
     }
 
     $sql = "SELECT ledger_id AS id, SUM( debit - credit ) AS balance
-            FROM {$wpdb->prefix}erp_acct_opening_balances
+            FROM {$wpdb->get_blog_prefix()}erp_acct_opening_balances
             WHERE type = 'tax_agency' GROUP BY ledger_id {$having}";
 
     return $wpdb->get_results( $sql, ARRAY_A );

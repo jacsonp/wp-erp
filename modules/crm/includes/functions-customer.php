@@ -295,9 +295,9 @@ function erp_crm_customer_get_status_count( $type = null ) {
     $results   = wp_cache_get( $cache_key, 'erp' );
 
     if ( false === $results ) {
-        $people_tbl = $wpdb->prefix . 'erp_peoples';
-        $rel_tbl    = $wpdb->prefix . 'erp_people_type_relations';
-        $type_tbl   = $wpdb->prefix . 'erp_people_types';
+        $people_tbl = $wpdb->get_blog_prefix() . 'erp_peoples';
+        $rel_tbl    = $wpdb->get_blog_prefix() . 'erp_people_type_relations';
+        $type_tbl   = $wpdb->get_blog_prefix() . 'erp_people_types';
 
         $sql        = 'select life_stage as status, count(*) as count'
                     . " from {$people_tbl}"
@@ -364,7 +364,7 @@ function erp_crm_count_trashed_customers( $type = null ) {
 function erp_crm_customer_add_company( $customer_id, $company_id ) {
     global $wpdb;
 
-    $wpdb->insert( $wpdb->prefix . 'erp_crm_customer_companies', [
+    $wpdb->insert( $wpdb->get_blog_prefix() . 'erp_crm_customer_companies', [
         'customer_id' => $customer_id,
         'company_id'  => $company_id,
     ] );
@@ -387,8 +387,8 @@ function erp_crm_customer_get_company( $postdata ) {
         return new WP_Error( 'no-ids', __( 'No contact found', 'erp' ) );
     }
 
-    $sql = 'SELECT com.* FROM ' . $wpdb->prefix . 'erp_crm_customer_companies AS com
-            LEFT JOIN ' . $wpdb->prefix . 'erp_peoples AS peop ON peop.id = com.company_id
+    $sql = 'SELECT com.* FROM ' . $wpdb->get_blog_prefix() . 'erp_crm_customer_companies AS com
+            LEFT JOIN ' . $wpdb->get_blog_prefix() . 'erp_peoples AS peop ON peop.id = com.company_id
             WHERE com.customer_id = ' . $postdata['id'];
 
     $data = $wpdb->get_results( $sql, ARRAY_A );
@@ -424,8 +424,8 @@ function erp_crm_company_get_customers( $postdata ) {
         return new WP_Error( 'no-ids', __( 'No comapany found', 'erp' ) );
     }
 
-    $sql = 'SELECT  com.* FROM ' . $wpdb->prefix . 'erp_crm_customer_companies AS com
-            LEFT JOIN ' . $wpdb->prefix . 'erp_peoples AS peop ON peop.id = com.customer_id
+    $sql = 'SELECT  com.* FROM ' . $wpdb->get_blog_prefix() . 'erp_crm_customer_companies AS com
+            LEFT JOIN ' . $wpdb->get_blog_prefix() . 'erp_peoples AS peop ON peop.id = com.customer_id
             WHERE com.company_id = ' . $postdata['id'];
 
     $data = $wpdb->get_results( $sql, ARRAY_A );
@@ -466,7 +466,7 @@ function erp_crm_get_customer_details_url( $id ) {
  */
 function erp_crm_customer_update_company( $row_id, $company_id ) {
     global $wpdb;
-    $wpdb->update( $wpdb->prefix . 'erp_crm_customer_companies', [ 'company_id' => $company_id ], [ 'id' => $row_id ] );
+    $wpdb->update( $wpdb->get_blog_prefix() . 'erp_crm_customer_companies', [ 'company_id' => $company_id ], [ 'id' => $row_id ] );
 }
 
 /**
@@ -478,7 +478,7 @@ function erp_crm_customer_update_company( $row_id, $company_id ) {
  */
 function erp_crm_customer_remove_company( $id ) {
     global $wpdb;
-    $wpdb->delete( $wpdb->prefix . 'erp_crm_customer_companies', [ 'id' => $id ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_crm_customer_companies', [ 'id' => $id ] );
 }
 
 /**
@@ -563,7 +563,7 @@ function erp_crm_get_customer_feeds_nav() {
 function erp_crm_check_customer_exist_company( $customer_id, $company_id ) {
     global $wpdb;
 
-    $sql = "SELECT `id` FROM {$wpdb->prefix}erp_crm_customer_companies WHERE `customer_id` = '$customer_id' AND `company_id` = '$company_id'";
+    $sql = "SELECT `id` FROM {$wpdb->get_blog_prefix()}erp_crm_customer_companies WHERE `customer_id` = '$customer_id' AND `company_id` = '$company_id'";
 
     return $wpdb->get_row( $sql, ARRAY_A );
 }
@@ -697,7 +697,7 @@ function erp_crm_get_feed_activity( $args = [] ) {
 
         if ( current_user_can( 'erp_crm_agent' ) ) {
             $contact_owner = get_current_user_id();
-            $people_ids    = array_keys( $wpdb->get_results( "SELECT id FROM {$wpdb->prefix}erp_peoples WHERE contact_owner = {$contact_owner}", OBJECT_K ) );
+            $people_ids    = array_keys( $wpdb->get_results( "SELECT id FROM {$wpdb->get_blog_prefix()}erp_peoples WHERE contact_owner = {$contact_owner}", OBJECT_K ) );
 
             $results = $results->whereIn( 'user_id', $people_ids );
         }
@@ -1291,15 +1291,15 @@ function erp_crm_get_subscriber_contact( $args = [] ) {
 
     if ( false === $items ) {
         $converted_data       = [];
-        $contact_subscribe_tb = $wpdb->prefix . 'erp_crm_contact_subscriber';
-        $contact_group_tb     = $wpdb->prefix . 'erp_crm_contact_group';
-        $contact_tags         = $wpdb->prefix . 'erp_crm_contact_tag';
+        $contact_subscribe_tb = $wpdb->get_blog_prefix() . 'erp_crm_contact_subscriber';
+        $contact_group_tb     = $wpdb->get_blog_prefix() . 'erp_crm_contact_group';
+        $contact_tags         = $wpdb->get_blog_prefix() . 'erp_crm_contact_tag';
 
         $contact_subscribers = WeDevs\ERP\CRM\Models\ContactSubscriber::leftjoin( $contact_group_tb, $contact_group_tb . '.id', '=', $contact_subscribe_tb . '.group_id' );
 
         // $contact_subscribers = $contact_subscribers::leftjoin('')
         if ( ! current_user_can( 'erp_crm_create_groups' ) ) {
-            $erp_peoples         = $wpdb->prefix . 'erp_peoples';
+            $erp_peoples         = $wpdb->get_blog_prefix() . 'erp_peoples';
             $contact_subscribers = $contact_subscribers->leftJoin( $erp_peoples, $erp_peoples . '.id', '=', $contact_subscribe_tb . '.user_id' )->addSelect( $contact_subscribe_tb . '.*', $contact_group_tb . '.*', $erp_peoples . '.contact_owner' )->where( $erp_peoples . '.contact_owner', '=', get_current_user_id() );
         }
 
@@ -2281,7 +2281,7 @@ function erp_crm_contact_advance_filter( $custom_sql, $args ) {
                         $custom_sql['where'][] = ( $i === count( $or_query ) - 1 ) ? ')' : ' ) AND';
                     } elseif ( $field === 'contact_group' ) {
                         if ( ! $is_contact_group_joined ) {
-                            $custom_sql['join'][] = "LEFT JOIN {$wpdb->prefix}erp_crm_contact_subscriber as subscriber ON people.id = subscriber.user_id";
+                            $custom_sql['join'][] = "LEFT JOIN {$wpdb->get_blog_prefix()}erp_crm_contact_subscriber as subscriber ON people.id = subscriber.user_id";
 
                             if ( ! $args['count'] ) {
                                 $custom_sql['group_by'][] = 'people.id';
@@ -2325,9 +2325,9 @@ function erp_crm_contact_advance_filter( $custom_sql, $args ) {
                         $custom_sql['where'][] = ( $i === count( $or_query ) - 1 ) ? ')' : ' ) AND';
                     } elseif ( $field === 'tags' ) {
                         if ( ! $tag_table_joined ) {
-                            $custom_sql['join'][] = "INNER JOIN {$wpdb->prefix}term_relationships as term_relation on (people.id = term_relation.object_id)";
-                            $custom_sql['join'][] = "INNER JOIN {$wpdb->prefix}term_taxonomy AS term_taxonomy ON (term_relation.term_taxonomy_id = term_taxonomy.term_taxonomy_id)";
-                            $custom_sql['join'][] = "INNER JOIN {$wpdb->prefix}terms AS term ON (term.term_id = term_taxonomy.term_id)";
+                            $custom_sql['join'][] = "INNER JOIN {$wpdb->get_blog_prefix()}term_relationships as term_relation on (people.id = term_relation.object_id)";
+                            $custom_sql['join'][] = "INNER JOIN {$wpdb->get_blog_prefix()}term_taxonomy AS term_taxonomy ON (term_relation.term_taxonomy_id = term_taxonomy.term_taxonomy_id)";
+                            $custom_sql['join'][] = "INNER JOIN {$wpdb->get_blog_prefix()}terms AS term ON (term.term_id = term_taxonomy.term_id)";
                             $tag_table_joined     = 1;
                         }
 
@@ -2361,7 +2361,7 @@ function erp_crm_contact_advance_filter( $custom_sql, $args ) {
                         $custom_sql['where'][] = "AND term_taxonomy.taxonomy = 'erp_crm_tag'";
                         $custom_sql['where'][] = ( $i === count( $or_query ) - 1 ) ? ')' : ' ) AND';
                     } elseif ( in_array( $field, $people_meta_fields, true ) ) {
-                        $pepmeta_tb           = $wpdb->prefix . 'erp_peoplemeta';
+                        $pepmeta_tb           = $wpdb->get_blog_prefix() . 'erp_peoplemeta';
                         $name                 = 'people_meta_' . ( $table_alias ) . '_' . ( $i + 1 );
                         $custom_sql['join'][] = "LEFT JOIN $pepmeta_tb as $name on people.id = $name.`erp_people_id`";
 
@@ -2410,7 +2410,7 @@ function erp_crm_contact_advance_filter( $custom_sql, $args ) {
                                 $where_condition = " created_at < '{$end_date}'";
                             }
 
-                            $custom_sql['where'][] = "people.id NOT IN ( SELECT user_id FROM {$wpdb->prefix}erp_crm_customer_activities WHERE " . $where_condition . " ) $add_or";
+                            $custom_sql['where'][] = "people.id NOT IN ( SELECT user_id FROM {$wpdb->get_blog_prefix()}erp_crm_customer_activities WHERE " . $where_condition . " ) $add_or";
                             $j ++;
                         }
 
@@ -4124,7 +4124,7 @@ function erp_crm_check_company_contact_relations( $id, $id_type ) {
             if ( $id_type === 'contact' ) {
                 $id_type = 'customer';
             }
-            $rel_count = $wpdb->get_var( "SELECT count(*) FROM {$wpdb->prefix}erp_crm_customer_companies WHERE {$id_type}_id = {$id}" );
+            $rel_count = $wpdb->get_var( "SELECT count(*) FROM {$wpdb->get_blog_prefix()}erp_crm_customer_companies WHERE {$id_type}_id = {$id}" );
 
             return $rel_count;
         }

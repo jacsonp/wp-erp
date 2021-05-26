@@ -57,10 +57,10 @@ function erp_acct_get_all_products( $args = [] ) {
                 product_type.name AS product_type_name";
         }
 
-        $sql .= " FROM {$wpdb->prefix}erp_acct_products AS product
-            LEFT JOIN {$wpdb->prefix}erp_peoples AS people ON product.vendor = people.id
-            LEFT JOIN {$wpdb->prefix}erp_acct_product_categories AS cat ON product.category_id = cat.id
-            LEFT JOIN {$wpdb->prefix}erp_acct_product_types AS product_type ON product.product_type_id = product_type.id
+        $sql .= " FROM {$wpdb->get_blog_prefix()}erp_acct_products AS product
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_peoples AS people ON product.vendor = people.id
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_product_categories AS cat ON product.category_id = cat.id
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_product_types AS product_type ON product.product_type_id = product_type.id
             WHERE product.product_type_id<>3 ORDER BY product.{$args['orderby']} {$args['order']} {$limit}";
 
         if ( $args['count'] ) {
@@ -108,10 +108,10 @@ function erp_acct_get_product( $product_id ) {
 
 		product_type.name AS product_type_name
 
-		FROM {$wpdb->prefix}erp_acct_products AS product
-		LEFT JOIN {$wpdb->prefix}erp_peoples AS people ON product.vendor = people.id
-		LEFT JOIN {$wpdb->prefix}erp_acct_product_categories AS cat ON product.category_id = cat.id
-        LEFT JOIN {$wpdb->prefix}erp_acct_product_types AS product_type ON product.product_type_id = product_type.id WHERE product.id = {$product_id} LIMIT 1",
+		FROM {$wpdb->get_blog_prefix()}erp_acct_products AS product
+		LEFT JOIN {$wpdb->get_blog_prefix()}erp_peoples AS people ON product.vendor = people.id
+		LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_product_categories AS cat ON product.category_id = cat.id
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_product_types AS product_type ON product.product_type_id = product_type.id WHERE product.id = {$product_id} LIMIT 1",
         ARRAY_A
     );
 
@@ -138,7 +138,7 @@ function erp_acct_insert_product( $data ) {
 
         $product_check =  $wpdb->get_row(
             $wpdb->prepare(
-                "SELECT * FROM {$wpdb->prefix}erp_acct_products where name = %s",
+                "SELECT * FROM {$wpdb->get_blog_prefix()}erp_acct_products where name = %s",
                 $product_data['name']
             ),
             OBJECT
@@ -150,7 +150,7 @@ function erp_acct_insert_product( $data ) {
 
 
         $wpdb->insert(
-            $wpdb->prefix . 'erp_acct_products',
+            $wpdb->get_blog_prefix() . 'erp_acct_products',
             [
                 'name'            => $product_data['name'],
                 'product_type_id' => $product_data['product_type_id'],
@@ -201,7 +201,7 @@ function erp_acct_update_product( $data, $id ) {
 
         $product_name_check =  $wpdb->get_row(
             $wpdb->prepare(
-                "SELECT * FROM {$wpdb->prefix}erp_acct_products where name = %s AND id NOT IN(%d)",
+                "SELECT * FROM {$wpdb->get_blog_prefix()}erp_acct_products where name = %s AND id NOT IN(%d)",
                 $product_data['name'],
                 $id
             ),
@@ -213,7 +213,7 @@ function erp_acct_update_product( $data, $id ) {
         }
 
         $wpdb->update(
-            $wpdb->prefix . 'erp_acct_products',
+            $wpdb->get_blog_prefix() . 'erp_acct_products',
             [
                 'name'            => $product_data['name'],
                 'product_type_id' => $product_data['product_type_id'],
@@ -280,8 +280,8 @@ function erp_acct_get_formatted_product_data( $data ) {
 function erp_acct_delete_product( $product_id ) {
     global $wpdb;
 
-    $wpdb->delete( $wpdb->prefix . 'erp_acct_products', [ 'id' => $product_id ] );
-    $wpdb->delete( $wpdb->prefix . 'erp_acct_product_details', [ 'product_id' => $product_id ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_products', [ 'id' => $product_id ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_product_details', [ 'product_id' => $product_id ] );
 
     erp_acct_purge_cache( ['list' => 'products,products_vendor'] );
 
@@ -300,7 +300,7 @@ function erp_acct_delete_product( $product_id ) {
 function erp_acct_get_product_types() {
     global $wpdb;
 
-    $types = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}erp_acct_product_types" );
+    $types = $wpdb->get_results( "SELECT * FROM {$wpdb->get_blog_prefix()}erp_acct_product_types" );
 
     return apply_filters( 'erp_acct_product_types', $types );
 }
@@ -315,7 +315,7 @@ function erp_acct_get_product_types() {
 function erp_acct_get_product_type_id_by_product_id( $product_id ) {
     global $wpdb;
 
-    $type_id = $wpdb->get_var( $wpdb->prepare( "SELECT product_type_id FROM {$wpdb->prefix}erp_acct_products WHERE id = %d", $product_id ) );
+    $type_id = $wpdb->get_var( $wpdb->prepare( "SELECT product_type_id FROM {$wpdb->get_blog_prefix()}erp_acct_products WHERE id = %d", $product_id ) );
 
     return $type_id;
 }
@@ -372,10 +372,10 @@ function erp_acct_get_vendor_products( $args = [] ) {
                 product_type.name AS product_type_name";
         }
 
-        $sql .= " FROM {$wpdb->prefix}erp_acct_products AS product
-            LEFT JOIN {$wpdb->prefix}erp_peoples AS people ON product.vendor = people.id
-            LEFT JOIN {$wpdb->prefix}erp_acct_product_categories AS cat ON product.category_id = cat.id
-            LEFT JOIN {$wpdb->prefix}erp_acct_product_types AS product_type ON product.product_type_id = product_type.id
+        $sql .= " FROM {$wpdb->get_blog_prefix()}erp_acct_products AS product
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_peoples AS people ON product.vendor = people.id
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_product_categories AS cat ON product.category_id = cat.id
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_product_types AS product_type ON product.product_type_id = product_type.id
             WHERE people.id={$args['vendor']} AND product.product_type_id<>3 ORDER BY product.{$args['orderby']} {$args['order']} {$limit}";
 
         if ( $args['count'] ) {

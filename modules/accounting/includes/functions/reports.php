@@ -36,7 +36,7 @@ function erp_acct_get_ledger_report( $ledger_id, $start_date, $end_date ) {
 
         $sql1 = $wpdb->prepare(
             "SELECT SUM(debit - credit) AS balance
-            FROM {$wpdb->prefix}erp_acct_ledger_details
+            FROM {$wpdb->get_blog_prefix()}erp_acct_ledger_details
             WHERE ledger_id = %d AND trn_date BETWEEN '%s' AND '%s' ORDER BY trn_date ASC",
             $ledger_id,
             $closest_fy_date['start_date'],
@@ -53,7 +53,7 @@ function erp_acct_get_ledger_report( $ledger_id, $start_date, $end_date ) {
     $sql2 = $wpdb->prepare(
         "SELECT
         trn_no, particulars, debit, credit, trn_date, created_at
-        FROM {$wpdb->prefix}erp_acct_ledger_details
+        FROM {$wpdb->get_blog_prefix()}erp_acct_ledger_details
         WHERE ledger_id = %d AND trn_date BETWEEN '%s' AND '%s' ORDER BY trn_date ASC",
         $ledger_id,
         $start_date,
@@ -142,7 +142,7 @@ function erp_acct_get_ledger_report( $ledger_id, $start_date, $end_date ) {
 function erp_acct_ledger_report_opening_balance_by_fn_year_id( $id, $ledger_id ) {
     global $wpdb;
 
-    $sql = "SELECT SUM(debit - credit) AS balance FROM {$wpdb->prefix}erp_acct_opening_balances
+    $sql = "SELECT SUM(debit - credit) AS balance FROM {$wpdb->get_blog_prefix()}erp_acct_opening_balances
         WHERE financial_year_id = %d AND ledger_id = %d AND type = 'ledger' GROUP BY ledger_id";
 
     return $wpdb->get_var( $wpdb->prepare( $sql, $id, $ledger_id ) );
@@ -169,7 +169,7 @@ function erp_acct_get_sales_tax_report( $agency_id, $start_date, $end_date ) {
     // opening balance
     $sql1 = $wpdb->prepare(
         "SELECT SUM(debit - credit) AS opening_balance
-        FROM {$wpdb->prefix}erp_acct_tax_agency_details
+        FROM {$wpdb->get_blog_prefix()}erp_acct_tax_agency_details
         WHERE agency_id = %d AND trn_date < '%s'",
         $agency_id,
         $start_date
@@ -179,7 +179,7 @@ function erp_acct_get_sales_tax_report( $agency_id, $start_date, $end_date ) {
     $opening_balance    = (float) $db_opening_balance;
 
     // agency details
-    $details = $wpdb->get_results( $wpdb->prepare( "SELECT trn_no, particulars, debit, credit, trn_date, created_at FROM {$wpdb->prefix}erp_acct_tax_agency_details WHERE agency_id = %d AND trn_date BETWEEN '%s' AND '%s'", $agency_id, $start_date, $end_date ), ARRAY_A );
+    $details = $wpdb->get_results( $wpdb->prepare( "SELECT trn_no, particulars, debit, credit, trn_date, created_at FROM {$wpdb->get_blog_prefix()}erp_acct_tax_agency_details WHERE agency_id = %d AND trn_date BETWEEN '%s' AND '%s'", $agency_id, $start_date, $end_date ), ARRAY_A );
 
     $total_debit  = 0;
     $total_credit = 0;
@@ -312,7 +312,7 @@ function erp_acct_income_statement_calculate_with_opening_balance( $is_start_dat
     // get opening balance data within that(^) financial year
     $opening_balance = erp_acct_is_opening_balance_by_fn_year_id( $closest_fy_date['id'], $chart_id );
 
-    $ledgers   = $wpdb->get_results( $wpdb->prepare( "SELECT ledger.id, ledger.name FROM {$wpdb->prefix}erp_acct_ledgers AS ledger WHERE ledger.chart_id = %d", $chart_id ), ARRAY_A );
+    $ledgers   = $wpdb->get_results( $wpdb->prepare( "SELECT ledger.id, ledger.name FROM {$wpdb->get_blog_prefix()}erp_acct_ledgers AS ledger WHERE ledger.chart_id = %d", $chart_id ), ARRAY_A );
     $temp_data = erp_acct_get_is_balance_with_opening_balance( $ledgers, $data, $opening_balance );
     $result    = [];
 
@@ -418,8 +418,8 @@ function erp_acct_is_opening_balance_by_fn_year_id( $id, $chart_id ) {
     }
 
     $sql = "SELECT ledger.id, ledger.name, SUM(opb.debit - opb.credit) AS balance
-        FROM {$wpdb->prefix}erp_acct_ledgers AS ledger
-        LEFT JOIN {$wpdb->prefix}erp_acct_opening_balances AS opb ON ledger.id = opb.ledger_id
+        FROM {$wpdb->get_blog_prefix()}erp_acct_ledgers AS ledger
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_opening_balances AS opb ON ledger.id = opb.ledger_id
         WHERE opb.financial_year_id = %d {$where} AND opb.type = 'ledger' AND ledger.slug <> 'owner_s_equity'
         GROUP BY opb.ledger_id";
 
@@ -459,24 +459,24 @@ function erp_acct_get_balance_sheet( $args ) {
         ledger.id,
         ledger.name,
         SUM(ledger_detail.debit - ledger_detail.credit) AS balance
-        FROM {$wpdb->prefix}erp_acct_ledgers AS ledger
-        LEFT JOIN {$wpdb->prefix}erp_acct_ledger_details AS ledger_detail ON ledger.id = ledger_detail.ledger_id WHERE ledger.chart_id=1 AND ledger_detail.trn_date BETWEEN '%s' AND '%s'
+        FROM {$wpdb->get_blog_prefix()}erp_acct_ledgers AS ledger
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_ledger_details AS ledger_detail ON ledger.id = ledger_detail.ledger_id WHERE ledger.chart_id=1 AND ledger_detail.trn_date BETWEEN '%s' AND '%s'
         GROUP BY ledger_detail.ledger_id";
 
     $sql2 = "SELECT
         ledger.id,
         ledger.name,
         SUM(ledger_detail.debit - ledger_detail.credit) AS balance
-        FROM {$wpdb->prefix}erp_acct_ledgers AS ledger
-        LEFT JOIN {$wpdb->prefix}erp_acct_ledger_details AS ledger_detail ON ledger.id = ledger_detail.ledger_id WHERE ledger.chart_id=2 AND ledger_detail.trn_date BETWEEN '%s' AND '%s'
+        FROM {$wpdb->get_blog_prefix()}erp_acct_ledgers AS ledger
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_ledger_details AS ledger_detail ON ledger.id = ledger_detail.ledger_id WHERE ledger.chart_id=2 AND ledger_detail.trn_date BETWEEN '%s' AND '%s'
         GROUP BY ledger_detail.ledger_id";
 
     $sql3 = "SELECT
         ledger.id,
         ledger.name,
         SUM(ledger_detail.debit - ledger_detail.credit) AS balance
-        FROM {$wpdb->prefix}erp_acct_ledgers AS ledger
-        LEFT JOIN {$wpdb->prefix}erp_acct_ledger_details AS ledger_detail ON ledger.id = ledger_detail.ledger_id WHERE ledger.chart_id=3 AND ledger.slug <> 'owner_s_equity' AND ledger_detail.trn_date BETWEEN '%s' AND '%s'
+        FROM {$wpdb->get_blog_prefix()}erp_acct_ledgers AS ledger
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_ledger_details AS ledger_detail ON ledger.id = ledger_detail.ledger_id WHERE ledger.chart_id=3 AND ledger.slug <> 'owner_s_equity' AND ledger_detail.trn_date BETWEEN '%s' AND '%s'
         GROUP BY ledger_detail.ledger_id";
 
     $data1 = $wpdb->get_results( $wpdb->prepare( $sql1, $args['start_date'], $args['end_date'] ), ARRAY_A );
@@ -647,7 +647,7 @@ function erp_acct_balance_sheet_calculate_with_opening_balance( $bs_start_date, 
 
     $ledger_sql = "SELECT
         ledger.id, ledger.name
-        FROM {$wpdb->prefix}erp_acct_ledgers AS ledger
+        FROM {$wpdb->get_blog_prefix()}erp_acct_ledgers AS ledger
         WHERE ledger.chart_id={$chart_id} AND ledger.slug <> 'owner_s_equity'";
 
     $ledgers   = $wpdb->get_results( $ledger_sql, ARRAY_A );
@@ -756,8 +756,8 @@ function erp_acct_bs_opening_balance_by_fn_year_id( $id, $chart_id ) {
     }
 
     $sql = "SELECT ledger.id, ledger.name, SUM(opb.debit - opb.credit) AS balance
-        FROM {$wpdb->prefix}erp_acct_ledgers AS ledger
-        LEFT JOIN {$wpdb->prefix}erp_acct_opening_balances AS opb ON ledger.id = opb.ledger_id
+        FROM {$wpdb->get_blog_prefix()}erp_acct_ledgers AS ledger
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_opening_balances AS opb ON ledger.id = opb.ledger_id
         WHERE opb.financial_year_id = %d {$where} AND opb.type = 'ledger' AND ledger.slug <> 'owner_s_equity'
         GROUP BY opb.ledger_id";
 
@@ -794,16 +794,16 @@ function erp_acct_get_profit_loss( $args ) {
         ledger.id,
         ledger.name,
         SUM(ledger_detail.debit - ledger_detail.credit) AS balance
-        FROM {$wpdb->prefix}erp_acct_ledgers AS ledger
-        LEFT JOIN {$wpdb->prefix}erp_acct_ledger_details AS ledger_detail ON ledger.id = ledger_detail.ledger_id WHERE ledger.chart_id=4 AND ledger_detail.trn_date BETWEEN '%s' AND '%s'
+        FROM {$wpdb->get_blog_prefix()}erp_acct_ledgers AS ledger
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_ledger_details AS ledger_detail ON ledger.id = ledger_detail.ledger_id WHERE ledger.chart_id=4 AND ledger_detail.trn_date BETWEEN '%s' AND '%s'
         GROUP BY ledger_detail.ledger_id";
 
     $sql2 = "SELECT
         ledger.id,
         ledger.name,
         SUM(ledger_detail.debit - ledger_detail.credit) AS balance
-        FROM {$wpdb->prefix}erp_acct_ledgers AS ledger
-        LEFT JOIN {$wpdb->prefix}erp_acct_ledger_details AS ledger_detail ON ledger.id = ledger_detail.ledger_id WHERE ledger.chart_id=5 AND ledger_detail.trn_date BETWEEN '%s' AND '%s'
+        FROM {$wpdb->get_blog_prefix()}erp_acct_ledgers AS ledger
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_ledger_details AS ledger_detail ON ledger.id = ledger_detail.ledger_id WHERE ledger.chart_id=5 AND ledger_detail.trn_date BETWEEN '%s' AND '%s'
         GROUP BY ledger_detail.ledger_id";
 
     $data1 = $wpdb->get_results( $wpdb->prepare( $sql1, $args['start_date'], $args['end_date'] ), ARRAY_A );

@@ -191,7 +191,7 @@ class Settings extends ERP_Settings_Page {
     public function acct_opening_balance() {
         global $wpdb;
 
-        $rows = $wpdb->get_results( "SELECT id, name, start_date, end_date FROM {$wpdb->prefix}erp_acct_financial_years", ARRAY_A );
+        $rows = $wpdb->get_results( "SELECT id, name, start_date, end_date FROM {$wpdb->get_blog_prefix()}erp_acct_financial_years", ARRAY_A );
 
         require_once ERP_ACCOUNTING_VIEWS . '/settings/opening-balance.php';
     }

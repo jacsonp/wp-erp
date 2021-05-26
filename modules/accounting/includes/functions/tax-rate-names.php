@@ -39,7 +39,7 @@ function erp_acct_get_all_tax_rate_names( $args = [] ) {
 
         $sql  = 'SELECT';
         $sql .= $args['count'] ? ' COUNT( id ) as total_number ' : ' * ';
-        $sql .= "FROM {$wpdb->prefix}erp_acct_taxes ORDER BY {$args['orderby']} {$args['order']} {$limit}";
+        $sql .= "FROM {$wpdb->get_blog_prefix()}erp_acct_taxes ORDER BY {$args['orderby']} {$args['order']} {$limit}";
 
         if ( $args['count'] ) {
             $tax_rates_count = $wpdb->get_var( $sql );
@@ -69,7 +69,7 @@ function erp_acct_get_all_tax_rate_names( $args = [] ) {
 function erp_acct_get_tax_rate_name( $tax_no ) {
     global $wpdb;
 
-    $row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}erp_acct_taxes WHERE id = %d LIMIT 1", $tax_no ), ARRAY_A );
+    $row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->get_blog_prefix()}erp_acct_taxes WHERE id = %d LIMIT 1", $tax_no ), ARRAY_A );
 
     return $row;
 }
@@ -89,13 +89,13 @@ function erp_acct_insert_tax_rate_name( $data ) {
     $data['created_by'] = $created_by;
 
     if ( ! empty( $data['default'] ) ) {
-        $wpdb->query( "UPDATE {$wpdb->prefix}erp_acct_taxes SET `default` = 0" );
+        $wpdb->query( "UPDATE {$wpdb->get_blog_prefix()}erp_acct_taxes SET `default` = 0" );
     }
 
     $tax_data = erp_acct_get_formatted_tax_rate_name_data( $data );
 
     $wpdb->insert(
-        $wpdb->prefix . 'erp_acct_taxes',
+        $wpdb->get_blog_prefix() . 'erp_acct_taxes',
         [
             'tax_rate_name' => $tax_data['tax_rate_name'],
             'tax_number'    => $tax_data['tax_number'],
@@ -129,11 +129,11 @@ function erp_acct_update_tax_rate_name( $data, $id ) {
     $tax_data = erp_acct_get_formatted_tax_rate_name_data( $data );
 
     if ( ! empty( $tax_data['default'] ) ) {
-        $wpdb->query( "UPDATE {$wpdb->prefix}erp_acct_taxes SET `default` = 0" );
+        $wpdb->query( "UPDATE {$wpdb->get_blog_prefix()}erp_acct_taxes SET `default` = 0" );
     }
 
     $wpdb->update(
-        $wpdb->prefix . 'erp_acct_taxes',
+        $wpdb->get_blog_prefix() . 'erp_acct_taxes',
         [
             'tax_rate_name' => $tax_data['tax_rate_name'],
             'tax_number'    => $tax_data['tax_number'],
@@ -161,7 +161,7 @@ function erp_acct_update_tax_rate_name( $data, $id ) {
 function erp_acct_delete_tax_rate_name( $id ) {
     global $wpdb;
 
-    $wpdb->delete( $wpdb->prefix . 'erp_acct_taxes', [ 'id' => $id ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_taxes', [ 'id' => $id ] );
 
     erp_acct_purge_cache( ['list' => 'tax_rates_names'] );
 

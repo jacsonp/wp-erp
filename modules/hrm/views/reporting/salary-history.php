@@ -1,7 +1,7 @@
 <?php
 global $wpdb;
 
-$all_user_id = $wpdb->get_col( "SELECT user_id FROM {$wpdb->prefix}erp_hr_employees WHERE status = 'active' ORDER BY hiring_date DESC" );
+$all_user_id = $wpdb->get_col( "SELECT user_id FROM {$wpdb->get_blog_prefix()}erp_hr_employees WHERE status = 'active' ORDER BY hiring_date DESC" );
 ?>
 <div class="wrap">
     <h1><?php esc_html_e( 'Salary History', 'erp' ); ?></h1>

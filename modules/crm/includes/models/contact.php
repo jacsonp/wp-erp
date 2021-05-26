@@ -8,6 +8,6 @@ class Contact extends People {
     public function tags() {
         global $wpdb;
 
-        return $this->belongsToMany( 'WeDevs\ERP\CRM\Models\CRMTag', "{$wpdb->prefix}erp_crm_contact_tag", 'contact_id', 'tag_id' )->withTimestamps();
+        return $this->belongsToMany( 'WeDevs\ERP\CRM\Models\CRMTag', "{$wpdb->get_blog_prefix()}erp_crm_contact_tag", 'contact_id', 'tag_id' )->withTimestamps();
     }
 }

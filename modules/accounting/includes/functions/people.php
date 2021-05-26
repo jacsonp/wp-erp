@@ -24,7 +24,7 @@ function erp_acct_add_employee_as_people( $data, $update = false ) {
 
     if ( $update ) {
         $wpdb->update(
-            $wpdb->prefix . 'erp_peoples',
+            $wpdb->get_blog_prefix() . 'erp_peoples',
             [
                 'first_name'    => $data['personal']['first_name'],
                 'last_name'     => $data['personal']['last_name'],
@@ -55,7 +55,7 @@ function erp_acct_add_employee_as_people( $data, $update = false ) {
         );
     } else {
         $wpdb->insert(
-            $wpdb->prefix . 'erp_peoples',
+            $wpdb->get_blog_prefix() . 'erp_peoples',
             [
                 'user_id'       => $data['user_id'],
                 'first_name'    => $data['personal']['first_name'],
@@ -104,7 +104,7 @@ function erp_people_filter_transaction( $people_id, $args = [] ) {
     $start_date = isset( $args['start_date'] ) ? $args['start_date'] : '';
     $end_date   = isset( $args['end_date'] ) ? $args['start_date'] : '';
 
-    $rows = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}erp_acct_people_account_details WHERE trn_date >= '{$start_date}' AND trn_date <= '{$end_date}' AND people_id = {$people_id}", ARRAY_A );
+    $rows = $wpdb->get_results( "SELECT * FROM {$wpdb->get_blog_prefix()}erp_acct_people_account_details WHERE trn_date >= '{$start_date}' AND trn_date <= '{$end_date}' AND people_id = {$people_id}", ARRAY_A );
 
     return $rows;
 }
@@ -123,7 +123,7 @@ function erp_acct_get_people_address( $people_id ) {
 
     $row = $wpdb->get_row(
         $wpdb->prepare(
-            "SELECT street_1, street_2, city, state, postal_code, country FROM {$wpdb->prefix}erp_peoples WHERE id = %d",
+            "SELECT street_1, street_2, city, state, postal_code, country FROM {$wpdb->get_blog_prefix()}erp_peoples WHERE id = %d",
             $people_id
         ),
         ARRAY_A
@@ -208,8 +208,8 @@ function erp_acct_get_people_transactions( $args = [] ) {
             people.created_at';
     }
 
-    $sql .= " FROM {$wpdb->prefix}erp_acct_voucher_no AS voucher
-        INNER JOIN {$wpdb->prefix}erp_acct_people_trn_details AS people ON voucher.id = people.voucher_no
+    $sql .= " FROM {$wpdb->get_blog_prefix()}erp_acct_voucher_no AS voucher
+        INNER JOIN {$wpdb->get_blog_prefix()}erp_acct_people_trn_details AS people ON voucher.id = people.voucher_no
         {$where} ORDER BY people.trn_date {$args['order']} {$limit}";
 
     if ( $args['count'] ) {
@@ -303,11 +303,11 @@ function erp_acct_get_people_transactions( $args = [] ) {
 function erp_acct_get_people_previous_balance( $args = [] ) {
     global $wpdb;
 
-    $opening_balance_query     = $wpdb->prepare( "SELECT SUM(debit - credit) AS opening_balance FROM {$wpdb->prefix}erp_acct_opening_balances where type = 'people' AND ledger_id = %d AND financial_year_id = %d", $args['people_id'], $args['financial_year_id'] );
+    $opening_balance_query     = $wpdb->prepare( "SELECT SUM(debit - credit) AS opening_balance FROM {$wpdb->get_blog_prefix()}erp_acct_opening_balances where type = 'people' AND ledger_id = %d AND financial_year_id = %d", $args['people_id'], $args['financial_year_id'] );
     $opening_balance_result    = $wpdb->get_row( $opening_balance_query, ARRAY_A );
     $opening_balance           =  isset( $opening_balance_result['opening_balance'] ) ? $opening_balance_result['opening_balance'] : 0;
 
-    $people_transaction_query  =  $wpdb->prepare( "SELECT SUM(debit - credit) AS balance FROM {$wpdb->prefix}erp_acct_people_trn_details where   people_id = %d AND trn_date BETWEEN %s AND %s", $args['people_id'], $args['start_date'], $args['end_date'] );
+    $people_transaction_query  =  $wpdb->prepare( "SELECT SUM(debit - credit) AS balance FROM {$wpdb->get_blog_prefix()}erp_acct_people_trn_details where   people_id = %d AND trn_date BETWEEN %s AND %s", $args['people_id'], $args['start_date'], $args['end_date'] );
     $people_transaction_result = $wpdb->get_row( $people_transaction_query, ARRAY_A );
     $balance                   =  isset( $people_transaction_result['balance'] ) ? $people_transaction_result['balance'] : 0;
 
@@ -324,7 +324,7 @@ function erp_acct_get_people_previous_balance( $args = [] ) {
 function erp_acct_get_people_type_by_id( $people_id ) {
     global $wpdb;
 
-    $row = $wpdb->get_row( $wpdb->prepare( "SELECT people_types_id FROM {$wpdb->prefix}erp_people_type_relations WHERE people_id = %d LIMIT 1", $people_id ) );
+    $row = $wpdb->get_row( $wpdb->prepare( "SELECT people_types_id FROM {$wpdb->get_blog_prefix()}erp_people_type_relations WHERE people_id = %d LIMIT 1", $people_id ) );
 
     return erp_acct_get_people_type_by_type_id( $row->people_types_id );
 }
@@ -339,7 +339,7 @@ function erp_acct_get_people_type_by_id( $people_id ) {
 function erp_acct_get_people_type_by_type_id( $type_id ) {
     global $wpdb;
 
-    $row = $wpdb->get_row( $wpdb->prepare( "SELECT name FROM {$wpdb->prefix}erp_people_types WHERE id = %d LIMIT 1", $type_id ) );
+    $row = $wpdb->get_row( $wpdb->prepare( "SELECT name FROM {$wpdb->get_blog_prefix()}erp_people_types WHERE id = %d LIMIT 1", $type_id ) );
 
     return $row->name;
 }
@@ -352,7 +352,7 @@ function erp_acct_get_people_type_by_type_id( $type_id ) {
 function erp_acct_get_people_id_by_user_id( $user_id ) {
     global $wpdb;
 
-    $row = $wpdb->get_row( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}erp_peoples WHERE user_id = %d LIMIT 1", $user_id ) );
+    $row = $wpdb->get_row( $wpdb->prepare( "SELECT id FROM {$wpdb->get_blog_prefix()}erp_peoples WHERE user_id = %d LIMIT 1", $user_id ) );
 
     return $row->id;
 }
@@ -365,7 +365,7 @@ function erp_acct_get_people_id_by_user_id( $user_id ) {
 function erp_acct_get_people_name_by_people_id( $people_id ) {
     global $wpdb;
 
-    $row = $wpdb->get_row( $wpdb->prepare( "SELECT first_name, last_name FROM {$wpdb->prefix}erp_peoples WHERE id = %d LIMIT 1", $people_id ) );
+    $row = $wpdb->get_row( $wpdb->prepare( "SELECT first_name, last_name FROM {$wpdb->get_blog_prefix()}erp_peoples WHERE id = %d LIMIT 1", $people_id ) );
 
     return $row->first_name . ' ' . $row->last_name;
 }
@@ -384,7 +384,7 @@ function erp_acct_is_employee_people( $user_id ) {
         return false;
     }
 
-    $res = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(1) FROM {$wpdb->prefix}erp_peoples WHERE user_id = %d", $user_id ) );
+    $res = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(1) FROM {$wpdb->get_blog_prefix()}erp_peoples WHERE user_id = %d", $user_id ) );
 
     if ( '1' === $res ) {
         return true;
@@ -403,7 +403,7 @@ function erp_acct_is_employee_people( $user_id ) {
 function erp_acct_get_user_id_by_people_id( $people_id ) {
     global $wpdb;
 
-    $row = $wpdb->get_row( $wpdb->prepare( "SELECT user_id FROM {$wpdb->prefix}erp_peoples WHERE id = %d LIMIT 1", $people_id ) );
+    $row = $wpdb->get_row( $wpdb->prepare( "SELECT user_id FROM {$wpdb->get_blog_prefix()}erp_peoples WHERE id = %d LIMIT 1", $people_id ) );
 
     return $row->user_id;
 }
@@ -437,10 +437,10 @@ function erp_acct_get_accounting_people( $args = [] ) {
     $cache_key    = 'erp-accounting-people-' . $people_type . '-' . md5( serialize( $args ) ) . ":$last_changed";
     $items        = wp_cache_get( $cache_key, 'erp' );
 
-    $pep_tb      = $wpdb->prefix . 'erp_peoples';
-    $pepmeta_tb  = $wpdb->prefix . 'erp_peoplemeta';
-    $types_tb    = $wpdb->prefix . 'erp_people_types';
-    $type_rel_tb = $wpdb->prefix . 'erp_people_type_relations';
+    $pep_tb      = $wpdb->get_blog_prefix() . 'erp_peoples';
+    $pepmeta_tb  = $wpdb->get_blog_prefix() . 'erp_peoplemeta';
+    $types_tb    = $wpdb->get_blog_prefix() . 'erp_people_types';
+    $type_rel_tb = $wpdb->get_blog_prefix() . 'erp_people_type_relations';
 
     if ( false === $items ) {
         extract( $args );
@@ -578,7 +578,7 @@ function erp_acct_check_associated_tranasaction( $people_id ) {
 
     return $wpdb->get_var(
         $wpdb->prepare(
-            "SELECT id FROM {$wpdb->prefix}erp_acct_people_trn_details WHERE people_id = %d",
+            "SELECT id FROM {$wpdb->get_blog_prefix()}erp_acct_people_trn_details WHERE people_id = %d",
             $people_id
         )
     );

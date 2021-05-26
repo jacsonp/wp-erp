@@ -33,7 +33,7 @@ function erp_acct_get_bills( $args = [] ) {
 
     $sql  = 'SELECT';
     $sql .= $args['count'] ? ' COUNT( id ) as total_number ' : ' * ';
-    $sql .= "FROM {$wpdb->prefix}erp_acct_bills WHERE `trn_by_ledger_id` IS NULL ORDER BY {$args['orderby']} {$args['order']} {$limit}";
+    $sql .= "FROM {$wpdb->get_blog_prefix()}erp_acct_bills WHERE `trn_by_ledger_id` IS NULL ORDER BY {$args['orderby']} {$args['order']} {$limit}";
 
     if ( $args['count'] ) {
         return $wpdb->get_var( $sql );
@@ -72,9 +72,9 @@ function erp_acct_get_bill( $bill_no ) {
     bill.created_at,
     bill.attachments
 
-    FROM {$wpdb->prefix}erp_acct_bills AS bill
-    LEFT JOIN {$wpdb->prefix}erp_acct_voucher_no as voucher ON bill.voucher_no = voucher.id
-    LEFT JOIN {$wpdb->prefix}erp_acct_bill_account_details AS b_ac_detail ON bill.voucher_no = b_ac_detail.trn_no
+    FROM {$wpdb->get_blog_prefix()}erp_acct_bills AS bill
+    LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_voucher_no as voucher ON bill.voucher_no = voucher.id
+    LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_bill_account_details AS b_ac_detail ON bill.voucher_no = b_ac_detail.trn_no
     WHERE bill.voucher_no = %d",
         $bill_no
     );
@@ -106,9 +106,9 @@ function erp_acct_format_bill_line_items( $voucher_no ) {
 
         ledger.name AS ledger_name
 
-        FROM {$wpdb->prefix}erp_acct_bills AS bill
-        LEFT JOIN {$wpdb->prefix}erp_acct_bill_details AS b_detail ON bill.voucher_no = b_detail.trn_no
-        LEFT JOIN {$wpdb->prefix}erp_acct_ledgers AS ledger ON ledger.id = b_detail.ledger_id
+        FROM {$wpdb->get_blog_prefix()}erp_acct_bills AS bill
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_bill_details AS b_detail ON bill.voucher_no = b_detail.trn_no
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_ledgers AS ledger ON ledger.id = b_detail.ledger_id
         WHERE bill.voucher_no = %d",
         $voucher_no
     );
@@ -140,7 +140,7 @@ function erp_acct_insert_bill( $data ) {
         $wpdb->query( 'START TRANSACTION' );
 
         $wpdb->insert(
-            $wpdb->prefix . 'erp_acct_voucher_no',
+            $wpdb->get_blog_prefix() . 'erp_acct_voucher_no',
             [
                 'type'       => 'bill',
                 'currency'   => $currency,
@@ -158,7 +158,7 @@ function erp_acct_insert_bill( $data ) {
         $bill_data['trn_no'] = $voucher_no;
 
         $wpdb->insert(
-            $wpdb->prefix . 'erp_acct_bills',
+            $wpdb->get_blog_prefix() . 'erp_acct_bills',
             [
                 'voucher_no'  => $bill_data['voucher_no'],
                 'vendor_id'   => $bill_data['vendor_id'],
@@ -180,7 +180,7 @@ function erp_acct_insert_bill( $data ) {
 
         foreach ( $items as $key => $item ) {
             $wpdb->insert(
-                $wpdb->prefix . 'erp_acct_bill_details',
+                $wpdb->get_blog_prefix() . 'erp_acct_bill_details',
                 [
                     'trn_no'      => $voucher_no,
                     'ledger_id'   => $item['ledger_id'],
@@ -201,7 +201,7 @@ function erp_acct_insert_bill( $data ) {
         }
 
         $wpdb->insert(
-            $wpdb->prefix . 'erp_acct_bill_account_details',
+            $wpdb->get_blog_prefix() . 'erp_acct_bill_account_details',
             [
                 'bill_no'     => $voucher_no,
                 'trn_no'      => $voucher_no,
@@ -266,11 +266,11 @@ function erp_acct_update_bill( $data, $bill_id ) {
             erp_acct_update_draft_bill( $data, $bill_id );
         } else {
             // disable editing on old bill
-            $wpdb->update( $wpdb->prefix . 'erp_acct_voucher_no', [ 'editable' => 0 ], [ 'id' => $bill_id ] );
+            $wpdb->update( $wpdb->get_blog_prefix() . 'erp_acct_voucher_no', [ 'editable' => 0 ], [ 'id' => $bill_id ] );
 
             // insert contra voucher
             $wpdb->insert(
-                $wpdb->prefix . 'erp_acct_voucher_no',
+                $wpdb->get_blog_prefix() . 'erp_acct_voucher_no',
                 [
                     'type'       => 'bill',
                     'currency'   => $currency,
@@ -287,7 +287,7 @@ function erp_acct_update_bill( $data, $bill_id ) {
             $old_bill = erp_acct_get_bill( $bill_id );
 
             // insert contra `erp_acct_bills` (basically a duplication of row)
-            $wpdb->query( $wpdb->prepare( "CREATE TEMPORARY TABLE acct_tmptable SELECT * FROM {$wpdb->prefix}erp_acct_bills WHERE voucher_no = %d", $bill_id ) );
+            $wpdb->query( $wpdb->prepare( "CREATE TEMPORARY TABLE acct_tmptable SELECT * FROM {$wpdb->get_blog_prefix()}erp_acct_bills WHERE voucher_no = %d", $bill_id ) );
             $wpdb->query(
                 $wpdb->prepare(
                     "UPDATE acct_tmptable SET id = %d, voucher_no = %d, particulars = 'Contra entry for voucher no \#%d', created_at = '%s'",
@@ -297,14 +297,14 @@ function erp_acct_update_bill( $data, $bill_id ) {
                     $data['created_at']
                 )
             );
-            $wpdb->query( "INSERT INTO {$wpdb->prefix}erp_acct_bills SELECT * FROM acct_tmptable" );
+            $wpdb->query( "INSERT INTO {$wpdb->get_blog_prefix()}erp_acct_bills SELECT * FROM acct_tmptable" );
             $wpdb->query( 'DROP TABLE acct_tmptable' );
 
             // change bill status and other things
             $status_closed = 7;
             $wpdb->query(
                 $wpdb->prepare(
-                    "UPDATE {$wpdb->prefix}erp_acct_bills SET status = %d, updated_at ='%s', updated_by = %d WHERE voucher_no IN (%d, %d)",
+                    "UPDATE {$wpdb->get_blog_prefix()}erp_acct_bills SET status = %d, updated_at ='%s', updated_by = %d WHERE voucher_no IN (%d, %d)",
                     $status_closed,
                     $data['updated_at'],
                     $user_id,
@@ -318,7 +318,7 @@ function erp_acct_update_bill( $data, $bill_id ) {
             foreach ( $items as $key => $item ) {
                 // insert contra `erp_acct_bill_details`
                 $wpdb->insert(
-                    $wpdb->prefix . 'erp_acct_bill_details',
+                    $wpdb->get_blog_prefix() . 'erp_acct_bill_details',
                     [
                         'trn_no'      => $voucher_no,
                         'ledger_id'   => $item['ledger_id'],
@@ -335,7 +335,7 @@ function erp_acct_update_bill( $data, $bill_id ) {
 
             // insert contra `erp_acct_bill_account_details`
             $wpdb->insert(
-                $wpdb->prefix . 'erp_acct_bill_account_details',
+                $wpdb->get_blog_prefix() . 'erp_acct_bill_account_details',
                 [
                     'bill_no'     => $bill_id,
                     'trn_no'      => $voucher_no,
@@ -383,7 +383,7 @@ function erp_acct_update_draft_bill( $data, $bill_id ) {
     $bill_data = erp_acct_get_formatted_bill_data( $data, $bill_id );
 
     $wpdb->update(
-        $wpdb->prefix . 'erp_acct_bills',
+        $wpdb->get_blog_prefix() . 'erp_acct_bills',
         [
             'vendor_id'   => $bill_data['vendor_id'],
             'vendor_name' => $bill_data['vendor_name'],
@@ -409,17 +409,17 @@ function erp_acct_update_draft_bill( $data, $bill_id ) {
      *? that's why we can't update because the foreach will iterate only 2 times, not 5 times
      *? so, remove previous rows and insert new rows
      */
-    $prev_detail_ids = $wpdb->get_results( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}erp_acct_bill_details WHERE trn_no = %d", $bill_id ), ARRAY_A );
+    $prev_detail_ids = $wpdb->get_results( $wpdb->prepare( "SELECT id FROM {$wpdb->get_blog_prefix()}erp_acct_bill_details WHERE trn_no = %d", $bill_id ), ARRAY_A );
 
     $prev_detail_ids = implode( ',', array_map( 'absint', $prev_detail_ids ) );
 
-    $wpdb->delete( $wpdb->prefix . 'erp_acct_bill_details', [ 'trn_no' => $bill_id ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_bill_details', [ 'trn_no' => $bill_id ] );
 
     $items = $bill_data['bill_details'];
 
     foreach ( $items as $item ) {
         $wpdb->insert(
-            $wpdb->prefix . 'erp_acct_bill_details',
+            $wpdb->get_blog_prefix() . 'erp_acct_bill_details',
             [
                 'trn_no'      => $bill_id,
                 'ledger_id'   => $item['ledger_id'],
@@ -449,15 +449,15 @@ function erp_acct_void_bill( $id ) {
     }
 
     $wpdb->update(
-        $wpdb->prefix . 'erp_acct_bills',
+        $wpdb->get_blog_prefix() . 'erp_acct_bills',
         [
             'status' => 8,
         ],
         [ 'voucher_no' => $id ]
     );
 
-    $wpdb->delete( $wpdb->prefix . 'erp_acct_ledger_details', [ 'trn_no' => $id ] );
-    $wpdb->delete( $wpdb->prefix . 'erp_acct_bill_account_details', [ 'bill_no' => $id ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_ledger_details', [ 'trn_no' => $id ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_bill_account_details', [ 'bill_no' => $id ] );
 
     erp_acct_purge_cache( [ 'list' => 'sales_transaction,purchase_transaction,expense_transaction' ] );
 }
@@ -518,7 +518,7 @@ function erp_acct_insert_bill_data_into_ledger( $bill_data, $item_data ) {
 
     // Insert items amount in ledger_details
     $wpdb->insert(
-        $wpdb->prefix . 'erp_acct_ledger_details',
+        $wpdb->get_blog_prefix() . 'erp_acct_ledger_details',
         [
             'ledger_id'   => $item_data['ledger_id'],
             'trn_no'      => $bill_data['voucher_no'],
@@ -554,7 +554,7 @@ function erp_acct_update_bill_data_into_ledger( $bill_data, $bill_no, $item_data
     $bill_data['updated_by'] = $user_id;
 
     $wpdb->insert(
-        $wpdb->prefix . 'erp_acct_ledger_details',
+        $wpdb->get_blog_prefix() . 'erp_acct_ledger_details',
         [
             'ledger_id'   => $item_data['ledger_id'],
             'trn_no'      => $bill_no,
@@ -578,7 +578,7 @@ function erp_acct_update_bill_data_into_ledger( $bill_data, $bill_no, $item_data
 function erp_acct_get_bill_count() {
     global $wpdb;
 
-    $row = $wpdb->get_row( 'SELECT COUNT(*) as count FROM ' . $wpdb->prefix . 'erp_acct_bills' );
+    $row = $wpdb->get_row( 'SELECT COUNT(*) as count FROM ' . $wpdb->get_blog_prefix() . 'erp_acct_bills' );
 
     return $row->count;
 }
@@ -610,8 +610,8 @@ function erp_acct_get_due_bills_by_people( $args = [] ) {
         $limit = "LIMIT {$args['number']} OFFSET {$args['offset']}";
     }
 
-    $bills            = "{$wpdb->prefix}erp_acct_bills";
-    $bill_act_details = "{$wpdb->prefix}erp_acct_bill_account_details";
+    $bills            = "{$wpdb->get_blog_prefix()}erp_acct_bills";
+    $bill_act_details = "{$wpdb->get_blog_prefix()}erp_acct_bill_account_details";
     $items            = $args['count'] ? ' COUNT( id ) as total_number ' : ' * ';
 
     $query = $wpdb->prepare(
@@ -644,7 +644,7 @@ function erp_acct_get_due_bills_by_people( $args = [] ) {
 function erp_acct_get_bill_due( $bill_no ) {
     global $wpdb;
 
-    $result = $wpdb->get_row( $wpdb->prepare( "SELECT bill_no, SUM( ba.debit - ba.credit) as due FROM {$wpdb->prefix}erp_acct_bill_account_details as ba WHERE ba.bill_no = %d GROUP BY ba.bill_no", $bill_no ), ARRAY_A );
+    $result = $wpdb->get_row( $wpdb->prepare( "SELECT bill_no, SUM( ba.debit - ba.credit) as due FROM {$wpdb->get_blog_prefix()}erp_acct_bill_account_details as ba WHERE ba.bill_no = %d GROUP BY ba.bill_no", $bill_no ), ARRAY_A );
 
     return $result['due'];
 }

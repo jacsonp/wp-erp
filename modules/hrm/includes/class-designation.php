@@ -17,7 +17,7 @@ class Designation extends \WeDevs\ERP\Item {
     protected function get_by_id( $designation_id ) {
         global $wpdb;
 
-        return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}erp_hr_designations WHERE id = %d", $designation_id ) );
+        return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->get_blog_prefix()}erp_hr_designations WHERE id = %d", $designation_id ) );
     }
 
     /**

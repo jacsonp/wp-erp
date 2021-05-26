@@ -6,7 +6,7 @@
  */
 function erp_ac_update_1_1_3_table() {
     global $wpdb;
-    $table = $wpdb->prefix . 'erp_ac_transactions';
+    $table = $wpdb->get_blog_prefix() . 'erp_ac_transactions';
     $cols  = $wpdb->get_col( 'DESC ' . $table );
 
     if ( in_array( 'invoice_number', $cols ) && ! in_array( 'invoice_format', $cols ) ) {
@@ -28,7 +28,7 @@ function erp_ac_update_1_1_3_table() {
 function erp_ac_update_1_1_3_payment() {
     global $wpdb;
 
-    $table        = $wpdb->prefix . 'erp_ac_transactions';
+    $table        = $wpdb->get_blog_prefix() . 'erp_ac_transactions';
     $payment      = erp_get_option( 'erp_ac_payment', false, 'SPN-{id}' );
     $pattern      = str_replace( '{id}', '[0-9]+', $payment );
     $get_payments = $wpdb->get_results( "SELECT id, invoice_format FROM $table WHERE form_type = 'payment' AND invoice_format REGEXP '^{$pattern}$'" );
@@ -47,7 +47,7 @@ function erp_ac_update_1_1_3_payment() {
 function erp_ac_update_1_1_3_invoice() {
     global $wpdb;
 
-    $table        = $wpdb->prefix . 'erp_ac_transactions';
+    $table        = $wpdb->get_blog_prefix() . 'erp_ac_transactions';
     $invoice      = erp_get_option( 'erp_ac_invoice', false, 'INV-{id}' );
     $pattern      = str_replace( '{id}', '[0-9]+', $invoice );
     $get_invoices = $wpdb->get_results( "SELECT id, invoice_format FROM $table WHERE form_type = 'invoice' AND invoice_format REGEXP '^{$pattern}$'" );

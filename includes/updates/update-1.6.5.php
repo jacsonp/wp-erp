@@ -284,7 +284,7 @@ function erp_acct_alter_audit_log_1_6_5() {
     global $wpdb;
 
     // Add hash column in `wp_erp_acct_expenses` table
-    $table = $wpdb->prefix . 'erp_audit_log';
+    $table = $wpdb->get_blog_prefix() . 'erp_audit_log';
     $cols  = $wpdb->get_col( "DESC $table" );
 
     if ( ! in_array( 'data_id', $cols ) ) {

@@ -79,13 +79,13 @@ function erp_hr_get_employees( $args = [] ) {
 
     if ( false === $results ) {
 
-        $employee_tbl = $wpdb->prefix . 'erp_hr_employees';
+        $employee_tbl = $wpdb->get_blog_prefix() . 'erp_hr_employees';
         $employees    = \WeDevs\ERP\HRM\Models\Employee::select( [ $employee_tbl . '.user_id', 'display_name' ] )
             ->leftJoin( $wpdb->users, $employee_tbl . '.user_id', '=', $wpdb->users . '.ID' )
-            ->leftJoin( "{$wpdb->prefix}usermeta as gender", function ( $join ) use ( $employee_tbl ) {
+            ->leftJoin( "{$wpdb->get_blog_prefix()}usermeta as gender", function ( $join ) use ( $employee_tbl ) {
                 $join->on( $employee_tbl . '.user_id', '=', 'gender.user_id' )->where( 'gender.meta_key', '=', 'gender' );
             } )
-            ->leftJoin( "{$wpdb->prefix}usermeta as marital_status", function ( $join ) use ( $employee_tbl ) {
+            ->leftJoin( "{$wpdb->get_blog_prefix()}usermeta as marital_status", function ( $join ) use ( $employee_tbl ) {
                 $join->on( $employee_tbl . '.user_id', '=', 'marital_status.user_id' )->where( 'marital_status.meta_key', '=', 'marital_status' );
             } );
 
@@ -738,7 +738,7 @@ function erp_hr_employee_add_history( $args = [] ) {
 function erp_hr_employee_remove_history( $history_id ) {
     global $wpdb;
 
-    return $wpdb->delete( $wpdb->prefix . 'erp_hr_employee_history', [ 'id' => $history_id ] );
+    return $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_hr_employee_history', [ 'id' => $history_id ] );
 }
 
 /**
@@ -1041,7 +1041,7 @@ function erp_hr_get_single_link( $user_id ) {
 function erp_is_employee_exist( $email, $user_id ) {
     global $wpdb;
     $user_email = sanitize_email( $email );
-    return $wpdb->get_col( $wpdb->prepare( "select ID from {$wpdb->prefix}users where user_email=%s AND ID !=%s", $user_email, $user_id ) );
+    return $wpdb->get_col( $wpdb->prepare( "select ID from {$wpdb->get_blog_prefix()}users where user_email=%s AND ID !=%s", $user_email, $user_id ) );
 }
 
 add_filter( 'user_has_cap', 'erp_revoke_terminated_employee_access', 10, 4 );

@@ -14,7 +14,7 @@ class Common {
     public static function getClosestFinYear( $startDate ) {
         global $wpdb;
 
-        $sql = "SELECT id, name, start_date, end_date FROM {$wpdb->prefix}erp_acct_financial_years WHERE start_date <= '%s' ORDER BY start_date DESC LIMIT 1";
+        $sql = "SELECT id, name, start_date, end_date FROM {$wpdb->get_blog_prefix()}erp_acct_financial_years WHERE start_date <= '%s' ORDER BY start_date DESC LIMIT 1";
        return $wpdb->get_row( $wpdb->prepare( $sql, $startDate ), ARRAY_A );
     }
 

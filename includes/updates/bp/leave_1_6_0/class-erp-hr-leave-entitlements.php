@@ -111,7 +111,7 @@ class ERP_HR_Leave_Entitlements extends WP_Background_Process {
 
         $entitlement_data = $wpdb->get_row(
             $wpdb->prepare(
-                "SELECT * FROM {$wpdb->prefix}erp_hr_leave_entitlements WHERE id = %d",
+                "SELECT * FROM {$wpdb->get_blog_prefix()}erp_hr_leave_entitlements WHERE id = %d",
                 [ $this->request_data['id'] ]
             ),
             ARRAY_A
@@ -139,7 +139,7 @@ class ERP_HR_Leave_Entitlements extends WP_Background_Process {
         // get policy data
         $policy_data = $wpdb->get_row(
             $wpdb->prepare(
-                "SELECT * FROM {$wpdb->prefix}erp_hr_leave_policies WHERE id = %d",
+                "SELECT * FROM {$wpdb->get_blog_prefix()}erp_hr_leave_policies WHERE id = %d",
                 [ $this->request_data['policy_id'] ]
             ),
             ARRAY_A
@@ -204,7 +204,7 @@ class ERP_HR_Leave_Entitlements extends WP_Background_Process {
         // check if policy already exists
         $new_policy_id = $wpdb->get_var(
             $wpdb->prepare(
-                "SELECT id FROM {$wpdb->prefix}erp_hr_leave_policies_new WHERE department_id = %d AND location_id = %d AND designation_id = %d AND gender = %s AND marital = %s AND f_year = %d AND leave_id = %d",
+                "SELECT id FROM {$wpdb->get_blog_prefix()}erp_hr_leave_policies_new WHERE department_id = %d AND location_id = %d AND designation_id = %d AND gender = %s AND marital = %s AND f_year = %d AND leave_id = %d",
                 [
                     $this->request_data['policy_data']['department'],
                     $this->request_data['policy_data']['location'],
@@ -250,7 +250,7 @@ class ERP_HR_Leave_Entitlements extends WP_Background_Process {
         // check f_year already exist for given date range
         $f_year_id = $wpdb->get_var(
             $wpdb->prepare(
-                "SELECT id FROM {$wpdb->prefix}erp_hr_financial_years_new WHERE start_date >= %d AND end_date <= %d LIMIT 1",
+                "SELECT id FROM {$wpdb->get_blog_prefix()}erp_hr_financial_years_new WHERE start_date >= %d AND end_date <= %d LIMIT 1",
                 [ $start_date->getTimestamp(), $end_date->getTimestamp() ]
             )
         );
@@ -278,7 +278,7 @@ class ERP_HR_Leave_Entitlements extends WP_Background_Process {
                 '%d',
             ];
 
-            if ( false === $wpdb->insert( "{$wpdb->prefix}erp_hr_financial_years_new", $insert_data, $insert_format ) ) {
+            if ( false === $wpdb->insert( "{$wpdb->get_blog_prefix()}erp_hr_financial_years_new", $insert_data, $insert_format ) ) {
                 error_log(
                     print_r(
                         [
@@ -316,7 +316,7 @@ class ERP_HR_Leave_Entitlements extends WP_Background_Process {
         // check if leave name already exist on database.
         $leave_id = $wpdb->get_var(
             $wpdb->prepare(
-                "SELECT id FROM {$wpdb->prefix}erp_hr_leaves_new WHERE name = %s",
+                "SELECT id FROM {$wpdb->get_blog_prefix()}erp_hr_leaves_new WHERE name = %s",
                 [ $name ]
             )
         );
@@ -340,7 +340,7 @@ class ERP_HR_Leave_Entitlements extends WP_Background_Process {
                 $table_format[]            = '%s';
             }
 
-            if ( false === $wpdb->insert( "{$wpdb->prefix}erp_hr_leaves_new", $table_data, $table_format ) ) {
+            if ( false === $wpdb->insert( "{$wpdb->get_blog_prefix()}erp_hr_leaves_new", $table_data, $table_format ) ) {
                 error_log(
                     print_r(
                         [
@@ -378,7 +378,7 @@ class ERP_HR_Leave_Entitlements extends WP_Background_Process {
         // check if already entitled
         $already_entitled = $wpdb->get_var(
             $wpdb->prepare(
-                "SELECT count(id) FROM {$wpdb->prefix}erp_hr_leave_entitlements_new WHERE user_id = %d AND leave_id = %d AND f_year = %d AND trn_type = %s",
+                "SELECT count(id) FROM {$wpdb->get_blog_prefix()}erp_hr_leave_entitlements_new WHERE user_id = %d AND leave_id = %d AND f_year = %d AND trn_type = %s",
                 [
                     $this->request_data['user_id'],
                     $this->request_data['leave_id'],
@@ -425,7 +425,7 @@ class ERP_HR_Leave_Entitlements extends WP_Background_Process {
             $table_format[]            = '%s';
         }
 
-        if ( false === $wpdb->insert( "{$wpdb->prefix}erp_hr_leave_entitlements_new", $table_data, $table_format ) ) {
+        if ( false === $wpdb->insert( "{$wpdb->get_blog_prefix()}erp_hr_leave_entitlements_new", $table_data, $table_format ) ) {
             error_log(
                 print_r(
                     [
@@ -517,7 +517,7 @@ class ERP_HR_Leave_Entitlements extends WP_Background_Process {
             $table_format[]                     = '%d';
         }
 
-        if ( false === $wpdb->insert( "{$wpdb->prefix}erp_hr_leave_policies_new", $table_data, $table_format ) ) {
+        if ( false === $wpdb->insert( "{$wpdb->get_blog_prefix()}erp_hr_leave_policies_new", $table_data, $table_format ) ) {
             error_log(
                 print_r(
                     [
@@ -542,7 +542,7 @@ class ERP_HR_Leave_Entitlements extends WP_Background_Process {
         ];
         $table_format = [ '%d', '%d', '%d' ];
 
-        if ( false === $wpdb->insert( "{$wpdb->prefix}erp_hr_leave_policies_segregation_new", $table_data, $table_format ) ) {
+        if ( false === $wpdb->insert( "{$wpdb->get_blog_prefix()}erp_hr_leave_policies_segregation_new", $table_data, $table_format ) ) {
             error_log(
                 print_r(
                     [
@@ -565,7 +565,7 @@ class ERP_HR_Leave_Entitlements extends WP_Background_Process {
         global $wpdb;
 
         $orphaned_policies = $wpdb->get_results(
-            "SELECT policy.* FROM {$wpdb->prefix}erp_hr_leave_policies as policy WHERE NOT EXISTS ( SELECT  null FROM {$wpdb->prefix}erp_hr_leave_entitlements as en WHERE policy.id = en.policy_id)",
+            "SELECT policy.* FROM {$wpdb->get_blog_prefix()}erp_hr_leave_policies as policy WHERE NOT EXISTS ( SELECT  null FROM {$wpdb->get_blog_prefix()}erp_hr_leave_entitlements as en WHERE policy.id = en.policy_id)",
             ARRAY_A
         );
 

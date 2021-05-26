@@ -22,13 +22,13 @@ function erp_ac_create_table() {
     }
 
     $table_schema = [
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_ac_chart_classes` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_ac_chart_classes` (
             `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
             `name` varchar(100) DEFAULT NULL,
             PRIMARY KEY (`id`)
         ) $collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_ac_chart_types` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_ac_chart_types` (
           `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
           `name` varchar(60) NOT NULL DEFAULT '',
           `class_id` tinyint(3) NOT NULL,
@@ -36,7 +36,7 @@ function erp_ac_create_table() {
           KEY `class_id` (`class_id`)
         ) $collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_ac_journals` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_ac_journals` (
           `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
           `ledger_id` int(11) unsigned NOT NULL,
           `transaction_id` bigint(20) unsigned NOT NULL,
@@ -48,7 +48,7 @@ function erp_ac_create_table() {
           KEY `transaction_id` (`transaction_id`)
         ) $collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_ac_ledger` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_ac_ledger` (
           `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
           `code` varchar(10) DEFAULT NULL,
           `name` varchar(100) DEFAULT NULL,
@@ -68,7 +68,7 @@ function erp_ac_create_table() {
           KEY `parent` (`parent`)
         ) $collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_ac_banks` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_ac_banks` (
           `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
           `ledger_id` int(10) unsigned DEFAULT NULL,
           `account_number` varchar(20) DEFAULT NULL,
@@ -77,7 +77,7 @@ function erp_ac_create_table() {
           KEY `ledger_id` (`ledger_id`)
         ) $collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_ac_transactions` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_ac_transactions` (
           `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
           `type` varchar(10) DEFAULT NULL,
           `form_type` varchar(20) DEFAULT NULL,
@@ -105,7 +105,7 @@ function erp_ac_create_table() {
           KEY `issue_date` (`issue_date`)
         ) $collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_ac_transaction_items` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_ac_transaction_items` (
           `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
           `transaction_id` bigint(20) unsigned DEFAULT NULL,
           `journal_id` bigint(20) unsigned DEFAULT NULL,
@@ -125,7 +125,7 @@ function erp_ac_create_table() {
           KEY `product_id` (`product_id`)
         ) $collate;",
 
-      "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_ac_payments` (
+      "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_ac_payments` (
         `id` bigint(20) NOT NULL AUTO_INCREMENT,
         `transaction_id` int(11) NOT NULL,
         `parent` int(11) NOT NULL,
@@ -133,7 +133,7 @@ function erp_ac_create_table() {
         PRIMARY KEY (`id`)
       ) $collate;",
 
-      "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_ac_tax` (
+      "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_ac_tax` (
         `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
         `name` varchar(255) DEFAULT NULL,
         `tax_number` varchar(255) DEFAULT NULL,
@@ -142,7 +142,7 @@ function erp_ac_create_table() {
          PRIMARY KEY (`id`)
       ) $collate;",
 
-      "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_ac_tax_items` (
+      "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_ac_tax_items` (
         `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
         `tax_id` bigint(20) NOT NULL,
         `component_name` varchar(255) DEFAULT NULL,
@@ -170,16 +170,16 @@ function erp_ac_populate_data() {
     global $wpdb;
 
     // check if classes exists
-    if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->prefix}erp_ac_chart_classes` LIMIT 0, 1" ) ) {
-        $sql = "INSERT INTO `{$wpdb->prefix}erp_ac_chart_classes` (`id`, `name`)
+    if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->get_blog_prefix()}erp_ac_chart_classes` LIMIT 0, 1" ) ) {
+        $sql = "INSERT INTO `{$wpdb->get_blog_prefix()}erp_ac_chart_classes` (`id`, `name`)
                 VALUES (1,'Assets'), (2,'Liabilities'), (3,'Expenses'), (4,'Income'), (5,'Equity');";
 
         $wpdb->query( $sql );
     }
 
     // check if chart types exists
-    if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->prefix}erp_ac_chart_types` LIMIT 0, 1" ) ) {
-        $sql = "INSERT INTO `{$wpdb->prefix}erp_ac_chart_types` (`id`, `name`, `class_id`)
+    if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->get_blog_prefix()}erp_ac_chart_types` LIMIT 0, 1" ) ) {
+        $sql = "INSERT INTO `{$wpdb->get_blog_prefix()}erp_ac_chart_types` (`id`, `name`, `class_id`)
                 VALUES (1,'Current Asset',1), (2,'Fixed Asset',1), (3,'Inventory',1),
                     (4,'Non-current Asset',1), (5,'Prepayment',1), (6,'Bank & Cash',1), (7,'Current Liability',2),
                     (8,'Liability',2), (9,'Non-current Liability',2), (10,'Depreciation',3),
@@ -190,8 +190,8 @@ function erp_ac_populate_data() {
     }
 
     // check if ledger exists
-    if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->prefix}erp_ac_ledger` LIMIT 0, 1" ) ) {
-        $sql = "INSERT INTO `{$wpdb->prefix}erp_ac_ledger` (`id`, `code`, `name`, `description`, `parent`, `type_id`, `currency`, `tax`, `cash_account`, `reconcile`, `system`, `active`)
+    if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->get_blog_prefix()}erp_ac_ledger` LIMIT 0, 1" ) ) {
+        $sql = "INSERT INTO `{$wpdb->get_blog_prefix()}erp_ac_ledger` (`id`, `code`, `name`, `description`, `parent`, `type_id`, `currency`, `tax`, `cash_account`, `reconcile`, `system`, `active`)
                     VALUES
                     (1,'120','Accounts Receivable',NULL,0,1,'',NULL,0,0,1,1),
                     (2,'140','Inventory',NULL,0,3,'',NULL,0,0,1,1),
@@ -260,8 +260,8 @@ function erp_ac_populate_data() {
     }
 
     // check if banks exists
-    if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->prefix}erp_ac_banks` LIMIT 0, 1" ) ) {
-        $sql = "INSERT INTO `{$wpdb->prefix}erp_ac_banks` (`id`, `ledger_id`, `account_number`, `bank_name`)
+    if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->get_blog_prefix()}erp_ac_banks` LIMIT 0, 1" ) ) {
+        $sql = "INSERT INTO `{$wpdb->get_blog_prefix()}erp_ac_banks` (`id`, `ledger_id`, `account_number`, `bank_name`)
                 VALUES  (1,7,'',''), (2,62,'012345689','ABC Bank');";
 
         $wpdb->query( $sql );
@@ -278,14 +278,14 @@ function erp_ac_populate_data() {
 function erp_ac_table_update() {
     global $wpdb;
 
-    $table = $wpdb->prefix . 'erp_ac_transactions';
+    $table = $wpdb->get_blog_prefix() . 'erp_ac_transactions';
     $cols  = $wpdb->get_col( 'DESC ' . $table );
 
     if ( ! in_array( 'sub_total', $cols ) ) {
         $wpdb->query( "ALTER TABLE $table ADD `sub_total` DECIMAL(13,4) NOT NULL AFTER `conversion_rate`" );
     }
 
-    $ledger = $wpdb->prefix . 'erp_ac_ledger';
+    $ledger = $wpdb->get_blog_prefix() . 'erp_ac_ledger';
 
     $cols = $wpdb->get_col( 'DESC ' . $ledger );
 
@@ -293,7 +293,7 @@ function erp_ac_table_update() {
         $wpdb->query( "ALTER TABLE $ledger ADD `created_by` bigint(20) NOT NULL AFTER `active`" );
     }
 
-    $item_table = $wpdb->prefix . 'erp_ac_transaction_items';
+    $item_table = $wpdb->get_blog_prefix() . 'erp_ac_transaction_items';
     $item_cols  = $wpdb->get_col( 'DESC ' . $item_table );
 
     if ( ! in_array( 'tax_rate', $item_cols ) ) {
@@ -308,7 +308,7 @@ function erp_ac_table_update() {
         $wpdb->query( "ALTER TABLE $item_table ADD `tax_journal` BIGINT(20) NOT NULL AFTER `tax_rate`" );
     }
 
-    $account_table = $wpdb->prefix . 'erp_ac_banks';
+    $account_table = $wpdb->get_blog_prefix() . 'erp_ac_banks';
 
     $wpdb->update( $account_table, [ 'ledger_id' => 62 ], [ 'id' => 2, 'ledger_id' => 60 ], [ '%d' ], [ '%d', '%d' ] );
 }
@@ -338,25 +338,25 @@ function erp_ac_update_manager_capabilities() {
 function erp_crm_update_table_column() {
     global $wpdb;
 
-    $save_search_tb     = $wpdb->prefix . 'erp_crm_save_search';
-    $people_tb          = $wpdb->prefix . 'erp_peoples';
+    $save_search_tb     = $wpdb->get_blog_prefix() . 'erp_crm_save_search';
+    $people_tb          = $wpdb->get_blog_prefix() . 'erp_peoples';
     $save_search_tb_col = $wpdb->get_col( 'DESC ' . $save_search_tb );
     $people_tb_col      = $wpdb->get_col( 'DESC ' . $people_tb );
 
     if ( ! in_array( 'type', $save_search_tb_col ) ) {
-        $wpdb->query( "ALTER TABLE {$wpdb->prefix}erp_crm_save_search ADD `type` VARCHAR(255) AFTER `id`" );
+        $wpdb->query( "ALTER TABLE {$wpdb->get_blog_prefix()}erp_crm_save_search ADD `type` VARCHAR(255) AFTER `id`" );
     }
 
     if ( ! in_array( 'created_at', $save_search_tb_col ) ) {
-        $wpdb->query( "ALTER TABLE {$wpdb->prefix}erp_crm_save_search ADD `created_at` DATETIME DEFAULT NULL" );
+        $wpdb->query( "ALTER TABLE {$wpdb->get_blog_prefix()}erp_crm_save_search ADD `created_at` DATETIME DEFAULT NULL" );
     }
 
     if ( ! in_array( 'updated_at', $save_search_tb_col ) ) {
-        $wpdb->query( "ALTER TABLE {$wpdb->prefix}erp_crm_save_search ADD `updated_at` DATETIME DEFAULT NULL" );
+        $wpdb->query( "ALTER TABLE {$wpdb->get_blog_prefix()}erp_crm_save_search ADD `updated_at` DATETIME DEFAULT NULL" );
     }
 
     if ( ! in_array( 'created_by', $people_tb_col ) ) {
-        $wpdb->query( "ALTER TABLE {$wpdb->prefix}erp_peoples ADD `created_by` BIGINT(20) AFTER `currency`" );
+        $wpdb->query( "ALTER TABLE {$wpdb->get_blog_prefix()}erp_peoples ADD `created_by` BIGINT(20) AFTER `currency`" );
     }
 }
 
@@ -373,14 +373,14 @@ function erp_crm_update_column_data() {
     $super_user_email = get_option( 'admin_email' );
     $user_info        = get_user_by( 'email', $super_user_email );
 
-    $wpdb->query( "UPDATE {$wpdb->prefix}erp_crm_save_search SET `type`='contact' WHERE `search_val` LIKE '%first_name%' OR `search_val` LIKE '%last_name%'" );
-    $wpdb->query( "UPDATE {$wpdb->prefix}erp_crm_save_search SET `type`='company' WHERE `search_val` LIKE '%company%'" );
+    $wpdb->query( "UPDATE {$wpdb->get_blog_prefix()}erp_crm_save_search SET `type`='contact' WHERE `search_val` LIKE '%first_name%' OR `search_val` LIKE '%last_name%'" );
+    $wpdb->query( "UPDATE {$wpdb->get_blog_prefix()}erp_crm_save_search SET `type`='company' WHERE `search_val` LIKE '%company%'" );
 
     if ( ! $user_info ) {
         return;
     }
     $user_id = $user_info->ID;
-    $wpdb->query( "UPDATE {$wpdb->prefix}erp_peoples SET `created_by`='$user_id'" );
+    $wpdb->query( "UPDATE {$wpdb->get_blog_prefix()}erp_peoples SET `created_by`='$user_id'" );
 }
 
 /**

@@ -39,7 +39,7 @@ function erp_acct_get_all_tax_cats( $args = [] ) {
 
         $sql  = 'SELECT';
         $sql .= $args['count'] ? ' COUNT( id ) as total_number ' : ' * ';
-        $sql .= "FROM {$wpdb->prefix}erp_acct_tax_categories ORDER BY {$args['orderby']} {$args['order']} {$limit}";
+        $sql .= "FROM {$wpdb->get_blog_prefix()}erp_acct_tax_categories ORDER BY {$args['orderby']} {$args['order']} {$limit}";
 
         if ( $args['count'] ) {
             $tax_cats_count = $wpdb->get_var( $sql );
@@ -69,7 +69,7 @@ function erp_acct_get_all_tax_cats( $args = [] ) {
 function erp_acct_get_tax_cat( $tax_no ) {
     global $wpdb;
 
-    $row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}erp_acct_tax_categories WHERE id = %d LIMIT 1", $tax_no ), ARRAY_A );
+    $row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->get_blog_prefix()}erp_acct_tax_categories WHERE id = %d LIMIT 1", $tax_no ), ARRAY_A );
 
     return $row;
 }
@@ -91,7 +91,7 @@ function erp_acct_insert_tax_cat( $data ) {
     $tax_data = erp_acct_get_formatted_tax_data( $data );
 
     $wpdb->insert(
-        $wpdb->prefix . 'erp_acct_tax_categories',
+        $wpdb->get_blog_prefix() . 'erp_acct_tax_categories',
         [
             'name'        => $tax_data['name'],
             'description' => $tax_data['description'],
@@ -126,7 +126,7 @@ function erp_acct_update_tax_cat( $data, $id ) {
     $tax_data = erp_acct_get_formatted_tax_data( $data );
 
     $wpdb->update(
-        $wpdb->prefix . 'erp_acct_tax_categories',
+        $wpdb->get_blog_prefix() . 'erp_acct_tax_categories',
         [
             'name'        => $tax_data['name'],
             'description' => $tax_data['description'],
@@ -155,7 +155,7 @@ function erp_acct_update_tax_cat( $data, $id ) {
 function erp_acct_delete_tax_cat( $id ) {
     global $wpdb;
 
-    $wpdb->delete( $wpdb->prefix . 'erp_acct_tax_categories', [ 'id' => $id ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_tax_categories', [ 'id' => $id ] );
 
     erp_acct_purge_cache( ['list' => 'tax_cats'] );
 

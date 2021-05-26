@@ -4,7 +4,7 @@ function erp_crm_alter_peoples_table_1_2_7() {
     global $wpdb;
     $wpdb->query( 'set wait_timeout = 200' );
 
-    $people_table         = $wpdb->prefix . 'erp_peoples';
+    $people_table         = $wpdb->get_blog_prefix() . 'erp_peoples';
     $people_table_columns = $wpdb->get_col( 'DESC ' . $people_table, 0 );
 
     if ( ! in_array( 'life_stage', $people_table_columns ) ) {
@@ -42,9 +42,9 @@ erp_crm_alter_peoples_table_1_2_7();
 function erp_crm_move_people_life_stage_from_meta_to_base_table_1_2_7() {
     global $wpdb;
     $wpdb->query( 'set wait_timeout = 1200' );
-    $people_table         = $wpdb->prefix . 'erp_peoples';
+    $people_table         = $wpdb->get_blog_prefix() . 'erp_peoples';
     $people_table_columns = $wpdb->get_col( 'DESC ' . $people_table, 0 );
-    $peoplemeta_table     = $wpdb->prefix . 'erp_peoplemeta';
+    $peoplemeta_table     = $wpdb->get_blog_prefix() . 'erp_peoplemeta';
 
     $metas_to_remove = [];
 
@@ -60,7 +60,7 @@ function erp_crm_move_people_life_stage_from_meta_to_base_table_1_2_7() {
     }
 
     if ( in_array( 'contact_owner', $people_table_columns ) ) {
-        $peoplemeta_table = $wpdb->prefix . 'erp_peoplemeta';
+        $peoplemeta_table = $wpdb->get_blog_prefix() . 'erp_peoplemeta';
 
         $migrate_contact_owner_sql = "UPDATE {$people_table}, "
                                      . " (select * from {$peoplemeta_table} where meta_key = 'contact_owner') AS meta"
@@ -75,7 +75,7 @@ function erp_crm_move_people_life_stage_from_meta_to_base_table_1_2_7() {
     }
 
     if ( in_array( 'hash', $people_table_columns ) ) {
-        $peoplemeta_table = $wpdb->prefix . 'erp_peoplemeta';
+        $peoplemeta_table = $wpdb->get_blog_prefix() . 'erp_peoplemeta';
 
         $migrate_contact_owner_sql = "UPDATE {$people_table}, "
                                      . " (select * from {$peoplemeta_table} where meta_key = 'hash') AS meta"

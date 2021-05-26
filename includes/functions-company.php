@@ -12,7 +12,7 @@ function erp_company_location_delete( $location_id ) {
 
     do_action( 'erp_company_location_delete', $location_id );
 
-    return $wpdb->delete( $wpdb->prefix . 'erp_company_locations', [ 'id' => $location_id ] );
+    return $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_company_locations', [ 'id' => $location_id ] );
 }
 
 /**
@@ -29,7 +29,7 @@ function erp_company_get_locations() {
     $locations = wp_cache_get( $cache_key, 'erp' );
 
     if ( ! $locations ) {
-        $locations = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}erp_company_locations" );
+        $locations = $wpdb->get_results( "SELECT * FROM {$wpdb->get_blog_prefix()}erp_company_locations" );
 
         $company = new \WeDevs\ERP\Company();
 

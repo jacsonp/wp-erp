@@ -9,8 +9,8 @@
 function erp_crm_delete_core_campaign_tables_1_2_5() {
     global $wpdb;
 
-    $wpdb->query( "DROP TABLE IF EXISTS `{$wpdb->prefix}erp_crm_campaigns`;" );
-    $wpdb->query( "DROP TABLE IF EXISTS `{$wpdb->prefix}erp_crm_campaign_group`;" );
+    $wpdb->query( "DROP TABLE IF EXISTS `{$wpdb->get_blog_prefix()}erp_crm_campaigns`;" );
+    $wpdb->query( "DROP TABLE IF EXISTS `{$wpdb->get_blog_prefix()}erp_crm_campaign_group`;" );
 }
 
 erp_crm_delete_core_campaign_tables_1_2_5();
@@ -27,7 +27,7 @@ function erp_create_table_indices_1_2_5() {
 
     $query = 'SELECT 1'
            . ' FROM INFORMATION_SCHEMA.STATISTICS'
-           . " WHERE table_schema=DATABASE() AND TABLE_NAME='{$wpdb->prefix}erp_hr_employees' AND INDEX_NAME='employee_id'"
+           . " WHERE table_schema=DATABASE() AND TABLE_NAME='{$wpdb->get_blog_prefix()}erp_hr_employees' AND INDEX_NAME='employee_id'"
            . ' LIMIT 1';
 
     if ( $wpdb->get_var( $query ) ) {
@@ -86,7 +86,7 @@ function erp_create_table_indices_1_2_5() {
 
     foreach ( $tables as $table => $columns ) {
         foreach ( $columns as $column ) {
-            $wpdb->query( "CREATE INDEX `{$column}` ON {$wpdb->prefix}{$table} (`{$column}`);" );
+            $wpdb->query( "CREATE INDEX `{$column}` ON {$wpdb->get_blog_prefix()}{$table} (`{$column}`);" );
         }
     }
 }
@@ -107,7 +107,7 @@ function erp_crm_update_table_1_2_5() {
     global $wpdb;
 
     // Add hash column in `erp_crm_contact_subscriber` table
-    $table = $wpdb->prefix . 'erp_crm_contact_subscriber';
+    $table = $wpdb->get_blog_prefix() . 'erp_crm_contact_subscriber';
     $cols  = $wpdb->get_col( "DESC $table" );
 
     if ( ! in_array( 'hash', $cols ) ) {

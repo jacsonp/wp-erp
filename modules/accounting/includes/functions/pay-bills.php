@@ -33,7 +33,7 @@ function erp_acct_get_pay_bills( $args = [] ) {
 
     $sql  = 'SELECT';
     $sql .= $args['count'] ? ' COUNT( id ) as total_number ' : ' * ';
-    $sql .= "FROM {$wpdb->prefix}erp_acct_pay_bill ORDER BY {$args['orderby']} {$args['order']} {$limit}";
+    $sql .= "FROM {$wpdb->get_blog_prefix()}erp_acct_pay_bill ORDER BY {$args['orderby']} {$args['order']} {$limit}";
 
     if ( $args['count'] ) {
         return $wpdb->get_var( $sql );
@@ -67,7 +67,7 @@ function erp_acct_get_pay_bill( $bill_no ) {
             pay_bill.created_at,
             pay_bill.attachments,
             pay_bill.status
-            FROM {$wpdb->prefix}erp_acct_pay_bill AS pay_bill
+            FROM {$wpdb->get_blog_prefix()}erp_acct_pay_bill AS pay_bill
             WHERE pay_bill.voucher_no = %d",
             $bill_no
         ),
@@ -92,8 +92,8 @@ function erp_acct_format_paybill_line_items( $voucher_no ) {
             pay_bill_detail.voucher_no,
             pay_bill_detail.bill_no,
             pay_bill_detail.amount
-            FROM {$wpdb->prefix}erp_acct_pay_bill AS pay_bill
-            LEFT JOIN {$wpdb->prefix}erp_acct_pay_bill_details as pay_bill_detail ON pay_bill.voucher_no = pay_bill_detail.voucher_no
+            FROM {$wpdb->get_blog_prefix()}erp_acct_pay_bill AS pay_bill
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_pay_bill_details as pay_bill_detail ON pay_bill.voucher_no = pay_bill_detail.voucher_no
             WHERE pay_bill.voucher_no = %d",
             $voucher_no
         ),
@@ -126,7 +126,7 @@ function erp_acct_insert_pay_bill( $data ) {
         $wpdb->query( 'START TRANSACTION' );
 
         $wpdb->insert(
-            $wpdb->prefix . 'erp_acct_voucher_no',
+            $wpdb->get_blog_prefix() . 'erp_acct_voucher_no',
             [
                 'type'       => 'pay_bill',
                 'currency'   => $currency,
@@ -142,7 +142,7 @@ function erp_acct_insert_pay_bill( $data ) {
         $pay_bill_data = erp_acct_get_formatted_pay_bill_data( $data, $voucher_no );
 
         $wpdb->insert(
-            $wpdb->prefix . 'erp_acct_pay_bill',
+            $wpdb->get_blog_prefix() . 'erp_acct_pay_bill',
             [
                 'voucher_no'       => $voucher_no,
                 'trn_date'         => $pay_bill_data['trn_date'],
@@ -166,7 +166,7 @@ function erp_acct_insert_pay_bill( $data ) {
 
         foreach ( $items as $key => $item ) {
             $wpdb->insert(
-                $wpdb->prefix . 'erp_acct_pay_bill_details',
+                $wpdb->get_blog_prefix() . 'erp_acct_pay_bill_details',
                 [
                     'voucher_no' => $voucher_no,
                     'bill_no'    => $item['voucher_no'],
@@ -187,7 +187,7 @@ function erp_acct_insert_pay_bill( $data ) {
 
         foreach ( $items as $key => $item ) {
             $wpdb->insert(
-                $wpdb->prefix . 'erp_acct_bill_account_details',
+                $wpdb->get_blog_prefix() . 'erp_acct_bill_account_details',
                 [
                     'bill_no'     => $item['voucher_no'],
                     'trn_no'      => $voucher_no,
@@ -259,7 +259,7 @@ function erp_acct_update_pay_bill( $data, $pay_bill_id ) {
         $pay_bill_data = erp_acct_get_formatted_pay_bill_data( $data, $pay_bill_id );
 
         $wpdb->update(
-            $wpdb->prefix . 'erp_acct_pay_bill',
+            $wpdb->get_blog_prefix() . 'erp_acct_pay_bill',
             [
                 'bill_no'     => $pay_bill_data['bill_no'],
                 'trn_date'    => $pay_bill_data['trn_date'],
@@ -282,7 +282,7 @@ function erp_acct_update_pay_bill( $data, $pay_bill_id ) {
 
         foreach ( $items as $key => $item ) {
             $wpdb->update(
-                $wpdb->prefix . 'erp_acct_pay_bill_details',
+                $wpdb->get_blog_prefix() . 'erp_acct_pay_bill_details',
                 [
                     'bill_no'    => $item['voucher_no'],
                     'amount'     => $item['amount'],
@@ -297,7 +297,7 @@ function erp_acct_update_pay_bill( $data, $pay_bill_id ) {
             );
 
             $wpdb->update(
-                $wpdb->prefix . 'erp_acct_bill_account_details',
+                $wpdb->get_blog_prefix() . 'erp_acct_bill_account_details',
                 [
                     'bill_no'     => $item['voucher_no'],
                     'particulars' => $pay_bill_data['particulars'],
@@ -347,15 +347,15 @@ function erp_acct_void_pay_bill( $id ) {
     }
 
     $wpdb->update(
-        $wpdb->prefix . 'erp_acct_pay_bill',
+        $wpdb->get_blog_prefix() . 'erp_acct_pay_bill',
         [
             'status' => 8,
         ],
         [ 'voucher_no' => $id ]
     );
 
-    $wpdb->delete( $wpdb->prefix . 'erp_acct_ledger_details', [ 'trn_no' => $id ] );
-    $wpdb->delete( $wpdb->prefix . 'erp_acct_bill_account_details', [ 'trn_no' => $id ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_ledger_details', [ 'trn_no' => $id ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_bill_account_details', [ 'trn_no' => $id ] );
 
     erp_acct_purge_cache( [ 'list' => 'sales_transaction,purchase_transaction,expense_transaction' ] );
 }
@@ -417,7 +417,7 @@ function erp_acct_insert_pay_bill_data_into_ledger( $pay_bill_data ) {
 
     // Insert amount in ledger_details
     $wpdb->insert(
-        $wpdb->prefix . 'erp_acct_ledger_details',
+        $wpdb->get_blog_prefix() . 'erp_acct_ledger_details',
         [
             'ledger_id'   => $pay_bill_data['trn_by_ledger_id'],
             'trn_no'      => $pay_bill_data['trn_no'],
@@ -451,7 +451,7 @@ function erp_acct_update_pay_bill_data_into_ledger( $pay_bill_data, $pay_bill_no
 
     // Update amount in ledger_details
     $wpdb->update(
-        $wpdb->prefix . 'erp_acct_ledger_details',
+        $wpdb->get_blog_prefix() . 'erp_acct_ledger_details',
         [
             'ledger_id'   => $pay_bill_data['trn_by_ledger_id'],
             'particulars' => $pay_bill_data['particulars'],
@@ -477,7 +477,7 @@ function erp_acct_update_pay_bill_data_into_ledger( $pay_bill_data, $pay_bill_no
 function erp_acct_get_pay_bill_count() {
     global $wpdb;
 
-    $row = $wpdb->get_row( 'SELECT COUNT(*) as count FROM ' . $wpdb->prefix . 'erp_acct_pay_bill' );
+    $row = $wpdb->get_row( 'SELECT COUNT(*) as count FROM ' . $wpdb->get_blog_prefix() . 'erp_acct_pay_bill' );
 
     return $row->count;
 }
@@ -496,7 +496,7 @@ function erp_acct_change_bill_status( $bill_no ) {
 
     if ( 0 == $due ) {
         $wpdb->update(
-            $wpdb->prefix . 'erp_acct_bills',
+            $wpdb->get_blog_prefix() . 'erp_acct_bills',
             [
                 'status' => 4,
             ],
@@ -504,7 +504,7 @@ function erp_acct_change_bill_status( $bill_no ) {
         );
     } else {
         $wpdb->update(
-            $wpdb->prefix . 'erp_acct_bills',
+            $wpdb->get_blog_prefix() . 'erp_acct_bills',
             [
                 'status' => 5,
             ],

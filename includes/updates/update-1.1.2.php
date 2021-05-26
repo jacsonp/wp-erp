@@ -1,9 +1,9 @@
 <?php
 
 global $wpdb;
-$table    = $wpdb->prefix . 'erp_ac_transactions';
-$items    = $wpdb->prefix . 'erp_ac_transaction_items';
-$journals = $wpdb->prefix . 'erp_ac_journals';
+$table    = $wpdb->get_blog_prefix() . 'erp_ac_transactions';
+$items    = $wpdb->get_blog_prefix() . 'erp_ac_transaction_items';
+$journals = $wpdb->get_blog_prefix() . 'erp_ac_journals';
 
 $wpdb->query( "ALTER TABLE $table
 	CHANGE `sub_total` `sub_total` DECIMAL(13,4) NULL DEFAULT '0.00',

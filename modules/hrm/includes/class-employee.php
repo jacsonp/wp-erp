@@ -2089,10 +2089,10 @@ class Employee {
      */
     public function get_entitlements( $args = [] ) {
         global $wpdb;
-        $ent_tbl    = $wpdb->prefix . 'erp_hr_leave_entitlements';
-        $policy_tbl = $wpdb->prefix . 'erp_hr_leave_policies';
-        $f_year_tbl = $wpdb->prefix . 'erp_hr_financial_years';
-        $leave_tbl  = $wpdb->prefix . 'erp_hr_leaves';
+        $ent_tbl    = $wpdb->get_blog_prefix() . 'erp_hr_leave_entitlements';
+        $policy_tbl = $wpdb->get_blog_prefix() . 'erp_hr_leave_policies';
+        $f_year_tbl = $wpdb->get_blog_prefix() . 'erp_hr_financial_years';
+        $leave_tbl  = $wpdb->get_blog_prefix() . 'erp_hr_leaves';
 
         $f_year = erp_hr_get_financial_year_from_date();
 

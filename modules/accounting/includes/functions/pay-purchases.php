@@ -33,7 +33,7 @@ function erp_acct_get_pay_purchases( $args = [] ) {
 
     $sql  = 'SELECT';
     $sql .= $args['count'] ? ' COUNT( id ) as total_number ' : ' * ';
-    $sql .= "FROM {$wpdb->prefix}erp_acct_pay_purchase ORDER BY {$args['orderby']} {$args['order']} {$limit}";
+    $sql .= "FROM {$wpdb->get_blog_prefix()}erp_acct_pay_purchase ORDER BY {$args['orderby']} {$args['order']} {$limit}";
 
     if ( $args['count'] ) {
         return $wpdb->get_var( $sql );
@@ -69,7 +69,7 @@ function erp_acct_get_pay_purchase( $purchase_no ) {
             pay_purchase.created_at,
             pay_purchase.attachments,
             pay_purchase.trn_by_ledger_id
-            FROM {$wpdb->prefix}erp_acct_pay_purchase AS pay_purchase
+            FROM {$wpdb->get_blog_prefix()}erp_acct_pay_purchase AS pay_purchase
             WHERE pay_purchase.voucher_no = %d",
             $purchase_no
         ),
@@ -90,10 +90,10 @@ function erp_acct_format_pay_purchase_line_items( $voucher_no ) {
 
     return $wpdb->get_results(
         $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}erp_acct_pay_purchase AS pay_purchase
-            LEFT JOIN {$wpdb->prefix}erp_acct_pay_purchase_details AS pay_purchase_detail
+            "SELECT * FROM {$wpdb->get_blog_prefix()}erp_acct_pay_purchase AS pay_purchase
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_pay_purchase_details AS pay_purchase_detail
             ON pay_purchase.voucher_no = pay_purchase_detail.voucher_no
-            LEFT JOIN {$wpdb->prefix}erp_acct_voucher_no AS voucher
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_voucher_no AS voucher
             ON pay_purchase_detail.voucher_no = voucher.id
             WHERE pay_purchase.voucher_no = %d",
             $voucher_no
@@ -133,7 +133,7 @@ function erp_acct_insert_pay_purchase( $data ) {
 
         //create voucher
         $wpdb->insert(
-            $wpdb->prefix . 'erp_acct_voucher_no',
+            $wpdb->get_blog_prefix() . 'erp_acct_voucher_no',
             [
                 'type'       => $trn_type,
                 'currency'   => $currency,
@@ -156,7 +156,7 @@ function erp_acct_insert_pay_purchase( $data ) {
         }
 
         $wpdb->insert(
-        $wpdb->prefix . 'erp_acct_pay_purchase',
+        $wpdb->get_blog_prefix() . 'erp_acct_pay_purchase',
             [
             'voucher_no'         => $voucher_no,
             'vendor_id'          => $pay_purchase_data['vendor_id'],
@@ -181,7 +181,7 @@ function erp_acct_insert_pay_purchase( $data ) {
 
         foreach ( $items as $key => $item ) {
             $wpdb->insert(
-                $wpdb->prefix . 'erp_acct_pay_purchase_details',
+                $wpdb->get_blog_prefix() . 'erp_acct_pay_purchase_details',
                 [
                     'voucher_no'  => $voucher_no,
                     'purchase_no' => $item['voucher_no'],
@@ -219,7 +219,7 @@ function erp_acct_insert_pay_purchase( $data ) {
             }
 
             $wpdb->insert(
-                $wpdb->prefix . 'erp_acct_purchase_account_details',
+                $wpdb->get_blog_prefix() . 'erp_acct_purchase_account_details',
                 [
                     'purchase_no' => $item['voucher_no'],
                     'trn_no'      => $voucher_no,
@@ -294,7 +294,7 @@ function erp_acct_update_pay_purchase( $data, $pay_purchase_id ) {
         $pay_purchase_data = erp_acct_get_formatted_pay_purchase_data( $data, $pay_purchase_id );
 
         $wpdb->update(
-            $wpdb->prefix . 'erp_acct_pay_purchase',
+            $wpdb->get_blog_prefix() . 'erp_acct_pay_purchase',
             [
                 'trn_date'    => $pay_purchase_data['trn_date'],
                 'amount'      => abs( $pay_purchase_data['amount'] ),
@@ -315,7 +315,7 @@ function erp_acct_update_pay_purchase( $data, $pay_purchase_id ) {
 
         foreach ( $items as $key => $item ) {
             $wpdb->update(
-                $wpdb->prefix . 'erp_acct_pay_purchase_details',
+                $wpdb->get_blog_prefix() . 'erp_acct_pay_purchase_details',
                 [
                     'purchase_no' => $item['voucher_no'],
                     'amount'      => abs( $item['amount'] ),
@@ -349,7 +349,7 @@ function erp_acct_update_pay_purchase( $data, $pay_purchase_id ) {
             }
 
             $wpdb->update(
-                $wpdb->prefix . 'erp_acct_purchase_account_details',
+                $wpdb->get_blog_prefix() . 'erp_acct_purchase_account_details',
                 [
                     'trn_no'      => $pay_purchase_id,
                     'particulars' => $pay_purchase_data['particulars'],
@@ -398,15 +398,15 @@ function erp_acct_void_pay_purchase( $id ) {
     }
 
     $wpdb->update(
-        $wpdb->prefix . 'erp_acct_pay_purchase',
+        $wpdb->get_blog_prefix() . 'erp_acct_pay_purchase',
         [
             'status' => 8,
         ],
         [ 'voucher_no' => $id ]
     );
 
-    $wpdb->delete( $wpdb->prefix . 'erp_acct_ledger_details', [ 'trn_no' => $id ] );
-    $wpdb->delete( $wpdb->prefix . 'erp_acct_purchase_account_details', [ 'trn_no' => $id ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_ledger_details', [ 'trn_no' => $id ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_purchase_account_details', [ 'trn_no' => $id ] );
 
     erp_acct_purge_cache( [ 'list' => 'purchase_transaction' ] );
 }
@@ -478,7 +478,7 @@ function erp_acct_insert_pay_purchase_data_into_ledger( $pay_purchase_data, $ite
 
     // Insert amount in ledger_details
     $wpdb->insert(
-        $wpdb->prefix . 'erp_acct_ledger_details',
+        $wpdb->get_blog_prefix() . 'erp_acct_ledger_details',
         [
             'ledger_id'   => $pay_purchase_data['trn_by_ledger_id'],
             'trn_no'      => $pay_purchase_data['voucher_no'],
@@ -521,7 +521,7 @@ function erp_acct_update_pay_purchase_data_into_ledger( $pay_purchase_data, $pay
 
     // Update amount in ledger_details
     $wpdb->update(
-        $wpdb->prefix . 'erp_acct_ledger_details',
+        $wpdb->get_blog_prefix() . 'erp_acct_ledger_details',
         [
             'ledger_id'   => $pay_purchase_data['trn_by_ledger_id'],
             'particulars' => $pay_purchase_data['particulars'],
@@ -547,7 +547,7 @@ function erp_acct_update_pay_purchase_data_into_ledger( $pay_purchase_data, $pay
 function erp_acct_get_pay_purchase_count() {
     global $wpdb;
 
-    $row = $wpdb->get_row( 'SELECT COUNT(*) as count FROM ' . $wpdb->prefix . 'erp_acct_pay_purchase' );
+    $row = $wpdb->get_row( 'SELECT COUNT(*) as count FROM ' . $wpdb->get_blog_prefix() . 'erp_acct_pay_purchase' );
 
     return $row->count;
 }
@@ -566,7 +566,7 @@ function erp_acct_change_purchase_status( $purchase_no ) {
 
     if ( 0 == $due ) {
         $wpdb->update(
-            $wpdb->prefix . 'erp_acct_purchase',
+            $wpdb->get_blog_prefix() . 'erp_acct_purchase',
             [
                 'status' => 4,
             ],
@@ -574,7 +574,7 @@ function erp_acct_change_purchase_status( $purchase_no ) {
         );
     } else {
         $wpdb->update(
-            $wpdb->prefix . 'erp_acct_purchase',
+            $wpdb->get_blog_prefix() . 'erp_acct_purchase',
             [
                 'status' => 5,
             ],

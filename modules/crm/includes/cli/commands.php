@@ -20,7 +20,7 @@ class Commands extends WP_CLI_Command {
         }
 
         foreach ( $tables as $table ) {
-            $wpdb->query( 'TRUNCATE TABLE ' . $wpdb->prefix . $table );
+            $wpdb->query( 'TRUNCATE TABLE ' . $wpdb->get_blog_prefix() . $table );
         }
 
         WP_CLI::success( 'Tables deleted successfully!' );

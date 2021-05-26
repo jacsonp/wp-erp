@@ -30,8 +30,8 @@ class Leave_Report_Employee_Based extends \WP_List_Table {
 
         $this->table_css();
 
-        $policy_tbl     = "{$wpdb->prefix}erp_hr_leave_policies";
-        $leave_name_tbl = "{$wpdb->prefix}erp_hr_leaves";
+        $policy_tbl     = "{$wpdb->get_blog_prefix()}erp_hr_leave_policies";
+        $leave_name_tbl = "{$wpdb->get_blog_prefix()}erp_hr_leaves";
 
         $this->policies = Leave_Policy::select( "$leave_name_tbl.name", "$policy_tbl.id", "$policy_tbl.leave_id" )
             ->leftJoin( $leave_name_tbl, "$policy_tbl.leave_id", '=', "$leave_name_tbl.id" )

@@ -126,7 +126,7 @@ class Leave_Requests_List_Table extends \WP_List_Table {
             case 'approved_by':
                 $status = $wpdb->get_row(
                     $wpdb->prepare(
-                        "SELECT message, approved_by, created_at FROM {$wpdb->prefix}erp_hr_leave_approval_status WHERE leave_request_id = %d ORDER BY id DESC LIMIT 1",
+                        "SELECT message, approved_by, created_at FROM {$wpdb->get_blog_prefix()}erp_hr_leave_approval_status WHERE leave_request_id = %d ORDER BY id DESC LIMIT 1",
                         [ $item->id ]
                     )
                 );

@@ -48,10 +48,10 @@ function erp_get_peoples( $args = [] ) {
     $last_changed = erp_cache_get_last_changed( 'crm', 'people' );
     $cache_key    = 'erp-people-' . $people_type . '-' . md5( serialize( $args ) ).": $last_changed";
     $items        = wp_cache_get( $cache_key, 'erp' );
-    $pep_tb       = $wpdb->prefix . 'erp_peoples';
-    $pepmeta_tb   = $wpdb->prefix . 'erp_peoplemeta';
-    $types_tb     = $wpdb->prefix . 'erp_people_types';
-    $type_rel_tb  = $wpdb->prefix . 'erp_people_type_relations';
+    $pep_tb       = $wpdb->get_blog_prefix() . 'erp_peoples';
+    $pepmeta_tb   = $wpdb->get_blog_prefix() . 'erp_peoplemeta';
+    $types_tb     = $wpdb->get_blog_prefix() . 'erp_people_types';
+    $type_rel_tb  = $wpdb->get_blog_prefix() . 'erp_people_type_relations';
 
     if ( false === $items ) {
         extract( $args );
@@ -386,9 +386,9 @@ function erp_get_people_by( $field, $value ) {
     if ( false === $people ) {
         $sql = 'SELECT people.*, ';
         $sql .= "GROUP_CONCAT(DISTINCT p_types.name) as types
-        FROM {$wpdb->prefix}erp_peoples as people
-        LEFT JOIN {$wpdb->prefix}erp_people_type_relations as p_types_rel on p_types_rel.people_id = people.id
-        LEFT JOIN {$wpdb->prefix}erp_people_types as p_types on p_types.id = p_types_rel.people_types_id
+        FROM {$wpdb->get_blog_prefix()}erp_peoples as people
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_people_type_relations as p_types_rel on p_types_rel.people_id = people.id
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_people_types as p_types on p_types.id = p_types_rel.people_types_id
         ";
 
         if ( is_array( $value ) ) {
@@ -923,7 +923,7 @@ function erp_convert_to_people( $args = [] ) {
 function erp_get_people_email( $id ) {
     global $wpdb;
 
-    $sql = $wpdb->prepare( "SELECT email FROM {$wpdb->prefix}erp_peoples WHERE id = %d", absint( $id ) );
+    $sql = $wpdb->prepare( "SELECT email FROM {$wpdb->get_blog_prefix()}erp_peoples WHERE id = %d", absint( $id ) );
 
     return $wpdb->get_var( $sql );
 }
@@ -941,7 +941,7 @@ function erp_is_people_trashed( $id ) {
     global $wpdb;
 
     $trashed = $wpdb->get_var(
-        $wpdb->prepare( "SELECT deleted_at FROM {$wpdb->prefix}erp_people_type_relations WHERE people_id = %d", absint( $id ) )
+        $wpdb->prepare( "SELECT deleted_at FROM {$wpdb->get_blog_prefix()}erp_people_type_relations WHERE people_id = %d", absint( $id ) )
     );
 
     if ( $trashed ) {

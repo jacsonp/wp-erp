@@ -774,7 +774,7 @@ function erp_hr_leave_get_policies( $args = [] ) {
 
         // If filtered by name, Get the ID of this leave type by name and do ordering
         if( $args['orderby'] === 'name' ) {
-            $policies = $policies->join( "{$wpdb->prefix}erp_hr_leaves as leave", 'leave.id', '=', "{$wpdb->prefix}erp_hr_leave_policies.leave_id" )
+            $policies = $policies->join( "{$wpdb->get_blog_prefix()}erp_hr_leaves as leave", 'leave.id', '=', "{$wpdb->get_blog_prefix()}erp_hr_leave_policies.leave_id" )
                         ->orderBy( 'leave.name', $args['order'] );
         } else {
             $policies = $policies->orderBy( $args['orderby'], $args['order'] );
@@ -1130,8 +1130,8 @@ function erp_hr_get_assign_policy_from_entitlement( $employee_id, $date = null )
 
     global $wpdb;
 
-    $entitlement_table = "{$wpdb->prefix}erp_hr_leave_entitlements";
-    $leave_table       = "{$wpdb->prefix}erp_hr_leaves";
+    $entitlement_table = "{$wpdb->get_blog_prefix()}erp_hr_leave_entitlements";
+    $leave_table       = "{$wpdb->get_blog_prefix()}erp_hr_leaves";
 
     $policies = Leave_Entitlement::select( $entitlement_table . '.id', $leave_table . '.name' )
         ->leftjoin( $leave_table, $entitlement_table . '.leave_id', '=', $leave_table . '.id' )
@@ -1263,7 +1263,7 @@ function erp_hr_leave_insert_request( $args = [] ) {
             'updated_at'  => erp_current_datetime()->getTimestamp(),
         ] );
 
-        if ( $wpdb->insert( $wpdb->prefix . 'erp_hr_leave_requests', $request ) ) {
+        if ( $wpdb->insert( $wpdb->get_blog_prefix() . 'erp_hr_leave_requests', $request ) ) {
             $request_id = $wpdb->insert_id;
 
             do_action( 'erp_hr_leave_new', $request_id, $request, $leaves );
@@ -1374,15 +1374,15 @@ function erp_hr_get_leave_requests( $args = [], $cached = true ) {
 
     //return erp_array_to_object( $formatted_data );
 
-    $leave_requests_table = $wpdb->prefix . 'erp_hr_leave_requests';
+    $leave_requests_table = $wpdb->get_blog_prefix() . 'erp_hr_leave_requests';
     $tables               = " FROM $leave_requests_table as request";
 
     $fields = 'SELECT SQL_CALC_FOUND_ROWS request.id, u.display_name';
     $fields .= ', policy.color';
 
     $join = " LEFT JOIN {$wpdb->users} AS u ON u.ID = request.user_id";
-    $join .= " LEFT JOIN {$wpdb->prefix}erp_hr_leave_entitlements AS entl ON request.leave_entitlement_id = entl.id";
-    $join .= " LEFT JOIN {$wpdb->prefix}erp_hr_leave_policies AS policy ON policy.id = entl.trn_id";
+    $join .= " LEFT JOIN {$wpdb->get_blog_prefix()}erp_hr_leave_entitlements AS entl ON request.leave_entitlement_id = entl.id";
+    $join .= " LEFT JOIN {$wpdb->get_blog_prefix()}erp_hr_leave_policies AS policy ON policy.id = entl.trn_id";
 
     $where = ' WHERE 1=1';
     $where .= " AND entl.trn_type = 'leave_policies'";
@@ -1586,8 +1586,8 @@ function erp_hr_leave_get_requests_count( $f_year ) {
 
         $total_leave_count = $wpdb->get_results( $wpdb->prepare( "
             SELECT rq.last_status as id, COUNT( rq.last_status ) AS count
-            FROM {$wpdb->prefix}erp_hr_leave_requests AS rq
-            LEFT JOIN {$wpdb->prefix}erp_hr_leave_entitlements AS en ON en.id = rq.leave_entitlement_id
+            FROM {$wpdb->get_blog_prefix()}erp_hr_leave_requests AS rq
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_hr_leave_entitlements AS en ON en.id = rq.leave_entitlement_id
             WHERE en.f_year = %d
             GROUP BY last_status
             ", $f_year ), ARRAY_A
@@ -2011,7 +2011,7 @@ function erp_hr_leave_has_employee_entitlement( $employee_id, $policy_id, $year 
     $from_date = $year . '-01-01';
     $to_date   = $year . '-12-31';
 
-    $query  = "SELECT id FROM {$wpdb->prefix}erp_hr_leave_entitlements
+    $query  = "SELECT id FROM {$wpdb->get_blog_prefix()}erp_hr_leave_entitlements
         WHERE user_id = %d AND policy_id = %d AND from_date = %s AND to_date = %s";
     $result = $wpdb->get_var( $wpdb->prepare( $query, $employee_id, $policy_id, $from_date, $to_date ) );
 
@@ -2037,7 +2037,7 @@ function erp_hr_leave_get_entitlement( $user_id, $leave_id, $start_date ) {
     // get entitlement
     $entitlement = $wpdb->get_row(
         $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}erp_hr_leave_entitlements WHERE user_id = %d and leave_id = %d and f_year = %d and trn_type = %s",
+            "SELECT * FROM {$wpdb->get_blog_prefix()}erp_hr_leave_entitlements WHERE user_id = %d and leave_id = %d and f_year = %d and trn_type = %s",
             [ $user_id, $leave_id, $f_year->id, 'leave_policies' ]
         )
     );
@@ -2124,11 +2124,11 @@ function erp_hr_leave_get_entitlements( $args = [] ) {
         $limit  = $args['number'] == '-1' ? '' : " LIMIT {$offset}, {$number}";
 
         $query = "SELECT SQL_CALC_FOUND_ROWS en.*, u.display_name as employee_name, l.name as policy_name, emp.status as emp_status
-            FROM `{$wpdb->prefix}erp_hr_leave_entitlements` AS en
-            LEFT JOIN {$wpdb->prefix}erp_hr_leaves AS l ON l.id = en.leave_id
+            FROM `{$wpdb->get_blog_prefix()}erp_hr_leave_entitlements` AS en
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_hr_leaves AS l ON l.id = en.leave_id
             LEFT JOIN {$wpdb->users} AS u ON en.user_id = u.ID
-            LEFT JOIN {$wpdb->prefix}erp_hr_employees AS emp ON en.user_id = emp.user_id
-            LEFT JOIN {$wpdb->prefix}erp_hr_leave_policies AS policy ON en.trn_id = policy.id
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_hr_employees AS emp ON en.user_id = emp.user_id
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_hr_leave_policies AS policy ON en.trn_id = policy.id
             $where
             ORDER BY {$args['orderby']} {$args['order']}
             {$limit};";
@@ -2258,13 +2258,13 @@ function erp_hr_leave_get_balance( $user_id, $date = null ) {
     $query = "
     SELECT en.id, en.leave_id, en.user_id, en.f_year, fy.start_date, fy.end_date, l.name AS policy_name,
     IFNULL( sum(en.day_in), 0 ) AS policy_day_in,
-    IFNULL( ( SELECT sum(en2.day_in) AS total_day_in FROM {$wpdb->prefix}erp_hr_leave_entitlements AS en2 WHERE en2.user_id = en.user_id AND en2.leave_id = en.leave_id AND en2.f_year = en.f_year ), 0 ) AS total_day_in,
-    IFNULL( ( SELECT sum(en2.day_out) AS total_day_out FROM {$wpdb->prefix}erp_hr_leave_entitlements AS en2 WHERE en2.user_id = en.user_id AND en2.leave_id = en.leave_id AND en2.f_year = en.f_year ), 0 ) AS total_day_out,
-    IFNULL( ( SELECT sum(en2.day_in) AS extra_leaves FROM {$wpdb->prefix}erp_hr_leave_entitlements AS en2 WHERE en2.user_id = en.user_id AND en2.leave_id = en.leave_id AND en2.f_year = en.f_year AND en2.trn_type = 'unpaid_leave' ), 0 ) AS extra_leaves,
-    IFNULL( ( SELECT sum(rq.days) AS leave_spent FROM {$wpdb->prefix}erp_hr_leave_requests AS rq WHERE rq.user_id = en.user_id AND rq.leave_id = en.leave_id AND rq.last_status = 1 AND rq.start_date BETWEEN fy.start_date AND fy.end_date ), 0 ) AS leave_spent
-    FROM {$wpdb->prefix}erp_hr_leave_entitlements AS en
-    LEFT JOIN {$wpdb->prefix}erp_hr_financial_years AS fy ON fy.id = en.f_year
-    LEFT JOIN {$wpdb->prefix}erp_hr_leaves AS l ON l.id = en.leave_id
+    IFNULL( ( SELECT sum(en2.day_in) AS total_day_in FROM {$wpdb->get_blog_prefix()}erp_hr_leave_entitlements AS en2 WHERE en2.user_id = en.user_id AND en2.leave_id = en.leave_id AND en2.f_year = en.f_year ), 0 ) AS total_day_in,
+    IFNULL( ( SELECT sum(en2.day_out) AS total_day_out FROM {$wpdb->get_blog_prefix()}erp_hr_leave_entitlements AS en2 WHERE en2.user_id = en.user_id AND en2.leave_id = en.leave_id AND en2.f_year = en.f_year ), 0 ) AS total_day_out,
+    IFNULL( ( SELECT sum(en2.day_in) AS extra_leaves FROM {$wpdb->get_blog_prefix()}erp_hr_leave_entitlements AS en2 WHERE en2.user_id = en.user_id AND en2.leave_id = en.leave_id AND en2.f_year = en.f_year AND en2.trn_type = 'unpaid_leave' ), 0 ) AS extra_leaves,
+    IFNULL( ( SELECT sum(rq.days) AS leave_spent FROM {$wpdb->get_blog_prefix()}erp_hr_leave_requests AS rq WHERE rq.user_id = en.user_id AND rq.leave_id = en.leave_id AND rq.last_status = 1 AND rq.start_date BETWEEN fy.start_date AND fy.end_date ), 0 ) AS leave_spent
+    FROM {$wpdb->get_blog_prefix()}erp_hr_leave_entitlements AS en
+    LEFT JOIN {$wpdb->get_blog_prefix()}erp_hr_financial_years AS fy ON fy.id = en.f_year
+    LEFT JOIN {$wpdb->get_blog_prefix()}erp_hr_leaves AS l ON l.id = en.leave_id
     WHERE en.user_id = %d AND en.trn_type='leave_policies'
     ";
 
@@ -2323,13 +2323,13 @@ function erp_hr_leave_get_balance_for_single_entitlement( $entitlement_id ) {
     $query = "
     SELECT en.id, en.leave_id, en.user_id, en.f_year, fy.start_date, fy.end_date, l.name AS policy_name,
     IFNULL( sum(en.day_in), 0 ) AS policy_day_in,
-    IFNULL( ( SELECT sum(en2.day_in) AS total_day_in FROM {$wpdb->prefix}erp_hr_leave_entitlements AS en2 WHERE en2.user_id = en.user_id AND en2.leave_id = en.leave_id AND en2.f_year = en.f_year ), 0 ) AS total_day_in,
-    IFNULL( ( SELECT sum(en2.day_out) AS total_day_out FROM {$wpdb->prefix}erp_hr_leave_entitlements AS en2 WHERE en2.user_id = en.user_id AND en2.leave_id = en.leave_id AND en2.f_year = en.f_year ), 0 ) AS total_day_out,
-    IFNULL( ( SELECT sum(en2.day_in) AS extra_leaves FROM {$wpdb->prefix}erp_hr_leave_entitlements AS en2 WHERE en2.user_id = en.user_id AND en2.leave_id = en.leave_id AND en2.f_year = en.f_year AND en2.trn_type = 'unpaid_leave' ), 0 ) AS extra_leaves,
-    IFNULL( ( SELECT sum(rq.days) AS leave_spent FROM {$wpdb->prefix}erp_hr_leave_requests AS rq WHERE rq.user_id = en.user_id AND rq.leave_id = en.leave_id AND rq.last_status = 1 AND rq.start_date BETWEEN fy.start_date AND fy.end_date ), 0 ) AS leave_spent
-    FROM {$wpdb->prefix}erp_hr_leave_entitlements AS en
-    LEFT JOIN {$wpdb->prefix}erp_hr_financial_years AS fy ON fy.id = en.f_year
-    LEFT JOIN {$wpdb->prefix}erp_hr_leaves AS l ON l.id = en.leave_id
+    IFNULL( ( SELECT sum(en2.day_in) AS total_day_in FROM {$wpdb->get_blog_prefix()}erp_hr_leave_entitlements AS en2 WHERE en2.user_id = en.user_id AND en2.leave_id = en.leave_id AND en2.f_year = en.f_year ), 0 ) AS total_day_in,
+    IFNULL( ( SELECT sum(en2.day_out) AS total_day_out FROM {$wpdb->get_blog_prefix()}erp_hr_leave_entitlements AS en2 WHERE en2.user_id = en.user_id AND en2.leave_id = en.leave_id AND en2.f_year = en.f_year ), 0 ) AS total_day_out,
+    IFNULL( ( SELECT sum(en2.day_in) AS extra_leaves FROM {$wpdb->get_blog_prefix()}erp_hr_leave_entitlements AS en2 WHERE en2.user_id = en.user_id AND en2.leave_id = en.leave_id AND en2.f_year = en.f_year AND en2.trn_type = 'unpaid_leave' ), 0 ) AS extra_leaves,
+    IFNULL( ( SELECT sum(rq.days) AS leave_spent FROM {$wpdb->get_blog_prefix()}erp_hr_leave_requests AS rq WHERE rq.user_id = en.user_id AND rq.leave_id = en.leave_id AND rq.last_status = 1 AND rq.start_date BETWEEN fy.start_date AND fy.end_date ), 0 ) AS leave_spent
+    FROM {$wpdb->get_blog_prefix()}erp_hr_leave_entitlements AS en
+    LEFT JOIN {$wpdb->get_blog_prefix()}erp_hr_financial_years AS fy ON fy.id = en.f_year
+    LEFT JOIN {$wpdb->get_blog_prefix()}erp_hr_leaves AS l ON l.id = en.leave_id
     WHERE en.id = %d
     ";
 
@@ -2376,7 +2376,7 @@ function erp_hr_leave_get_balance_for_single_policy( $entitlement ) {
     if ( is_int( $entitlement ) ) {
         $entitlement = $wpdb->get_row(
             $wpdb->prepare(
-                "SELECT * FROM {$wpdb->prefix}erp_hr_leave_entitlements WHERE id = %d AND trn_type = %s",
+                "SELECT * FROM {$wpdb->get_blog_prefix()}erp_hr_leave_entitlements WHERE id = %d AND trn_type = %s",
                 [ $entitlement, 'leave_policies' ]
             )
         );
@@ -2467,10 +2467,10 @@ function erp_hr_leave_period() {
 function erp_hr_get_calendar_leave_events( $get = false, $user_id = false, $approved_only = false ) {
     global $wpdb;
 
-    $employee_tb = $wpdb->prefix . 'erp_hr_employees';
+    $employee_tb = $wpdb->get_blog_prefix() . 'erp_hr_employees';
     $users_tb    = $wpdb->users;
-    $request_tb  = $wpdb->prefix . 'erp_hr_leave_requests';
-    $policy_tb   = $wpdb->prefix . 'erp_hr_leave_policies';
+    $request_tb  = $wpdb->get_blog_prefix() . 'erp_hr_leave_requests';
+    $policy_tb   = $wpdb->get_blog_prefix() . 'erp_hr_leave_policies';
 
     $employee      = new \WeDevs\ERP\HRM\Models\Employee();
     $leave_request = new \WeDevs\ERP\HRM\Models\Leave_Request();
@@ -2606,9 +2606,9 @@ function erp_hr_get_custom_leave_report( $user_id, $f_year = null, $start_date =
     global $wpdb;
 
     $query = 'select en.id, en.leave_id, en.day_in, en.f_year, fy.start_date, fy.end_date, l.name as policy_name';
-    $query .= " from {$wpdb->prefix}erp_hr_leave_entitlements as en";
-    $query .= " LEFT JOIN {$wpdb->prefix}erp_hr_financial_years as fy on fy.id = en.f_year";
-    $query .= " LEFT JOIN {$wpdb->prefix}erp_hr_leaves as l on l.id = en.leave_id";
+    $query .= " from {$wpdb->get_blog_prefix()}erp_hr_leave_entitlements as en";
+    $query .= " LEFT JOIN {$wpdb->get_blog_prefix()}erp_hr_financial_years as fy on fy.id = en.f_year";
+    $query .= " LEFT JOIN {$wpdb->get_blog_prefix()}erp_hr_leaves as l on l.id = en.leave_id";
     $query .= " where user_id = %d and trn_type='leave_policies'";
 
     if ( $f_year === null || 'custom' === $f_year ) {
@@ -2646,7 +2646,7 @@ function erp_hr_get_custom_leave_report( $user_id, $f_year = null, $start_date =
         foreach ( $results as $result ) {
             $days_count = $wpdb->get_row(
                 $wpdb->prepare(
-                    "SELECT sum(day_in) as day_in, sum(day_out) as day_out FROM {$wpdb->prefix}erp_hr_leave_entitlements WHERE user_id = %d AND leave_id = %d and f_year = %d ",
+                    "SELECT sum(day_in) as day_in, sum(day_out) as day_out FROM {$wpdb->get_blog_prefix()}erp_hr_leave_entitlements WHERE user_id = %d AND leave_id = %d and f_year = %d ",
                     [ $user_id, $result->leave_id, $result->f_year ]
                 ),
                 ARRAY_A
@@ -2659,8 +2659,8 @@ function erp_hr_get_custom_leave_report( $user_id, $f_year = null, $start_date =
                 // total spent
                 $leave_spent = $wpdb->get_var(
                     $wpdb->prepare(
-                        "SELECT count(rq_details.id) FROM {$wpdb->prefix}erp_hr_leave_request_details as rq_details
-                                LEFT JOIN {$wpdb->prefix}erp_hr_leave_requests as rq on rq.id = rq_details.leave_request_id
+                        "SELECT count(rq_details.id) FROM {$wpdb->get_blog_prefix()}erp_hr_leave_request_details as rq_details
+                                LEFT JOIN {$wpdb->get_blog_prefix()}erp_hr_leave_requests as rq on rq.id = rq_details.leave_request_id
                                 WHERE rq.leave_entitlement_id = %d AND rq_details.user_id = %d AND rq_details.workingday_status = %d AND rq_details.leave_date BETWEEN %d AND %d",
                         [ $result->id, $user_id, 1, $start_date, $end_date ]
                     )
@@ -3044,7 +3044,7 @@ function erp_hr_get_financial_year_from_date( $date = null ) {
     }
 
     $query = $wpdb->prepare(
-        "SELECT id FROM {$wpdb->prefix}erp_hr_financial_years
+        "SELECT id FROM {$wpdb->get_blog_prefix()}erp_hr_financial_years
                     WHERE (start_date <= %d AND end_date >= %d)
                     OR (start_date >= %d and start_date <= %d)
                     OR (end_date >= %d and end_date <= %d)
@@ -3105,7 +3105,7 @@ function erp_hr_get_financial_year_from_date_range( $start_date, $end_date ) {
 
     return $wpdb->get_col(
         $wpdb->prepare(
-            "SELECT id FROM {$wpdb->prefix}erp_hr_financial_years
+            "SELECT id FROM {$wpdb->get_blog_prefix()}erp_hr_financial_years
                     WHERE (start_date <= %d AND end_date >= %d)
                     OR (start_date <= %d AND end_date >= %d)
                     OR (start_date >= %d and start_date <= %d)

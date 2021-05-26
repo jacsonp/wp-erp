@@ -281,7 +281,7 @@ class Ledgers_Accounts_Controller extends \WeDevs\ERP\API\REST_Controller {
     public function create_ledger_account( $request ) {
         global $wpdb;
 
-        $exist = $wpdb->get_var( $wpdb->prepare( "SELECT name FROM {$wpdb->prefix}erp_acct_ledgers WHERE name = %s", $request['name'] ) );
+        $exist = $wpdb->get_var( $wpdb->prepare( "SELECT name FROM {$wpdb->get_blog_prefix()}erp_acct_ledgers WHERE name = %s", $request['name'] ) );
 
         if ( $exist ) {
             return new WP_Error( 'rest_ledger_name_already_exist', __( 'Name already exist.' ), [ 'status' => 404 ] );
@@ -353,7 +353,7 @@ class Ledgers_Accounts_Controller extends \WeDevs\ERP\API\REST_Controller {
 
         $item = erp_acct_get_ledger( $id );
 
-        $wpdb->delete( "{$wpdb->prefix}erp_acct_ledgers", [ 'id' => $id ] );
+        $wpdb->delete( "{$wpdb->get_blog_prefix()}erp_acct_ledgers", [ 'id' => $id ] );
 
         $this->add_log( $item, 'delete' );
 

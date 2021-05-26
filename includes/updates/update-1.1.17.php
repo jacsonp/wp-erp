@@ -10,7 +10,7 @@ function erp_crm_update_table_1_1_17() {
     global $wpdb;
 
     // Add hash column in `erp_crm_contact_subscriber` table
-    $table = $wpdb->prefix . 'erp_crm_contact_subscriber';
+    $table = $wpdb->get_blog_prefix() . 'erp_crm_contact_subscriber';
     $cols  = $wpdb->get_col( "DESC $table" );
 
     if ( ! in_array( 'hash', $cols ) ) {
@@ -46,7 +46,7 @@ function erp_crm_update_table_1_1_17() {
     }
 
     // Change `pay_rate` column's data type in `erp_hr_employees` table
-    $table = $wpdb->prefix . 'erp_hr_employees';
+    $table = $wpdb->get_blog_prefix() . 'erp_hr_employees';
     $cols  = $wpdb->get_col( "DESC $table" );
 
     if ( in_array( 'pay_rate', $cols ) ) {

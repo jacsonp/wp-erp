@@ -13,7 +13,7 @@ function move_ledger_1403_to_expense() {
     // get chart_id for expenses
     $expense_chart_id = $wpdb->get_var(
         $wpdb->prepare(
-            "SELECT id FROM {$wpdb->prefix}erp_acct_chart_of_accounts WHERE slug = %s",
+            "SELECT id FROM {$wpdb->get_blog_prefix()}erp_acct_chart_of_accounts WHERE slug = %s",
             [ 'expense' ]
         )
     );
@@ -22,7 +22,7 @@ function move_ledger_1403_to_expense() {
     if ( null !== $expense_chart_id && $expense_chart_id > 0 ) {
         $wpdb->query(
             $wpdb->prepare(
-                "UPDATE {$wpdb->prefix}erp_acct_ledgers SET chart_id = %d WHERE code = %d",
+                "UPDATE {$wpdb->get_blog_prefix()}erp_acct_ledgers SET chart_id = %d WHERE code = %d",
                 [ $expense_chart_id, 1403 ]
             )
         );

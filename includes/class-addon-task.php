@@ -38,7 +38,7 @@ class AddonTask {
 
     public function erp_hr_leave_holiday_delete_hook_callback( $id ) {
         $result = $this->make_query( 'select', '', [ 'sql' => function ( $wpdb ) use ( $id ) {
-            return "SELECT * FROM {$wpdb->prefix}erp_holidays_indv WHERE holiday_id = {$id}";
+            return "SELECT * FROM {$wpdb->get_blog_prefix()}erp_holidays_indv WHERE holiday_id = {$id}";
         } ] );
 
         $this->make_query( 'delete', 'erp_holidays_indv', [ 'where' => [ 'holiday_id' => $id ] ] );
@@ -72,7 +72,7 @@ class AddonTask {
 
     public function erp_hr_leave_request_pending_hook_callback( $id, $request ) {
         $results = $this->make_query( 'select', '', [ 'sql' => function ( $wpdb ) use ( $id, $request ) {
-            return "SELECT * FROM {$wpdb->prefix}erp_user_leaves WHERE user_id = {$request->user_id} AND request_id = {$id}";
+            return "SELECT * FROM {$wpdb->get_blog_prefix()}erp_user_leaves WHERE user_id = {$request->user_id} AND request_id = {$id}";
         } ] );
 
         $this->make_query( 'delete', 'erp_user_leaves', [ 'where' => [ 'user_id' => $request->user_id, 'request_id' => $id ] ] );
@@ -82,7 +82,7 @@ class AddonTask {
 
     public function erp_hr_leave_request_reject_hook_callback( $id, $request ) {
         $results = $this->make_query( 'select', '', [ 'sql' => function ( $wpdb ) use ( $id, $request ) {
-            return "SELECT * FROM {$wpdb->prefix}erp_user_leaves WHERE user_id = {$request->user_id} AND request_id = {$id}";
+            return "SELECT * FROM {$wpdb->get_blog_prefix()}erp_user_leaves WHERE user_id = {$request->user_id} AND request_id = {$id}";
         } ] );
 
         $this->make_query( 'delete', 'erp_user_leaves', [ 'where' => [ 'user_id' => $request->user_id, 'request_id' => $id ] ] );
@@ -93,7 +93,7 @@ class AddonTask {
     public function make_query( $type, $table, $input_data ) {
         global $wpdb;
 
-        $table = $wpdb->prefix . $table;
+        $table = $wpdb->get_blog_prefix() . $table;
 
         if ( $type == 'insert' ) {
             return $wpdb->insert( $table, $input_data['data'] );
@@ -115,7 +115,7 @@ class AddonTask {
     public function holiday_create( $id, $args ) {
         if ( ! empty( $id ) && ! empty( $args ) ) {
             $results_prev = $this->make_query( 'select', '', [ 'sql' => function ( $wpdb ) use ( $id ) {
-                return "SELECT * FROM {$wpdb->prefix}erp_holidays_indv WHERE holiday_id = {$id}";
+                return "SELECT * FROM {$wpdb->get_blog_prefix()}erp_holidays_indv WHERE holiday_id = {$id}";
             } ] );
 
             $this->make_query( 'delete', 'erp_holidays_indv', [ 'where' => [ 'holiday_id' => $id ] ] );
@@ -137,7 +137,7 @@ class AddonTask {
             }
 
             $results_now = $this->make_query( 'select', '', [ 'sql' => function ( $wpdb ) use ( $id ) {
-                return "SELECT * FROM {$wpdb->prefix}erp_holidays_indv WHERE holiday_id = {$id}";
+                return "SELECT * FROM {$wpdb->get_blog_prefix()}erp_holidays_indv WHERE holiday_id = {$id}";
             } ] );
 
             do_action( 'after_calling_erp_hr_holiday_create_hook_callback', $results_prev, $results_now );

@@ -10,7 +10,7 @@ class Ledger_Map {
     private function __construct() {
         global $wpdb;
 
-        $this->ledgers = $wpdb->get_results( "SELECT slug, id, chart_id, category_id, name, code FROM {$wpdb->prefix}erp_acct_ledgers", OBJECT_K );
+        $this->ledgers = $wpdb->get_results( "SELECT slug, id, chart_id, category_id, name, code FROM {$wpdb->get_blog_prefix()}erp_acct_ledgers", OBJECT_K );
     }
 
     public static function get_instance() {

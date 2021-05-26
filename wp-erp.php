@@ -345,7 +345,7 @@ final class WeDevs_ERP {
     public function setup_database() {
         global $wpdb;
 
-        $wpdb->erp_peoplemeta = $wpdb->prefix . 'erp_peoplemeta';
+        $wpdb->erp_peoplemeta = $wpdb->get_blog_prefix() . 'erp_peoplemeta';
     }
 
     /**

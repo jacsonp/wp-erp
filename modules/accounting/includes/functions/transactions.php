@@ -90,10 +90,10 @@ function erp_acct_get_sales_transactions( $args = [] ) {
                 invoice_receipt.status as pay_status';
         }
 
-        $sql .= " FROM {$wpdb->prefix}erp_acct_voucher_no AS voucher
-            LEFT JOIN {$wpdb->prefix}erp_acct_invoices AS invoice ON invoice.voucher_no = voucher.id
-            LEFT JOIN {$wpdb->prefix}erp_acct_invoice_receipts AS invoice_receipt ON invoice_receipt.voucher_no = voucher.id
-            LEFT JOIN {$wpdb->prefix}erp_acct_invoice_account_details AS invoice_account_detail ON invoice_account_detail.invoice_no = invoice.voucher_no
+        $sql .= " FROM {$wpdb->get_blog_prefix()}erp_acct_voucher_no AS voucher
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_invoices AS invoice ON invoice.voucher_no = voucher.id
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_invoice_receipts AS invoice_receipt ON invoice_receipt.voucher_no = voucher.id
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_invoice_account_details AS invoice_account_detail ON invoice_account_detail.invoice_no = invoice.voucher_no
             {$where} GROUP BY voucher.id ORDER BY voucher.id {$args['order']} {$limit}";
 
         if ( $args['count'] ) {
@@ -136,8 +136,8 @@ function erp_acct_get_sales_chart_status( $args = [] ) {
     }
 
     $sql = "SELECT COUNT(invoice.status) AS sub_total, status_type.type_name
-            FROM {$wpdb->prefix}erp_acct_trn_status_types AS status_type
-            LEFT JOIN {$wpdb->prefix}erp_acct_invoices AS invoice ON invoice.status = status_type.id {$where}
+            FROM {$wpdb->get_blog_prefix()}erp_acct_trn_status_types AS status_type
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_invoices AS invoice ON invoice.status = status_type.id {$where}
             GROUP BY status_type.id HAVING COUNT(invoice.status) > 0 ORDER BY status_type.type_name ASC";
 
     return $wpdb->get_results( $sql, ARRAY_A );
@@ -165,8 +165,8 @@ function erp_acct_get_sales_chart_payment( $args = [] ) {
 
     $sql = "SELECT SUM(credit) as received, SUM(balance) AS outstanding
         FROM ( SELECT invoice.voucher_no, SUM(invoice_acc_detail.credit) AS credit, SUM( invoice_acc_detail.debit - invoice_acc_detail.credit) AS balance
-        FROM {$wpdb->prefix}erp_acct_invoices AS invoice
-        LEFT JOIN {$wpdb->prefix}erp_acct_invoice_account_details AS invoice_acc_detail ON invoice.voucher_no = invoice_acc_detail.invoice_no {$where}
+        FROM {$wpdb->get_blog_prefix()}erp_acct_invoices AS invoice
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_invoice_account_details AS invoice_acc_detail ON invoice.voucher_no = invoice_acc_detail.invoice_no {$where}
         GROUP BY invoice.voucher_no) AS get_amount";
 
     return $wpdb->get_row( $sql, ARRAY_A );
@@ -194,8 +194,8 @@ function erp_acct_get_bill_chart_data( $args = [] ) {
 
     $sql = "SELECT SUM(debit) as paid, ABS(SUM(balance)) AS payable
         FROM ( SELECT bill.voucher_no, SUM(bill_acc_detail.debit) AS debit, SUM( bill_acc_detail.debit - bill_acc_detail.credit) AS balance
-        FROM {$wpdb->prefix}erp_acct_bills AS bill
-        LEFT JOIN {$wpdb->prefix}erp_acct_bill_account_details AS bill_acc_detail ON bill.voucher_no = bill_acc_detail.bill_no {$where}
+        FROM {$wpdb->get_blog_prefix()}erp_acct_bills AS bill
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_bill_account_details AS bill_acc_detail ON bill.voucher_no = bill_acc_detail.bill_no {$where}
         GROUP BY bill.voucher_no) AS get_amount";
 
     return $wpdb->get_row( $sql, ARRAY_A );
@@ -222,8 +222,8 @@ function erp_acct_get_bill_chart_status( $args = [] ) {
     }
 
     $sql = "SELECT status_type.type_name, COUNT(bill.status) AS sub_total
-            FROM {$wpdb->prefix}erp_acct_trn_status_types AS status_type
-            LEFT JOIN {$wpdb->prefix}erp_acct_bills AS bill ON bill.status = status_type.id {$where}
+            FROM {$wpdb->get_blog_prefix()}erp_acct_trn_status_types AS status_type
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_bills AS bill ON bill.status = status_type.id {$where}
             GROUP BY status_type.id
             HAVING sub_total > 0
             ORDER BY status_type.type_name ASC";
@@ -253,8 +253,8 @@ function erp_acct_get_purchase_chart_data( $args = [] ) {
 
     $sql = "SELECT SUM(debit) as paid, ABS(SUM(balance)) AS payable
         FROM ( SELECT purchase.voucher_no, SUM(purchase_acc_detail.debit) AS debit, SUM( purchase_acc_detail.debit - purchase_acc_detail.credit) AS balance
-        FROM {$wpdb->prefix}erp_acct_purchase AS purchase
-        LEFT JOIN {$wpdb->prefix}erp_acct_purchase_account_details AS purchase_acc_detail ON purchase.voucher_no = purchase_acc_detail.purchase_no {$where}
+        FROM {$wpdb->get_blog_prefix()}erp_acct_purchase AS purchase
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_purchase_account_details AS purchase_acc_detail ON purchase.voucher_no = purchase_acc_detail.purchase_no {$where}
         GROUP BY purchase.voucher_no) AS get_amount";
 
     $result = $wpdb->get_row( $sql, ARRAY_A );
@@ -283,8 +283,8 @@ function erp_acct_get_purchase_chart_status( $args = [] ) {
     }
 
     $sql = "SELECT status_type.type_name, COUNT(purchase.status) AS sub_total
-            FROM {$wpdb->prefix}erp_acct_trn_status_types AS status_type
-            LEFT JOIN {$wpdb->prefix}erp_acct_purchase AS purchase ON purchase.status = status_type.id {$where}
+            FROM {$wpdb->get_blog_prefix()}erp_acct_trn_status_types AS status_type
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_purchase AS purchase ON purchase.status = status_type.id {$where}
             GROUP BY status_type.id
             HAVING sub_total > 0
             ORDER BY status_type.type_name ASC";
@@ -316,8 +316,8 @@ function erp_acct_get_expense_chart_data( $args = [] ) {
 
     $sql = "SELECT SUM(balance) as paid, 0 AS payable
         FROM ( SELECT bill.voucher_no, bill_acc_detail.amount AS balance
-        FROM {$wpdb->prefix}erp_acct_expenses AS bill
-        LEFT JOIN {$wpdb->prefix}erp_acct_expense_details AS bill_acc_detail ON bill.voucher_no = bill_acc_detail.trn_no {$where} HAVING balance > 0 ) AS get_amount";
+        FROM {$wpdb->get_blog_prefix()}erp_acct_expenses AS bill
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_expense_details AS bill_acc_detail ON bill.voucher_no = bill_acc_detail.trn_no {$where} HAVING balance > 0 ) AS get_amount";
 
     return $wpdb->get_row( $sql, ARRAY_A );
 }
@@ -343,8 +343,8 @@ function erp_acct_get_expense_chart_status( $args = [] ) {
     }
 
     $sql = "SELECT status_type.type_name, COUNT(bill.status) AS sub_total
-            FROM {$wpdb->prefix}erp_acct_trn_status_types AS status_type
-            LEFT JOIN {$wpdb->prefix}erp_acct_expenses AS bill ON bill.status = status_type.id {$where}
+            FROM {$wpdb->get_blog_prefix()}erp_acct_trn_status_types AS status_type
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_expenses AS bill ON bill.status = status_type.id {$where}
             GROUP BY status_type.id
             HAVING sub_total > 0
             ORDER BY status_type.type_name ASC";
@@ -439,9 +439,9 @@ function erp_acct_get_income_expense_chart_data() {
 function erp_acct_get_monthly_balance_by_chart_id( $start_date, $end_date, $chart_id ) {
     global $wpdb;
 
-    $ledger_details = $wpdb->prefix . 'erp_acct_ledger_details';
-    $ledgers        = $wpdb->prefix . 'erp_acct_ledgers';
-    $chart_of_accs  = $wpdb->prefix . 'erp_acct_chart_of_accounts';
+    $ledger_details = $wpdb->get_blog_prefix() . 'erp_acct_ledger_details';
+    $ledgers        = $wpdb->get_blog_prefix() . 'erp_acct_ledgers';
+    $chart_of_accs  = $wpdb->get_blog_prefix() . 'erp_acct_chart_of_accounts';
 
     $query = "Select Month(ld.trn_date) as month, SUM( ld.debit-ld.credit ) as balance
               From $ledger_details as ld
@@ -526,9 +526,9 @@ function erp_acct_get_daily_balance_by_chart_id( $chart_id, $month = 'current' )
             break;
     }
 
-    $ledger_details = $wpdb->prefix . 'erp_acct_ledger_details';
-    $ledgers        = $wpdb->prefix . 'erp_acct_ledgers';
-    $chart_of_accs  = $wpdb->prefix . 'erp_acct_chart_of_accounts';
+    $ledger_details = $wpdb->get_blog_prefix() . 'erp_acct_ledger_details';
+    $ledgers        = $wpdb->get_blog_prefix() . 'erp_acct_ledgers';
+    $chart_of_accs  = $wpdb->get_blog_prefix() . 'erp_acct_chart_of_accounts';
 
     $query = "Select ld.trn_date as day, SUM( ld.debit-ld.credit ) as balance
               From $ledger_details as ld
@@ -660,12 +660,12 @@ function erp_acct_get_expense_transactions( $args = [] ) {
                 expense.status as expense_status';
         }
 
-        $sql .= " FROM {$wpdb->prefix}erp_acct_voucher_no AS voucher
-            LEFT JOIN {$wpdb->prefix}erp_acct_bills AS bill ON bill.voucher_no = voucher.id
-            LEFT JOIN {$wpdb->prefix}erp_acct_pay_bill AS pay_bill ON pay_bill.voucher_no = voucher.id
-            LEFT JOIN {$wpdb->prefix}erp_acct_bill_account_details AS bill_acct_details ON bill_acct_details.bill_no = bill.voucher_no
-            LEFT JOIN {$wpdb->prefix}erp_acct_expenses AS expense ON expense.voucher_no = voucher.id
-            LEFT JOIN {$wpdb->prefix}erp_acct_expense_checks AS cheque ON cheque.trn_no = voucher.id
+        $sql .= " FROM {$wpdb->get_blog_prefix()}erp_acct_voucher_no AS voucher
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_bills AS bill ON bill.voucher_no = voucher.id
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_pay_bill AS pay_bill ON pay_bill.voucher_no = voucher.id
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_bill_account_details AS bill_acct_details ON bill_acct_details.bill_no = bill.voucher_no
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_expenses AS expense ON expense.voucher_no = voucher.id
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_expense_checks AS cheque ON cheque.trn_no = voucher.id
             {$where}
             GROUP BY voucher.id
             ORDER BY voucher.id {$args['order']} {$limit}";
@@ -776,10 +776,10 @@ function erp_acct_get_purchase_transactions( $args = [] ) {
                 pay_purchase.status AS pay_purchase_status';
         }
 
-        $sql .= " FROM {$wpdb->prefix}erp_acct_voucher_no AS voucher
-            LEFT JOIN {$wpdb->prefix}erp_acct_purchase AS purchase ON purchase.voucher_no = voucher.id
-            LEFT JOIN {$wpdb->prefix}erp_acct_pay_purchase AS pay_purchase ON pay_purchase.voucher_no = voucher.id
-            LEFT JOIN {$wpdb->prefix}erp_acct_purchase_account_details AS purchase_acct_details ON purchase_acct_details.purchase_no = purchase.voucher_no
+        $sql .= " FROM {$wpdb->get_blog_prefix()}erp_acct_voucher_no AS voucher
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_purchase AS purchase ON purchase.voucher_no = voucher.id
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_pay_purchase AS pay_purchase ON pay_purchase.voucher_no = voucher.id
+            LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_purchase_account_details AS purchase_acct_details ON purchase_acct_details.purchase_no = purchase.voucher_no
             {$where} GROUP BY voucher.id ORDER BY voucher.id {$args['order']} {$limit}";
 
         if ( $args['count'] ) {
@@ -822,7 +822,7 @@ function erp_acct_generate_transaction_pdf( $voucher_no ) {
 function erp_acct_generate_transaction_pdfs() {
     global $wpdb;
 
-    $voucher_nos = $wpdb->get_results( "SELECT id, type FROM {$wpdb->prefix}erp_acct_voucher_no", ARRAY_A );
+    $voucher_nos = $wpdb->get_results( "SELECT id, type FROM {$wpdb->get_blog_prefix()}erp_acct_voucher_no", ARRAY_A );
 
     for ( $i = 0; $i < count( $voucher_nos ); $i++ ) {
         if ( 'journal' === $voucher_nos[ $i ]['type'] ) {
@@ -1417,7 +1417,7 @@ function acct_send_email( $receiver, $pdf_file, $email_type, $voucher_no ) {
 function erp_acct_get_transaction_type( $voucher_no ) {
     global $wpdb;
 
-    return $wpdb->get_var( $wpdb->prepare( "SELECT type FROM {$wpdb->prefix}erp_acct_voucher_no WHERE id = %d", $voucher_no ) );
+    return $wpdb->get_var( $wpdb->prepare( "SELECT type FROM {$wpdb->get_blog_prefix()}erp_acct_voucher_no WHERE id = %d", $voucher_no ) );
 }
 
 /**
@@ -1568,7 +1568,7 @@ function erp_acct_insert_data_into_people_trn_details( $transaction, $voucher_no
     $date = ! empty( $transaction['trn_date'] ) ? $transaction['trn_date'] : $transaction['date'];
 
     $wpdb->insert(
-        $wpdb->prefix . 'erp_acct_people_trn_details',
+        $wpdb->get_blog_prefix() . 'erp_acct_people_trn_details',
         [
             'people_id'   => $people_id,
             'voucher_no'  => $voucher_no,
@@ -1593,7 +1593,7 @@ function erp_acct_insert_data_into_people_trn_details( $transaction, $voucher_no
 function erp_acct_update_data_into_people_trn_details( $transaction, $voucher_no ) {
     global $wpdb;
 
-    $wpdb->delete( $wpdb->prefix . 'erp_acct_people_trn_details', [ 'voucher_no' => $voucher_no ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_people_trn_details', [ 'voucher_no' => $voucher_no ] );
 }
 
 /**

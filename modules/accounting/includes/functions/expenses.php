@@ -33,7 +33,7 @@ function erp_acct_get_expenses( $args = [] ) {
 
     $sql  = 'SELECT';
     $sql .= $args['count'] ? ' COUNT( id ) as total_number ' : ' * ';
-    $sql .= "FROM {$wpdb->prefix}erp_acct_expenses WHERE `trn_by_ledger_id` IS NOT NULL ORDER BY {$args['orderby']} {$args['order']} {$limit}";
+    $sql .= "FROM {$wpdb->get_blog_prefix()}erp_acct_expenses WHERE `trn_by_ledger_id` IS NOT NULL ORDER BY {$args['orderby']} {$args['order']} {$limit}";
 
     if ( $args['count'] ) {
         return $wpdb->get_var( $sql );
@@ -76,7 +76,7 @@ function erp_acct_get_expense( $expense_no ) {
     expense.updated_at,
     expense.updated_by
 
-    FROM {$wpdb->prefix}erp_acct_expenses AS expense WHERE expense.voucher_no = {$expense_no}";
+    FROM {$wpdb->get_blog_prefix()}erp_acct_expenses AS expense WHERE expense.voucher_no = {$expense_no}";
 
     $row = $wpdb->get_row( $sql, ARRAY_A );
 
@@ -125,9 +125,9 @@ function erp_acct_get_check( $expense_no ) {
     ledg_detail.debit,
     ledg_detail.credit
 
-    FROM {$wpdb->prefix}erp_acct_expenses AS expense
+    FROM {$wpdb->get_blog_prefix()}erp_acct_expenses AS expense
 
-    LEFT JOIN {$wpdb->prefix}erp_acct_ledger_details AS ledg_detail ON expense.voucher_no = ledg_detail.trn_no
+    LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_ledger_details AS ledg_detail ON expense.voucher_no = ledg_detail.trn_no
 
     WHERE expense.voucher_no = {$expense_no} AND expense.trn_by = 3";
 
@@ -158,9 +158,9 @@ function erp_acct_format_check_line_items( $voucher_no ) {
 
         ledger.name AS ledger_name
 
-        FROM {$wpdb->prefix}erp_acct_expenses AS expense
-        LEFT JOIN {$wpdb->prefix}erp_acct_expense_details AS expense_detail ON expense_detail.trn_no = expense.voucher_no
-        LEFT JOIN {$wpdb->prefix}erp_acct_ledgers AS ledger ON expense_detail.ledger_id = ledger.id
+        FROM {$wpdb->get_blog_prefix()}erp_acct_expenses AS expense
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_expense_details AS expense_detail ON expense_detail.trn_no = expense.voucher_no
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_ledgers AS ledger ON expense_detail.ledger_id = ledger.id
 
         WHERE expense.voucher_no={$voucher_no} AND expense.trn_by = 3",
         $voucher_no
@@ -184,8 +184,8 @@ function erp_acct_format_expense_line_items( $voucher_no ) {
         expense_detail.particulars,
         expense_detail.amount
 
-        FROM {$wpdb->prefix}erp_acct_expenses AS expense
-        LEFT JOIN {$wpdb->prefix}erp_acct_expense_details AS expense_detail ON expense.voucher_no = expense_detail.trn_no LEFT JOIN {$wpdb->prefix}erp_acct_ledgers AS ledger ON expense_detail.ledger_id = ledger.id WHERE expense.voucher_no = %d", $voucher_no
+        FROM {$wpdb->get_blog_prefix()}erp_acct_expenses AS expense
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_expense_details AS expense_detail ON expense.voucher_no = expense_detail.trn_no LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_ledgers AS ledger ON expense_detail.ledger_id = ledger.id WHERE expense.voucher_no = %d", $voucher_no
     );
 
     return $wpdb->get_results( $sql, ARRAY_A );
@@ -220,7 +220,7 @@ function erp_acct_insert_expense( $data ) {
         }
 
         $wpdb->insert(
-            $wpdb->prefix . 'erp_acct_voucher_no',
+            $wpdb->get_blog_prefix() . 'erp_acct_voucher_no',
             [
                 'type'       => $type,
                 'currency'   => $currency,
@@ -243,7 +243,7 @@ function erp_acct_insert_expense( $data ) {
 
 
     $wpdb->insert(
-            $wpdb->prefix . 'erp_acct_expenses',
+            $wpdb->get_blog_prefix() . 'erp_acct_expenses',
         [
             'voucher_no'         => $expense_data['voucher_no'],
             'people_id'          => $expense_data['people_id'],
@@ -272,7 +272,7 @@ function erp_acct_insert_expense( $data ) {
 
         foreach ( $items as $key => $item ) {
             $wpdb->insert(
-                $wpdb->prefix . 'erp_acct_expense_details',
+                $wpdb->get_blog_prefix() . 'erp_acct_expense_details',
                 [
                     'trn_no'      => $voucher_no,
                     'ledger_id'   => $item['ledger_id'],
@@ -382,7 +382,7 @@ function erp_acct_update_expense( $data, $expense_id ) {
         $expense_data = erp_acct_get_formatted_expense_data( $data, $expense_id );
 
         $wpdb->update(
-            $wpdb->prefix . 'erp_acct_expenses',
+            $wpdb->get_blog_prefix() . 'erp_acct_expenses',
             [
                 'people_id'        => $expense_data['people_id'],
                 'people_name'      => $expense_data['people_name'],
@@ -410,16 +410,16 @@ function erp_acct_update_expense( $data, $expense_id ) {
          *? that's why we can't update because the foreach will iterate only 2 times, not 5 times
          *? so, remove previous rows and insert new rows
          */
-        $prev_detail_ids = $wpdb->get_results( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}erp_acct_expense_details WHERE trn_no = %d", $expense_id ), ARRAY_A );
+        $prev_detail_ids = $wpdb->get_results( $wpdb->prepare( "SELECT id FROM {$wpdb->get_blog_prefix()}erp_acct_expense_details WHERE trn_no = %d", $expense_id ), ARRAY_A );
         $prev_detail_ids = implode( ',', array_map( 'absint', $prev_detail_ids ) );
 
-        $wpdb->delete( $wpdb->prefix . 'erp_acct_expense_details', [ 'trn_no' => $expense_id ] );
+        $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_expense_details', [ 'trn_no' => $expense_id ] );
 
         $items = $expense_data['bill_details'];
 
         foreach ( $items as $key => $item ) {
             $wpdb->insert(
-                $wpdb->prefix . 'erp_acct_expense_details',
+                $wpdb->get_blog_prefix() . 'erp_acct_expense_details',
                 [
                     'ledger_id'   => $item['ledger_id'],
                     'particulars' => $item['particulars'],
@@ -471,7 +471,7 @@ function erp_acct_convert_draft_to_expense( $data, $expense_id ) {
         $expense_data = erp_acct_get_formatted_expense_data( $data, $expense_id );
 
         $wpdb->update(
-            $wpdb->prefix . 'erp_acct_expenses',
+            $wpdb->get_blog_prefix() . 'erp_acct_expenses',
             [
                 'people_id'        => $expense_data['people_id'],
                 'people_name'      => $expense_data['people_name'],
@@ -500,16 +500,16 @@ function erp_acct_convert_draft_to_expense( $data, $expense_id ) {
          *? that's why we can't update because the foreach will iterate only 2 times, not 5 times
          *? so, remove previous rows and insert new rows
          */
-        $prev_detail_ids = $wpdb->get_results( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}erp_acct_expense_details WHERE trn_no = %d", $expense_id ), ARRAY_A );
+        $prev_detail_ids = $wpdb->get_results( $wpdb->prepare( "SELECT id FROM {$wpdb->get_blog_prefix()}erp_acct_expense_details WHERE trn_no = %d", $expense_id ), ARRAY_A );
         $prev_detail_ids = implode( ',', array_map( 'absint', $prev_detail_ids ) );
 
-        $wpdb->delete( $wpdb->prefix . 'erp_acct_expense_details', [ 'trn_no' => $expense_id ] );
+        $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_expense_details', [ 'trn_no' => $expense_id ] );
 
         $items = $expense_data['bill_details'];
 
         foreach ( $items as $item ) {
             $wpdb->insert(
-                $wpdb->prefix . 'erp_acct_expense_details',
+                $wpdb->get_blog_prefix() . 'erp_acct_expense_details',
                 [
                     'ledger_id'   => $item['ledger_id'],
                     'particulars' => $item['particulars'],
@@ -591,15 +591,15 @@ function erp_acct_void_expense( $id ) {
     }
 
     $wpdb->update(
-        $wpdb->prefix . 'erp_acct_expenses',
+        $wpdb->get_blog_prefix() . 'erp_acct_expenses',
         [
             'status' => 8,
         ],
         [ 'voucher_no' => $id ]
     );
 
-    $wpdb->delete( $wpdb->prefix . 'erp_acct_ledger_details', [ 'trn_no' => $id ] );
-    $wpdb->delete( $wpdb->prefix . 'erp_acct_expense_details', [ 'trn_no' => $id ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_ledger_details', [ 'trn_no' => $id ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_expense_details', [ 'trn_no' => $id ] );
 
     erp_acct_purge_cache( [ 'list' => 'expense_transaction' ] );
 }
@@ -665,7 +665,7 @@ function erp_acct_insert_expense_data_into_ledger( $expense_data, $item_data = [
 
     // Insert amount in ledger_details
     $wpdb->insert(
-        $wpdb->prefix . 'erp_acct_ledger_details',
+        $wpdb->get_blog_prefix() . 'erp_acct_ledger_details',
         [
             'ledger_id'   => $item_data['ledger_id'],
             'trn_no'      => $expense_data['voucher_no'],
@@ -699,7 +699,7 @@ function erp_acct_update_expense_data_into_ledger( $expense_data, $expense_no, $
 
     // Update amount in ledger_details
     $wpdb->update(
-        $wpdb->prefix . 'erp_acct_ledger_details',
+        $wpdb->get_blog_prefix() . 'erp_acct_ledger_details',
         [
             'ledger_id'   => $item_data['ledger_id'],
             'particulars' => $expense_data['particulars'],
@@ -733,7 +733,7 @@ function erp_acct_insert_source_expense_data_into_ledger( $expense_data ) {
 
     // Insert amount in ledger_details
     $wpdb->insert(
-        $wpdb->prefix . 'erp_acct_ledger_details',
+        $wpdb->get_blog_prefix() . 'erp_acct_ledger_details',
         [
             'ledger_id'   => $expense_data['trn_by_ledger_id'],
             'trn_no'      => $expense_data['voucher_no'],
@@ -771,8 +771,8 @@ function erp_acct_get_check_data_of_expense( $expense_no ) {
     ledg_detail.debit,
     ledg_detail.credit
 
-    FROM {$wpdb->prefix}erp_acct_expense_checks AS cheque
-    LEFT JOIN {$wpdb->prefix}erp_acct_ledger_details AS ledg_detail ON cheque.trn_no = ledg_detail.trn_no
+    FROM {$wpdb->get_blog_prefix()}erp_acct_expense_checks AS cheque
+    LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_ledger_details AS ledg_detail ON cheque.trn_no = ledg_detail.trn_no
 
     WHERE cheque.trn_no = {$expense_no}";
 

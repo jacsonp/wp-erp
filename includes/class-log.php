@@ -64,7 +64,7 @@ class Log {
         $where = $results = [];
 
         $audits    = new \WeDevs\ERP\Admin\Models\Audit_Log();
-        $audit_log = $audits->leftjoin( $wpdb->users, 'created_by', '=', $wpdb->users . '.ID' )->select( $wpdb->users . '.display_name', $wpdb->prefix . 'erp_audit_log.*' );
+        $audit_log = $audits->leftjoin( $wpdb->users, 'created_by', '=', $wpdb->users . '.ID' )->select( $wpdb->users . '.display_name', $wpdb->get_blog_prefix() . 'erp_audit_log.*' );
 
         if ( isset( $args['component'] ) && ! empty( $args['component'] ) ) {
             $audit_log = $audit_log->where( 'component', $args['component'] );
@@ -135,7 +135,7 @@ class Log {
     public function insert_log( $args ) {
         global $wpdb;
 
-        $table = $wpdb->prefix . 'erp_audit_log';
+        $table = $wpdb->get_blog_prefix() . 'erp_audit_log';
 
         $defaults = [
             'component'     => 'HRM',

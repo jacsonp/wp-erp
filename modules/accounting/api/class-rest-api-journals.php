@@ -161,7 +161,7 @@ class Journals_Controller extends \WeDevs\ERP\API\REST_Controller {
     public function get_next_journal_id( $request ) {
         global $wpdb;
 
-        $count      = $wpdb->get_row( 'SELECT count(*) FROM ' . $wpdb->prefix . 'erp_acct_journals', ARRAY_N );
+        $count      = $wpdb->get_row( 'SELECT count(*) FROM ' . $wpdb->get_blog_prefix() . 'erp_acct_journals', ARRAY_N );
         $item['id'] = $count['0'] + 1;
 
         $response = rest_ensure_response( $item );

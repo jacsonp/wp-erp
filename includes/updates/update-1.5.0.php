@@ -19,7 +19,7 @@ function erp_acct_create_accounting_tables() {
     $charset_collate = $charset . ' ' . $collate;
 
     $table_schema = [
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_voucher_no` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_voucher_no` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `type` varchar(255) DEFAULT NULL,
             `currency` varchar(50) DEFAULT NULL,
@@ -31,7 +31,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_bill_account_details` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_bill_account_details` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `bill_no` int(11) DEFAULT NULL,
             `trn_no` int(11) DEFAULT NULL,
@@ -46,7 +46,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_bill_details` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_bill_details` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `trn_no` int(11) DEFAULT NULL,
             `ledger_id` int(11) DEFAULT NULL,
@@ -59,7 +59,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_bills` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_bills` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `voucher_no` int(11) DEFAULT NULL,
             `vendor_id` int(11) DEFAULT NULL,
@@ -79,7 +79,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_chart_of_accounts` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_chart_of_accounts` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `name` varchar(255) DEFAULT NULL,
             `slug` varchar(255) DEFAULT NULL,
@@ -90,7 +90,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_currency_info` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_currency_info` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `name` varchar(255) DEFAULT NULL,
             `sign` varchar(255) DEFAULT NULL,
@@ -101,7 +101,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_invoice_account_details` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_invoice_account_details` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `invoice_no` int(11) DEFAULT NULL,
             `trn_no` int(11) DEFAULT NULL,
@@ -116,7 +116,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_invoice_details` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_invoice_details` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `trn_no` int(11) DEFAULT NULL,
             `product_id` int(11) DEFAULT NULL,
@@ -133,7 +133,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_invoice_receipts` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_invoice_receipts` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `voucher_no` int(11) DEFAULT NULL,
             `customer_id` int(11) DEFAULT NULL,
@@ -152,7 +152,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_invoice_receipts_details` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_invoice_receipts_details` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `voucher_no` int(11) DEFAULT NULL,
             `invoice_no` int(11) DEFAULT NULL,
@@ -164,7 +164,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_invoices` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_invoices` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `voucher_no` int(11) DEFAULT NULL,
             `customer_id` int(11) DEFAULT NULL,
@@ -187,7 +187,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_journal_details` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_journal_details` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `trn_no` int(11) DEFAULT NULL,
             `ledger_id` int(11) DEFAULT NULL,
@@ -201,7 +201,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_journals` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_journals` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `trn_date` date DEFAULT NULL,
             `ref` varchar(255) DEFAULT NULL,
@@ -216,7 +216,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_ledger_categories` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_ledger_categories` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `name` varchar(255) DEFAULT NULL,
             `slug` varchar(255) DEFAULT NULL,
@@ -230,7 +230,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_ledger_details` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_ledger_details` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `ledger_id` int(11) DEFAULT NULL,
             `trn_no` int(11) DEFAULT NULL,
@@ -245,7 +245,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_ledger_settings` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_ledger_settings` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `ledger_id` int(11) DEFAULT NULL,
             `short_code` varchar(255) DEFAULT NULL,
@@ -256,7 +256,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_ledgers` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_ledgers` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `chart_id` int(11) DEFAULT NULL,
             `category_id` int(11) DEFAULT NULL,
@@ -272,7 +272,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_cash_at_banks` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_cash_at_banks` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `ledger_id` int(11) DEFAULT NULL,
             `name` varchar(255) DEFAULT NULL,
@@ -284,7 +284,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_transfer_voucher` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_transfer_voucher` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `voucher_no` int(11) DEFAULT NULL,
             `trn_date` date DEFAULT NULL,
@@ -299,7 +299,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_opening_balances` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_opening_balances` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `financial_year_id` int(11) DEFAULT NULL,
             `chart_id` int(11) DEFAULT NULL,
@@ -314,7 +314,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_financial_years` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_financial_years` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `name` VARCHAR(255) DEFAULT NULL,
             `start_date` date DEFAULT NULL,
@@ -327,7 +327,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_pay_bill` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_pay_bill` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `voucher_no` int(11) DEFAULT NULL,
             `vendor_id` int(11) DEFAULT NULL,
@@ -346,7 +346,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_pay_bill_details` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_pay_bill_details` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `voucher_no` int(11) DEFAULT NULL,
             `bill_no` int(11) DEFAULT NULL,
@@ -358,7 +358,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_pay_purchase` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_pay_purchase` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `voucher_no` int(11) DEFAULT NULL,
             `vendor_id` int(11) DEFAULT NULL,
@@ -377,7 +377,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_pay_purchase_details` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_pay_purchase_details` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `voucher_no` int(11) DEFAULT NULL,
             `purchase_no` int(11) DEFAULT NULL,
@@ -389,7 +389,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_people_account_details` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_people_account_details` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `people_id` varchar(255) DEFAULT NULL,
             `trn_no` int(11) DEFAULT NULL,
@@ -406,7 +406,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_people_trn` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_people_trn` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `people_id` varchar(255) DEFAULT NULL,
             `voucher_no` int(11) DEFAULT NULL,
@@ -422,7 +422,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_product_categories` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_product_categories` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `name` varchar(255) DEFAULT NULL,
             `parent` int(11) NOT NULL,
@@ -433,7 +433,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_product_types` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_product_types` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `name` varchar(255) DEFAULT NULL,
             `slug` varchar(255) DEFAULT NULL,
@@ -444,7 +444,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_products` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_products` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `name` varchar(255) DEFAULT NULL,
             `product_type_id` int(11) DEFAULT NULL,
@@ -460,7 +460,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_product_details` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_product_details` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `product_id` int(11) DEFAULT NULL,
             `trn_no` int(11) DEFAULT NULL,
@@ -473,7 +473,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_purchase` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_purchase` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `voucher_no` int(11) DEFAULT NULL,
             `vendor_id` int(11) DEFAULT NULL,
@@ -493,7 +493,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_purchase_account_details` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_purchase_account_details` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `purchase_no` int(11) DEFAULT NULL,
             `trn_no` int(11) DEFAULT NULL,
@@ -508,7 +508,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_purchase_details` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_purchase_details` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `trn_no` int(11) DEFAULT NULL,
             `product_id` int(11) DEFAULT NULL,
@@ -522,7 +522,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_tax_categories` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_tax_categories` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `name` varchar(100) DEFAULT NULL,
             `description` varchar(255) DEFAULT NULL,
@@ -533,7 +533,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_taxes` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_taxes` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `tax_rate_name` varchar(255) DEFAULT NULL,
             `tax_number` varchar(100) DEFAULT NULL,
@@ -545,7 +545,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_tax_cat_agency` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_tax_cat_agency` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `tax_id` int(11) DEFAULT NULL,
             `component_name` varchar(255) DEFAULT NULL,
@@ -559,7 +559,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_tax_agencies` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_tax_agencies` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `name` varchar(255) DEFAULT NULL,
             `ecommerce_type` varchar(255) DEFAULT NULL,
@@ -570,7 +570,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_tax_pay` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_tax_pay` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `voucher_no` int(11) DEFAULT NULL,
             `trn_date` date DEFAULT NULL,
@@ -587,7 +587,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_tax_agency_details` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_tax_agency_details` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `agency_id` int(11) DEFAULT NULL,
             `trn_no` int(11) DEFAULT NULL,
@@ -602,7 +602,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_invoice_details_tax` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_invoice_details_tax` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `invoice_details_id` int(11) DEFAULT NULL,
             `agency_id` int(11) DEFAULT NULL,
@@ -615,7 +615,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_trn_status_types` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_trn_status_types` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `type_name` varchar(255) DEFAULT NULL,
             `slug` varchar(255) DEFAULT NULL,
@@ -626,7 +626,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_payment_methods` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_payment_methods` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `name` varchar(255) DEFAULT NULL,
             `created_at` date DEFAULT NULL,
@@ -636,7 +636,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_expenses` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_expenses` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `voucher_no` int(11) DEFAULT NULL,
             `people_id` int(11) DEFAULT NULL,
@@ -658,7 +658,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_expense_details` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_expense_details` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `trn_no` int(11) DEFAULT NULL,
             `ledger_id` int(11) DEFAULT NULL,
@@ -671,7 +671,7 @@ function erp_acct_create_accounting_tables() {
             PRIMARY KEY (`id`)
         ) $charset_collate;",
 
-        "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_expense_checks` (
+        "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_expense_checks` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `trn_no` int(11) DEFAULT NULL,
             `check_no` varchar(255) DEFAULT NULL,
@@ -706,7 +706,7 @@ function erp_acct_populate_data() {
     do_action( 'erp_acct_before_new_acct_populate_data' );
 
     // check if people_types exists
-    $sql = "INSERT IGNORE INTO `{$wpdb->prefix}erp_people_types` (`id`, `name`) VALUES (5, 'employee')";
+    $sql = "INSERT IGNORE INTO `{$wpdb->get_blog_prefix()}erp_people_types` (`id`, `name`) VALUES (5, 'employee')";
 
     $wpdb->query( $sql );
 
@@ -716,11 +716,11 @@ function erp_acct_populate_data() {
      */
 
     // insert chart of accounts
-    if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->prefix}erp_acct_chart_of_accounts` LIMIT 0, 1" ) ) {
+    if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->get_blog_prefix()}erp_acct_chart_of_accounts` LIMIT 0, 1" ) ) {
         $charts = [ 'Asset', 'Liability', 'Equity', 'Income', 'Expense', 'Asset & Liability', 'Bank' ];
 
         for ( $i = 0; $i < count( $charts ); $i++ ) {
-            $wpdb->insert( "{$wpdb->prefix}erp_acct_chart_of_accounts", [
+            $wpdb->insert( "{$wpdb->get_blog_prefix()}erp_acct_chart_of_accounts", [
                 'name' => $charts[$i],
                 'slug' => slugify( $charts[$i] ),
             ] );
@@ -728,8 +728,8 @@ function erp_acct_populate_data() {
     }
 
     // insert ledger categories
-    if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->prefix}erp_acct_ledger_categories` LIMIT 0, 1" ) ) {
-        $wpdb->query( "INSERT INTO `{$wpdb->prefix}erp_acct_ledger_categories`
+    if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->get_blog_prefix()}erp_acct_ledger_categories` LIMIT 0, 1" ) ) {
+        $wpdb->query( "INSERT INTO `{$wpdb->get_blog_prefix()}erp_acct_ledger_categories`
                 (id,name,chart_id)
                     VALUES
                 (1,'Current Asset',1),
@@ -751,18 +751,18 @@ function erp_acct_populate_data() {
     }
 
     // insert payment methods
-    if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->prefix}erp_acct_payment_methods` LIMIT 0, 1" ) ) {
+    if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->get_blog_prefix()}erp_acct_payment_methods` LIMIT 0, 1" ) ) {
         $methods = [ 'Cash', 'Bank', 'Check' ];
 
         for ( $i = 0; $i < count( $methods ); $i++ ) {
-            $wpdb->insert( "{$wpdb->prefix}erp_acct_payment_methods", [
+            $wpdb->insert( "{$wpdb->get_blog_prefix()}erp_acct_payment_methods", [
                 'name' => $methods[$i],
             ] );
         }
     }
 
     // insert status types
-    if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->prefix}erp_acct_trn_status_types` LIMIT 0, 1" ) ) {
+    if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->get_blog_prefix()}erp_acct_trn_status_types` LIMIT 0, 1" ) ) {
         $statuses = [
             'Draft',
             'Awaiting Payment',
@@ -775,7 +775,7 @@ function erp_acct_populate_data() {
         ];
 
         for ( $i = 0; $i < count( $statuses ); $i++ ) {
-            $wpdb->insert( "{$wpdb->prefix}erp_acct_trn_status_types", [
+            $wpdb->insert( "{$wpdb->get_blog_prefix()}erp_acct_trn_status_types", [
                 'type_name' => $statuses[$i],
                 'slug'      => slugify( $statuses[$i] ),
             ] );
@@ -783,15 +783,15 @@ function erp_acct_populate_data() {
     }
 
     // insert product types
-    if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->prefix}erp_acct_product_types` LIMIT 0, 1" ) ) {
-        $sql = "INSERT INTO `{$wpdb->prefix}erp_acct_product_types` (`id`, `name`, `slug`)
+    if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->get_blog_prefix()}erp_acct_product_types` LIMIT 0, 1" ) ) {
+        $sql = "INSERT INTO `{$wpdb->get_blog_prefix()}erp_acct_product_types` (`id`, `name`, `slug`)
                     VALUES (1, 'Inventory', 'inventory'), (2, 'Service', 'service')";
 
         $wpdb->query( $sql );
     }
 
     // insert currency info
-    if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->prefix}erp_acct_currency_info` LIMIT 0, 1" ) ) {
+    if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->get_blog_prefix()}erp_acct_currency_info` LIMIT 0, 1" ) ) {
         $currency_symbols = [
             'AED' => 'د.إ',
             'AFN' => '؋',
@@ -958,7 +958,7 @@ function erp_acct_populate_data() {
         ];
 
         foreach ( $currency_symbols as $key => $val ) {
-            $sql = "INSERT INTO `{$wpdb->prefix}erp_acct_currency_info` (`name`, `sign`)
+            $sql = "INSERT INTO `{$wpdb->get_blog_prefix()}erp_acct_currency_info` (`name`, `sign`)
                 VALUES ( '{$key}', '{$val}' )";
 
             $wpdb->query( $sql );
@@ -966,11 +966,11 @@ function erp_acct_populate_data() {
     }
 
     //Insert default financial years
-    if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->prefix}erp_acct_financial_years` LIMIT 0, 1" ) ) {
-        $start_date = $wpdb->get_var( "SELECT MIN(issue_date) FROM {$wpdb->prefix}erp_ac_transactions LIMIT 1" );
+    if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->get_blog_prefix()}erp_acct_financial_years` LIMIT 0, 1" ) ) {
+        $start_date = $wpdb->get_var( "SELECT MIN(issue_date) FROM {$wpdb->get_blog_prefix()}erp_ac_transactions LIMIT 1" );
         $end_date   = date( 'Y-m-d' );
 
-        $wpdb->insert( $wpdb->prefix . 'erp_acct_financial_years', [
+        $wpdb->insert( $wpdb->get_blog_prefix() . 'erp_acct_financial_years', [
             'name'       => date( 'Y' ),
             'start_date' => $start_date,
             'end_date'   => $end_date,
@@ -982,7 +982,7 @@ function erp_acct_populate_data() {
         $next_fy_name  = date( 'Y' ) . '_1';
         $next_fy_start = date( 'Y-m-d', strtotime( ' +1 day' ) );
         $next_fy_end   = date( 'Y-m-d', strtotime( 'Dec 31' ) );
-        $wpdb->insert( $wpdb->prefix . 'erp_acct_financial_years', [
+        $wpdb->insert( $wpdb->get_blog_prefix() . 'erp_acct_financial_years', [
             'name'       => $next_fy_name,
             'start_date' => $next_fy_start,
             'end_date'   => $next_fy_end,
@@ -1026,7 +1026,7 @@ function erp_acct_populate_tax_agencies() {
     //=============================
     // get previous tax info
     //=============================
-    $db_tax_items = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}erp_ac_tax_items", ARRAY_A );
+    $db_tax_items = $wpdb->get_results( "SELECT * FROM {$wpdb->get_blog_prefix()}erp_ac_tax_items", ARRAY_A );
 
     $tax_agencies = array_map( function ( $tax ) {
         return $tax['agency_name'];
@@ -1037,7 +1037,7 @@ function erp_acct_populate_tax_agencies() {
     foreach ( $unique_agencies as $unique_agency ) {
         $wpdb->insert(
         // `erp_acct_tax_agencies`
-            "{$wpdb->prefix}erp_acct_tax_agencies", [
+            "{$wpdb->get_blog_prefix()}erp_acct_tax_agencies", [
                 'name'       => $unique_agency,
                 'created_at' => date( 'Y-m-d' ),
                 'created_by' => 1,
@@ -1046,7 +1046,7 @@ function erp_acct_populate_tax_agencies() {
     }
 
     // name, id ( order is very* *very important here )
-    $db_tax_agencies = $wpdb->get_results( "SELECT name, id FROM {$wpdb->prefix}erp_acct_tax_agencies", OBJECT_K );
+    $db_tax_agencies = $wpdb->get_results( "SELECT name, id FROM {$wpdb->get_blog_prefix()}erp_acct_tax_agencies", OBJECT_K );
 }
 
 /**
@@ -1062,12 +1062,12 @@ function erp_acct_populate_tax_data() {
     //=============================
     // first get previous tax info
     //=============================
-    $taxes = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}erp_ac_tax", ARRAY_A );
+    $taxes = $wpdb->get_results( "SELECT * FROM {$wpdb->get_blog_prefix()}erp_ac_tax", ARRAY_A );
 
     for ( $i = 0; $i < count( $taxes ); $i++ ) {
         $wpdb->insert(
         // `erp_acct_taxes`
-            "{$wpdb->prefix}erp_acct_taxes", [
+            "{$wpdb->get_blog_prefix()}erp_acct_taxes", [
                 'tax_rate_name' => $taxes[$i]['name'],
                 'tax_number'    => $taxes[$i]['tax_number'],
                 'default'       => 0 === $i ? 1 : 0,           // if first record
@@ -1080,7 +1080,7 @@ function erp_acct_populate_tax_data() {
             if ( $taxes[$i]['id'] === $db_tax_item['tax_id'] ) {
                 $wpdb->insert(
                 // `erp_acct_tax_cat_agency`
-                    "{$wpdb->prefix}erp_acct_tax_cat_agency", [
+                    "{$wpdb->get_blog_prefix()}erp_acct_tax_cat_agency", [
                         'tax_id'         => $db_tax_item['tax_id'],
                         'component_name' => $db_tax_item['component_name'],
                         'tax_cat_id'     => null,
@@ -1107,12 +1107,12 @@ function erp_acct_populate_transactions() {
     //=======================================
     // get transaction status types (new)
     //=======================================
-    $status_types = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}erp_acct_trn_status_types", ARRAY_A );
+    $status_types = $wpdb->get_results( "SELECT * FROM {$wpdb->get_blog_prefix()}erp_acct_trn_status_types", ARRAY_A );
 
     //=============================
     // get transactions (old)
     //=============================
-    $transactions = $wpdb->get_results( "SELECT id FROM {$wpdb->prefix}erp_ac_transactions", ARRAY_A );
+    $transactions = $wpdb->get_results( "SELECT id FROM {$wpdb->get_blog_prefix()}erp_ac_transactions", ARRAY_A );
 
     if ( !class_exists( '\WeDevs\ERP\Updates\BP\ERP_ACCT_BG_Process' ) || empty( $bg_process ) ) {
         $bg_process = new \WeDevs\ERP\Updates\BP\ERP_ACCT_BG_Process();
@@ -1152,9 +1152,9 @@ function erp_acct_populate_charts_ledgers() {
 
     $o_ledgers = $wpdb->get_results( "SELECT
         ledger.code, ledger.id, ledger.system, chart_cat.id category_id, chart.id as chart_id, ledger.name
-        FROM {$wpdb->prefix}erp_ac_ledger as ledger
-        LEFT JOIN {$wpdb->prefix}erp_ac_chart_types AS chart_cat ON ledger.type_id = chart_cat.id
-        LEFT JOIN {$wpdb->prefix}erp_ac_chart_classes AS chart ON chart_cat.class_id = chart.id ORDER BY chart_id", ARRAY_A );
+        FROM {$wpdb->get_blog_prefix()}erp_ac_ledger as ledger
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_ac_chart_types AS chart_cat ON ledger.type_id = chart_cat.id
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_ac_chart_classes AS chart ON chart_cat.class_id = chart.id ORDER BY chart_id", ARRAY_A );
 
     if ( ! empty( $o_ledgers ) ) {
         for ( $i = 0; $i < count( $o_ledgers ); $i++ ) {
@@ -1168,9 +1168,9 @@ function erp_acct_populate_charts_ledgers() {
     }
 
     $old_banks = $wpdb->get_results( "SELECT	ledger_id, account_number as code, bank_name as name
-        FROM {$wpdb->prefix}erp_ac_banks WHERE ledger_id <> 7", ARRAY_A );
+        FROM {$wpdb->get_blog_prefix()}erp_ac_banks WHERE ledger_id <> 7", ARRAY_A );
 
-    $wpdb->query( 'TRUNCATE TABLE ' . $wpdb->prefix . 'erp_acct_ledgers' );
+    $wpdb->query( 'TRUNCATE TABLE ' . $wpdb->get_blog_prefix() . 'erp_acct_ledgers' );
 
     foreach ( $old_ledgers as $old_ledger ) {
         if ( '120' == $old_ledger['code'] || '200' == $old_ledger['code'] ) {
@@ -1178,7 +1178,7 @@ function erp_acct_populate_charts_ledgers() {
         }
 
         $wpdb->insert(
-            "{$wpdb->prefix}erp_acct_ledgers",
+            "{$wpdb->get_blog_prefix()}erp_acct_ledgers",
             [
                 'id'       => $old_ledger['id'],
                 'chart_id' => $old_ledger['chart_id'],
@@ -1194,7 +1194,7 @@ function erp_acct_populate_charts_ledgers() {
     foreach ( array_keys( $ledgers ) as $array_key ) {
         foreach ( $ledgers[$array_key] as $value ) {
             $wpdb->insert(
-                "{$wpdb->prefix}erp_acct_ledgers",
+                "{$wpdb->get_blog_prefix()}erp_acct_ledgers",
                 [
                     'chart_id' => erp_acct_get_chart_id_by_slug( $array_key ),
                     'name'     => $value['name'],
@@ -1208,7 +1208,7 @@ function erp_acct_populate_charts_ledgers() {
 
     foreach ( $old_banks as $old_bank ) {
         $wpdb->insert(
-            "{$wpdb->prefix}erp_acct_ledgers",
+            "{$wpdb->get_blog_prefix()}erp_acct_ledgers",
             [
                 'chart_id' => 7,
                 'name'     => $old_bank['name'],
@@ -1225,7 +1225,7 @@ function erp_acct_populate_charts_ledgers() {
 function erp_acct_migrate_balance_sheet() {
     global $wpdb;
 
-    $start_date = $wpdb->get_var( "SELECT MIN(issue_date) FROM {$wpdb->prefix}erp_ac_transactions LIMIT 1" );
+    $start_date = $wpdb->get_var( "SELECT MIN(issue_date) FROM {$wpdb->get_blog_prefix()}erp_ac_transactions LIMIT 1" );
     $end_date   = date( 'Y-m-d' );
 
     $next_fy_start = date( 'Y-m-d', strtotime( ' +1 day' ) );

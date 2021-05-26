@@ -13,10 +13,10 @@ function erp_acct_get_all_currencies( $count = false ) {
     global $wpdb;
 
     if ( $count ) {
-        return $wpdb->get_var( "SELECT count(*) FROM {$wpdb->prefix}erp_acct_currency_info" );
+        return $wpdb->get_var( "SELECT count(*) FROM {$wpdb->get_blog_prefix()}erp_acct_currency_info" );
     }
 
-    return $wpdb->get_results( "SELECT id, name, sign FROM {$wpdb->prefix}erp_acct_currency_info", ARRAY_A );
+    return $wpdb->get_results( "SELECT id, name, sign FROM {$wpdb->get_blog_prefix()}erp_acct_currency_info", ARRAY_A );
 }
 
 /**
@@ -48,7 +48,7 @@ function erp_acct_get_currency_symbol() {
 
     return $wpdb->get_var(
         $wpdb->prepare(
-            "SELECT sign FROM {$wpdb->prefix}erp_acct_currency_info WHERE id = %d",
+            "SELECT sign FROM {$wpdb->get_blog_prefix()}erp_acct_currency_info WHERE id = %d",
             absint( $active_currency_id )
         )
     );

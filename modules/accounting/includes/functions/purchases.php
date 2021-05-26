@@ -33,7 +33,7 @@ function erp_acct_get_purchases( $args = [] ) {
 
     $sql  = 'SELECT';
     $sql .= $args['count'] ? ' COUNT( id ) as total_number ' : ' * ';
-    $sql .= "FROM {$wpdb->prefix}erp_acct_purchase ORDER BY {$args['orderby']} {$args['order']} {$limit}";
+    $sql .= "FROM {$wpdb->get_blog_prefix()}erp_acct_purchase ORDER BY {$args['orderby']} {$args['order']} {$limit}";
 
     if ( $args['count'] ) {
         return $wpdb->get_var( $sql );
@@ -76,9 +76,9 @@ function erp_acct_get_purchase( $purchase_no ) {
     purchase_acc_detail.debit,
     purchase_acc_detail.credit
 
-    FROM {$wpdb->prefix}erp_acct_purchase AS purchase
-    LEFT JOIN {$wpdb->prefix}erp_acct_voucher_no as voucher ON purchase.voucher_no = voucher.id
-    LEFT JOIN {$wpdb->prefix}erp_acct_purchase_account_details AS purchase_acc_detail ON purchase.voucher_no = purchase_acc_detail.trn_no
+    FROM {$wpdb->get_blog_prefix()}erp_acct_purchase AS purchase
+    LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_voucher_no as voucher ON purchase.voucher_no = voucher.id
+    LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_purchase_account_details AS purchase_acc_detail ON purchase.voucher_no = purchase_acc_detail.trn_no
     WHERE purchase.voucher_no = %d",
         $purchase_no
     );
@@ -116,9 +116,9 @@ function erp_acct_format_purchase_line_items( $voucher_no ) {
             product.cost_price,
             product.sale_price as unit_price
 
-        FROM {$wpdb->prefix}erp_acct_purchase AS purchase
-        LEFT JOIN {$wpdb->prefix}erp_acct_purchase_details AS purchase_detail ON purchase.voucher_no = purchase_detail.trn_no
-        LEFT JOIN {$wpdb->prefix}erp_acct_products AS product ON purchase_detail.product_id = product.id
+        FROM {$wpdb->get_blog_prefix()}erp_acct_purchase AS purchase
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_purchase_details AS purchase_detail ON purchase.voucher_no = purchase_detail.trn_no
+        LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_products AS product ON purchase_detail.product_id = product.id
         WHERE purchase.voucher_no = %d",
         $voucher_no
     );
@@ -158,7 +158,7 @@ function erp_acct_insert_purchase( $data ) {
         $wpdb->query( 'START TRANSACTION' );
 
         $wpdb->insert(
-            $wpdb->prefix . 'erp_acct_voucher_no',
+            $wpdb->get_blog_prefix() . 'erp_acct_voucher_no',
             [
                 'type'       => 'purchase',
                 'currency'   => $currency,
@@ -176,7 +176,7 @@ function erp_acct_insert_purchase( $data ) {
         $purchase_data = erp_acct_get_formatted_purchase_data( $data, $voucher_no );
 
         $wpdb->insert(
-            $wpdb->prefix . 'erp_acct_purchase',
+            $wpdb->get_blog_prefix() . 'erp_acct_purchase',
             [
                 'voucher_no'      => $voucher_no,
                 'vendor_id'       => $purchase_data['vendor_id'],
@@ -202,7 +202,7 @@ function erp_acct_insert_purchase( $data ) {
         $items = $data['line_items'];
 
         foreach ( $items as $item ) {
-            $wpdb->insert( $wpdb->prefix . 'erp_acct_purchase_details', [
+            $wpdb->insert( $wpdb->get_blog_prefix() . 'erp_acct_purchase_details', [
                 'trn_no'     => $voucher_no,
                 'product_id' => $item['product_id'],
                 'qty'        => $item['qty'],
@@ -222,7 +222,7 @@ function erp_acct_insert_purchase( $data ) {
             $tax_rate_agency = get_purchase_tax_rate_with_agency( $purchase_data['tax_rate']['id'], $item['tax_cat_id'] );
 
             $wpdb->insert(
-                $wpdb->prefix . 'erp_acct_purchase_details_tax',
+                $wpdb->get_blog_prefix() . 'erp_acct_purchase_details_tax',
                 [
                     'invoice_details_id' => $details_id,
                     'agency_id'          => isset( $purchase_data['tax_rate']['agency_id'] ) ? $purchase_data['tax_rate']['agency_id'] : null,
@@ -247,7 +247,7 @@ function erp_acct_insert_purchase( $data ) {
         }
 
         $wpdb->insert(
-            $wpdb->prefix . 'erp_acct_purchase_account_details',
+            $wpdb->get_blog_prefix() . 'erp_acct_purchase_account_details',
             [
                 'purchase_no' => $purchase_no,
                 'trn_no'      => $voucher_no,
@@ -296,7 +296,7 @@ function get_purchase_tax_rate_with_agency( $tax_id, $tax_cat_id ) {
 
     return $wpdb->get_row(
         $wpdb->prepare(
-            "SELECT agency_id, tax_rate FROM {$wpdb->prefix}erp_acct_tax_cat_agency where tax_id = %d and tax_cat_id = %d",
+            "SELECT agency_id, tax_rate FROM {$wpdb->get_blog_prefix()}erp_acct_tax_cat_agency where tax_id = %d and tax_cat_id = %d",
             absint( $tax_id ),
             absint( $tax_cat_id )
         ),
@@ -338,7 +338,7 @@ function erp_acct_update_purchase( $purchase_data, $purchase_id ) {
             $purchase_data = erp_acct_get_formatted_purchase_data( $purchase_data, $purchase_id );
 
             $wpdb->update(
-                $wpdb->prefix . 'erp_acct_purchase',
+                $wpdb->get_blog_prefix() . 'erp_acct_purchase',
                 [
                     'vendor_id'      => $purchase_data['vendor_id'],
                     'vendor_name'    => $purchase_data['vendor_name'],
@@ -369,19 +369,19 @@ function erp_acct_update_purchase( $purchase_data, $purchase_id ) {
              *? that's why we can't update because the foreach will iterate only 2 times, not 5 times
              *? so, remove previous rows and insert new rows
              */
-            $prev_detail_ids = $wpdb->get_results( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}erp_acct_purchase_details WHERE trn_no = %s", $purchase_id ), ARRAY_A );
+            $prev_detail_ids = $wpdb->get_results( $wpdb->prepare( "SELECT id FROM {$wpdb->get_blog_prefix()}erp_acct_purchase_details WHERE trn_no = %s", $purchase_id ), ARRAY_A );
 
             $prev_detail_ids = implode( ',', array_map( 'absint', $prev_detail_ids ) );
 
-            $wpdb->delete( $wpdb->prefix . 'erp_acct_purchase_details', [ 'trn_no' => $purchase_id ] );
+            $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_purchase_details', [ 'trn_no' => $purchase_id ] );
 
-            $wpdb->query( "DELETE FROM {$wpdb->prefix}erp_acct_purchase_details_tax WHERE invoice_details_id IN($prev_detail_ids)" ); // delete previous tax data
+            $wpdb->query( "DELETE FROM {$wpdb->get_blog_prefix()}erp_acct_purchase_details_tax WHERE invoice_details_id IN($prev_detail_ids)" ); // delete previous tax data
 
             $items = $purchase_data['purchase_details'];
 
             foreach ( $items as $key => $item ) {
                 $wpdb->update(
-                    $wpdb->prefix . 'erp_acct_purchase_details',
+                    $wpdb->get_blog_prefix() . 'erp_acct_purchase_details',
                     [
                         'product_id' => $item['product_id'],
                         'qty'        => $item['qty'],
@@ -405,7 +405,7 @@ function erp_acct_update_purchase( $purchase_data, $purchase_id ) {
                     $tax_rate_agency = get_purchase_tax_rate_with_agency( $purchase_data['tax_rate']['id'], $item['tax_cat_id'] );
 
                     $wpdb->insert(
-                        $wpdb->prefix . 'erp_acct_purchase_details_tax',
+                        $wpdb->get_blog_prefix() . 'erp_acct_purchase_details_tax',
                         [
                             'invoice_details_id' => $details_id,
                             'agency_id'          => isset($purchase_data['tax_rate']['agency_id']) ? $purchase_data['tax_rate']['agency_id'] : null,
@@ -422,10 +422,10 @@ function erp_acct_update_purchase( $purchase_data, $purchase_id ) {
             return erp_acct_get_purchase( $purchase_id );
         } else {
             // disable editing on old bill
-            $wpdb->update( $wpdb->prefix . 'erp_acct_voucher_no', [ 'editable' => 0 ], [ 'id' => $purchase_id ] );
+            $wpdb->update( $wpdb->get_blog_prefix() . 'erp_acct_voucher_no', [ 'editable' => 0 ], [ 'id' => $purchase_id ] );
             // insert contra voucher
             $wpdb->insert(
-                $wpdb->prefix . 'erp_acct_voucher_no',
+                $wpdb->get_blog_prefix() . 'erp_acct_voucher_no',
                 [
                     'type'       => 'purchase',
                     'currency'   => $currency,
@@ -442,7 +442,7 @@ function erp_acct_update_purchase( $purchase_data, $purchase_id ) {
             $old_purchase = erp_acct_get_purchase( $purchase_id );
 
             // insert contra `erp_acct_purchase` (basically a duplication of row)
-            $wpdb->query( $wpdb->prepare( "CREATE TEMPORARY TABLE acct_tmptable SELECT * FROM {$wpdb->prefix}erp_acct_purchase WHERE voucher_no = %d", $purchase_id ) );
+            $wpdb->query( $wpdb->prepare( "CREATE TEMPORARY TABLE acct_tmptable SELECT * FROM {$wpdb->get_blog_prefix()}erp_acct_purchase WHERE voucher_no = %d", $purchase_id ) );
             $wpdb->query(
                 $wpdb->prepare(
                     "UPDATE acct_tmptable SET id = %d, voucher_no = %d, particulars = 'Contra entry for voucher no \#%d', created_at = '%s'",
@@ -452,14 +452,14 @@ function erp_acct_update_purchase( $purchase_data, $purchase_id ) {
                     $data['created_at']
                 )
             );
-            $wpdb->query( "INSERT INTO {$wpdb->prefix}erp_acct_purchase SELECT * FROM acct_tmptable" );
+            $wpdb->query( "INSERT INTO {$wpdb->get_blog_prefix()}erp_acct_purchase SELECT * FROM acct_tmptable" );
             $wpdb->query( 'DROP TABLE acct_tmptable' );
 
             // change purchase status and other things
             $status_closed = 7;
             $wpdb->query(
                 $wpdb->prepare(
-                    "UPDATE {$wpdb->prefix}erp_acct_purchase SET status = %d, updated_at ='%s', updated_by = %d WHERE voucher_no IN (%d, %d)",
+                    "UPDATE {$wpdb->get_blog_prefix()}erp_acct_purchase SET status = %d, updated_at ='%s', updated_by = %d WHERE voucher_no IN (%d, %d)",
                     $status_closed,
                     $data['updated_at'],
                     $user_id,
@@ -472,7 +472,7 @@ function erp_acct_update_purchase( $purchase_data, $purchase_id ) {
 
             foreach ( $items as $key => $item ) {
                 $wpdb->insert(
-                    $wpdb->prefix . 'erp_acct_purchase_details',
+                    $wpdb->get_blog_prefix() . 'erp_acct_purchase_details',
                     [
                         'trn_no'     => $voucher_no,
                         'product_id' => $item['product_id'],
@@ -486,7 +486,7 @@ function erp_acct_update_purchase( $purchase_data, $purchase_id ) {
             }
 
             $wpdb->insert(
-                $wpdb->prefix . 'erp_acct_purchase_account_details',
+                $wpdb->get_blog_prefix() . 'erp_acct_purchase_account_details',
                 [
                     'purchase_no' => $purchase_id,
                     'trn_no'      => $voucher_no,
@@ -541,7 +541,7 @@ function erp_acct_convert_order_to_purchase( $purchase_data, $purchase_id ) {
 
         // erp_acct_purchase
         $wpdb->update(
-            $wpdb->prefix . 'erp_acct_purchase',
+            $wpdb->get_blog_prefix() . 'erp_acct_purchase',
             [
                 'vendor_id'      => $purchase_data['vendor_id'],
                 'vendor_name'    => $purchase_data['vendor_name'],
@@ -563,10 +563,10 @@ function erp_acct_convert_order_to_purchase( $purchase_data, $purchase_id ) {
         );
 
         // remove data from erp_acct_purchase_details
-        $wpdb->delete( $wpdb->prefix . 'erp_acct_purchase_details', [ 'trn_no' => $purchase_id ] );
+        $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_purchase_details', [ 'trn_no' => $purchase_id ] );
 
         foreach ( $purchase_data['line_items'] as $item ) {
-            $wpdb->insert( $wpdb->prefix . 'erp_acct_purchase_details', [
+            $wpdb->insert( $wpdb->get_blog_prefix() . 'erp_acct_purchase_details', [
                 'trn_no'     => $purchase_id,
                 'product_id' => $item['product_id'],
                 'qty'        => $item['qty'],
@@ -577,7 +577,7 @@ function erp_acct_convert_order_to_purchase( $purchase_data, $purchase_id ) {
             ] );
         }
 
-        $wpdb->insert( $wpdb->prefix . 'erp_acct_purchase_account_details', [
+        $wpdb->insert( $wpdb->get_blog_prefix() . 'erp_acct_purchase_account_details', [
             'purchase_no' => $purchase_id,
             'trn_no'      => $purchase_id,
             'trn_date'    => $purchase_data['trn_date'],
@@ -627,15 +627,15 @@ function erp_acct_void_purchase( $id ) {
     }
 
     $wpdb->update(
-        $wpdb->prefix . 'erp_acct_purchase',
+        $wpdb->get_blog_prefix() . 'erp_acct_purchase',
         [
             'status' => 8,
         ],
         [ 'voucher_no' => $id ]
     );
 
-    $wpdb->delete( $wpdb->prefix . 'erp_acct_ledger_details', [ 'trn_no' => $id ] );
-    $wpdb->delete( $wpdb->prefix . 'erp_acct_purchase_account_details', [ 'purchase_no' => $id ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_ledger_details', [ 'trn_no' => $id ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_purchase_account_details', [ 'purchase_no' => $id ] );
 
     erp_acct_purge_cache( [ 'list' => 'purchase_transaction' ] );
 }
@@ -700,7 +700,7 @@ function erp_acct_insert_purchase_data_into_ledger( $purchase_data ) {
 
     // Insert amount in ledger_details
     $wpdb->insert(
-        $wpdb->prefix . 'erp_acct_ledger_details',
+        $wpdb->get_blog_prefix() . 'erp_acct_ledger_details',
         [
             'ledger_id'   => $purchase_ledger_id,
             'trn_no'      => $purchase_data['voucher_no'],
@@ -724,7 +724,7 @@ function erp_acct_insert_purchase_data_into_ledger( $purchase_data ) {
 
         // Insert amount in ledger_details
         $wpdb->insert(
-            $wpdb->prefix . 'erp_acct_ledger_details',
+            $wpdb->get_blog_prefix() . 'erp_acct_ledger_details',
             [
                 'ledger_id'   => $purchase_vat_ledger_id,
                 'trn_no'      => $purchase_data['voucher_no'],
@@ -761,7 +761,7 @@ function erp_acct_update_purchase_data_into_ledger( $purchase_data, $purchase_no
     }
 
     // insert contra `erp_acct_ledger_details`
-    $wpdb->update( $wpdb->prefix . 'erp_acct_ledger_details', [
+    $wpdb->update( $wpdb->get_blog_prefix() . 'erp_acct_ledger_details', [
         'ledger_id'   => $ledger_id,
         'particulars' => ! empty( $purchase_data['particulars'] ) ? $purchase_data['particulars'] : '',
         'credit'      => $purchase_data['amount'],
@@ -783,7 +783,7 @@ function erp_acct_update_purchase_data_into_ledger( $purchase_data, $purchase_no
 function erp_acct_get_purchase_count() {
     global $wpdb;
 
-    $row = $wpdb->get_row( 'SELECT COUNT(*) as count FROM ' . $wpdb->prefix . 'erp_acct_purchase' );
+    $row = $wpdb->get_row( 'SELECT COUNT(*) as count FROM ' . $wpdb->get_blog_prefix() . 'erp_acct_purchase' );
 
     return $row->count;
 }
@@ -813,8 +813,8 @@ function erp_acct_get_due_purchases_by_vendor( $args ) {
         $limit = "LIMIT {$args['number']} OFFSET {$args['offset']}";
     }
 
-    $purchases            = "{$wpdb->prefix}erp_acct_purchase";
-    $purchase_act_details = "{$wpdb->prefix}erp_acct_purchase_account_details";
+    $purchases            = "{$wpdb->get_blog_prefix()}erp_acct_purchase";
+    $purchase_act_details = "{$wpdb->get_blog_prefix()}erp_acct_purchase_account_details";
     $items                = $args['count'] ? ' COUNT( id ) as total_number ' : ' * ';
 
     $query = $wpdb->prepare(
@@ -850,7 +850,7 @@ function erp_acct_get_due_purchases_by_vendor( $args ) {
 function erp_acct_get_purchase_due( $purchase_no ) {
     global $wpdb;
 
-    $result = $wpdb->get_row( $wpdb->prepare( "SELECT purchase_no, SUM( debit - credit) as due FROM {$wpdb->prefix}erp_acct_purchase_account_details WHERE purchase_no = %d GROUP BY purchase_no", $purchase_no ), ARRAY_A );
+    $result = $wpdb->get_row( $wpdb->prepare( "SELECT purchase_no, SUM( debit - credit) as due FROM {$wpdb->get_blog_prefix()}erp_acct_purchase_account_details WHERE purchase_no = %d GROUP BY purchase_no", $purchase_no ), ARRAY_A );
 
     return $result['due'];
 }

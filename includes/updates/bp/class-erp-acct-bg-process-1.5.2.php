@@ -32,7 +32,7 @@ class ERP_ACCT_BG_Process_People_Trn extends WP_Background_Process {
         $voucher_no   = $voucher['id'];
         $voucher_type = $voucher['type'];
 
-        $exists = $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}erp_acct_people_trn_details WHERE voucher_no = %d", $voucher_no );
+        $exists = $wpdb->prepare( "SELECT id FROM {$wpdb->get_blog_prefix()}erp_acct_people_trn_details WHERE voucher_no = %d", $voucher_no );
 
         if ( $wpdb->get_var( $exists ) ) {
             return false;
@@ -46,8 +46,8 @@ class ERP_ACCT_BG_Process_People_Trn extends WP_Background_Process {
         if ( 'invoice' === $voucher_type ) {
             $invoice = $wpdb->get_row(
                 $wpdb->prepare( "SELECT invoice.customer_id, invoice.trn_date, invoice.particulars, invoice.created_at, invoice_account.debit
-                    FROM {$wpdb->prefix}erp_acct_invoices AS invoice
-                    LEFT JOIN {$wpdb->prefix}erp_acct_invoice_account_details AS invoice_account
+                    FROM {$wpdb->get_blog_prefix()}erp_acct_invoices AS invoice
+                    LEFT JOIN {$wpdb->get_blog_prefix()}erp_acct_invoice_account_details AS invoice_account
                     ON invoice.voucher_no = invoice_account.trn_no
                     WHERE invoice.voucher_no = %d AND (invoice.status <> %d AND invoice.status <> %d)",
                 $voucher_no, $draft, $void ), ARRAY_A
@@ -55,7 +55,7 @@ class ERP_ACCT_BG_Process_People_Trn extends WP_Background_Process {
 
             $wpdb->insert(
                 // `erp_acct_people_trn_details`
-                "{$wpdb->prefix}erp_acct_people_trn_details", [
+                "{$wpdb->get_blog_prefix()}erp_acct_people_trn_details", [
                     'people_id'   => $invoice['customer_id'],
                     'voucher_no'  => $voucher_no,
                     'trn_date'    => $invoice['trn_date'],
@@ -68,13 +68,13 @@ class ERP_ACCT_BG_Process_People_Trn extends WP_Background_Process {
 
         elseif ( 'payment' === $voucher_type ) {
             $payment = $wpdb->get_row(
-                $wpdb->prepare( "SELECT payment.customer_id, payment.trn_date, payment.amount, payment.particulars, payment.created_at FROM {$wpdb->prefix}erp_acct_invoice_receipts AS payment WHERE payment.voucher_no = %d AND (payment.status <> %d AND payment.status <> %d)",
+                $wpdb->prepare( "SELECT payment.customer_id, payment.trn_date, payment.amount, payment.particulars, payment.created_at FROM {$wpdb->get_blog_prefix()}erp_acct_invoice_receipts AS payment WHERE payment.voucher_no = %d AND (payment.status <> %d AND payment.status <> %d)",
                 $voucher_no, $draft, $void ), ARRAY_A
             );
 
             $wpdb->insert(
                 // `erp_acct_people_trn_details`
-                "{$wpdb->prefix}erp_acct_people_trn_details", [
+                "{$wpdb->get_blog_prefix()}erp_acct_people_trn_details", [
                     'people_id'   => $payment['customer_id'],
                     'voucher_no'  => $voucher_no,
                     'trn_date'    => $payment['trn_date'],
@@ -87,13 +87,13 @@ class ERP_ACCT_BG_Process_People_Trn extends WP_Background_Process {
 
         elseif ( 'expense' === $voucher_type || 'check' === $voucher_type ) {
             $expense = $wpdb->get_row(
-                $wpdb->prepare( "SELECT expense.people_id, expense.trn_date, expense.amount, expense.particulars, expense.created_at FROM {$wpdb->prefix}erp_acct_expenses AS expense WHERE expense.voucher_no = %d AND (expense.status <> %d AND expense.status <> %d)",
+                $wpdb->prepare( "SELECT expense.people_id, expense.trn_date, expense.amount, expense.particulars, expense.created_at FROM {$wpdb->get_blog_prefix()}erp_acct_expenses AS expense WHERE expense.voucher_no = %d AND (expense.status <> %d AND expense.status <> %d)",
                 $voucher_no, $draft, $void ), ARRAY_A
             );
 
             $wpdb->insert(
                 // `erp_acct_people_trn_details`
-                "{$wpdb->prefix}erp_acct_people_trn_details", [
+                "{$wpdb->get_blog_prefix()}erp_acct_people_trn_details", [
                     'people_id'   => $expense['people_id'],
                     'voucher_no'  => $voucher_no,
                     'trn_date'    => $expense['trn_date'],
@@ -106,13 +106,13 @@ class ERP_ACCT_BG_Process_People_Trn extends WP_Background_Process {
 
         elseif ( 'bill' === $voucher_type ) {
             $bill = $wpdb->get_row(
-                $wpdb->prepare( "SELECT bill.vendor_id, bill.trn_date, bill.amount, bill.particulars, bill.created_at FROM {$wpdb->prefix}erp_acct_bills AS bill WHERE bill.voucher_no = %d AND (bill.status <> %d AND bill.status <> %d)",
+                $wpdb->prepare( "SELECT bill.vendor_id, bill.trn_date, bill.amount, bill.particulars, bill.created_at FROM {$wpdb->get_blog_prefix()}erp_acct_bills AS bill WHERE bill.voucher_no = %d AND (bill.status <> %d AND bill.status <> %d)",
                 $voucher_no, $draft, $void ), ARRAY_A
             );
 
             $wpdb->insert(
                 // `erp_acct_people_trn_details`
-                "{$wpdb->prefix}erp_acct_people_trn_details", [
+                "{$wpdb->get_blog_prefix()}erp_acct_people_trn_details", [
                     'people_id'   => $bill['vendor_id'],
                     'voucher_no'  => $voucher_no,
                     'trn_date'    => $bill['trn_date'],
@@ -125,13 +125,13 @@ class ERP_ACCT_BG_Process_People_Trn extends WP_Background_Process {
 
         elseif ( 'pay_bill' === $voucher_type ) {
             $pay_bill = $wpdb->get_row(
-                $wpdb->prepare( "SELECT pay_bill.vendor_id, pay_bill.trn_date, pay_bill.amount, pay_bill.particulars, pay_bill.created_at FROM {$wpdb->prefix}erp_acct_pay_bill AS pay_bill WHERE pay_bill.voucher_no = %d AND (pay_bill.status <> %d AND pay_bill.status <> %d)",
+                $wpdb->prepare( "SELECT pay_bill.vendor_id, pay_bill.trn_date, pay_bill.amount, pay_bill.particulars, pay_bill.created_at FROM {$wpdb->get_blog_prefix()}erp_acct_pay_bill AS pay_bill WHERE pay_bill.voucher_no = %d AND (pay_bill.status <> %d AND pay_bill.status <> %d)",
                 $voucher_no, $draft, $void ), ARRAY_A
             );
 
             $wpdb->insert(
                 // `erp_acct_people_trn_details`
-                "{$wpdb->prefix}erp_acct_people_trn_details", [
+                "{$wpdb->get_blog_prefix()}erp_acct_people_trn_details", [
                     'people_id'   => $pay_bill['vendor_id'],
                     'voucher_no'  => $voucher_no,
                     'trn_date'    => $pay_bill['trn_date'],
@@ -144,13 +144,13 @@ class ERP_ACCT_BG_Process_People_Trn extends WP_Background_Process {
 
         elseif ( 'purchase' === $voucher_type ) {
             $purchase = $wpdb->get_row(
-                $wpdb->prepare( "SELECT purchase.vendor_id, purchase.trn_date, purchase.amount, purchase.particulars, purchase.created_at FROM {$wpdb->prefix}erp_acct_purchase AS purchase WHERE purchase.voucher_no = %d AND (purchase.status <> %d AND purchase.status <> %d)",
+                $wpdb->prepare( "SELECT purchase.vendor_id, purchase.trn_date, purchase.amount, purchase.particulars, purchase.created_at FROM {$wpdb->get_blog_prefix()}erp_acct_purchase AS purchase WHERE purchase.voucher_no = %d AND (purchase.status <> %d AND purchase.status <> %d)",
                 $voucher_no, $draft, $void ), ARRAY_A
             );
 
             $wpdb->insert(
                 // `erp_acct_people_trn_details`
-                "{$wpdb->prefix}erp_acct_people_trn_details", [
+                "{$wpdb->get_blog_prefix()}erp_acct_people_trn_details", [
                     'people_id'   => $purchase['vendor_id'],
                     'voucher_no'  => $voucher_no,
                     'trn_date'    => $purchase['trn_date'],
@@ -163,13 +163,13 @@ class ERP_ACCT_BG_Process_People_Trn extends WP_Background_Process {
 
         elseif ( 'pay_purchase' === $voucher_type ) {
             $pay_purchase = $wpdb->get_row(
-                $wpdb->prepare( "SELECT pay_purchase.vendor_id, pay_purchase.trn_date, pay_purchase.amount, pay_purchase.particulars, pay_purchase.created_at FROM {$wpdb->prefix}erp_acct_pay_purchase AS pay_purchase WHERE pay_purchase.voucher_no = %d AND (pay_purchase.status <> %d AND pay_purchase.status <> %d)",
+                $wpdb->prepare( "SELECT pay_purchase.vendor_id, pay_purchase.trn_date, pay_purchase.amount, pay_purchase.particulars, pay_purchase.created_at FROM {$wpdb->get_blog_prefix()}erp_acct_pay_purchase AS pay_purchase WHERE pay_purchase.voucher_no = %d AND (pay_purchase.status <> %d AND pay_purchase.status <> %d)",
                 $voucher_no, $draft, $void ), ARRAY_A
             );
 
             $wpdb->insert(
                 // `erp_acct_people_trn_details`
-                "{$wpdb->prefix}erp_acct_people_trn_details", [
+                "{$wpdb->get_blog_prefix()}erp_acct_people_trn_details", [
                     'people_id'   => $pay_purchase['vendor_id'],
                     'voucher_no'  => $voucher_no,
                     'trn_date'    => $pay_purchase['trn_date'],
@@ -182,7 +182,7 @@ class ERP_ACCT_BG_Process_People_Trn extends WP_Background_Process {
 
         elseif ( 'people_trn' === $voucher_type ) {
             $people_trn = $wpdb->get_row(
-                $wpdb->prepare( "SELECT people_trn.people_id, people_trn.trn_date, people_trn.amount, people_trn.particulars, people_trn.created_at, people_trn.voucher_type FROM {$wpdb->prefix}erp_acct_people_trn AS people_trn WHERE people_trn.voucher_no = %d",
+                $wpdb->prepare( "SELECT people_trn.people_id, people_trn.trn_date, people_trn.amount, people_trn.particulars, people_trn.created_at, people_trn.voucher_type FROM {$wpdb->get_blog_prefix()}erp_acct_people_trn AS people_trn WHERE people_trn.voucher_no = %d",
                 $voucher_no ), ARRAY_A
             );
 
@@ -196,7 +196,7 @@ class ERP_ACCT_BG_Process_People_Trn extends WP_Background_Process {
 
             $wpdb->insert(
                 // `erp_acct_people_trn_details`
-                "{$wpdb->prefix}erp_acct_people_trn_details", [
+                "{$wpdb->get_blog_prefix()}erp_acct_people_trn_details", [
                     'people_id'   => $people_trn['people_id'],
                     'voucher_no'  => $voucher_no,
                     'trn_date'    => $people_trn['trn_date'],

@@ -184,7 +184,7 @@ function erp_hr_can_apply_sandwich_rules_between_dates( $start_date, $end_date, 
         $last_leave_request = $wpdb->get_row(
             $wpdb->prepare(
                 "SELECT rq.start_date, rq.end_date, rq.last_status
-                        FROM {$wpdb->prefix}erp_hr_leave_requests as rq
+                        FROM {$wpdb->get_blog_prefix()}erp_hr_leave_requests as rq
                         where rq.user_id = %d and rq.end_date < %d order by rq.id DESC limit 1",
                 [ $user_id, strtotime( $start_date ) ]
             ),
@@ -224,7 +224,7 @@ function erp_hr_can_apply_sandwich_rules_between_dates( $start_date, $end_date, 
         $next_leave_request = $wpdb->get_row(
             $wpdb->prepare(
                 "SELECT rq.start_date, rq.end_date, rq.last_status
-                        FROM {$wpdb->prefix}erp_hr_leave_requests as rq
+                        FROM {$wpdb->get_blog_prefix()}erp_hr_leave_requests as rq
                         where rq.user_id = %d and rq.start_date > %d order by rq.id DESC limit 1",
                 [ $user_id, strtotime( $end_date ) ]
             ),

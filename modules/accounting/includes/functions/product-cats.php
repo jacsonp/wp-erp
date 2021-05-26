@@ -16,7 +16,7 @@ function erp_acct_get_all_product_cats() {
     $categories = wp_cache_get( $cache_key, 'erp-accounting' );
 
     if ( false === $categories ) {
-        $categories = $wpdb->get_results( 'SELECT * FROM ' . $wpdb->prefix . 'erp_acct_product_categories', ARRAY_A );
+        $categories = $wpdb->get_results( 'SELECT * FROM ' . $wpdb->get_blog_prefix() . 'erp_acct_product_categories', ARRAY_A );
 
         wp_cache_set( $cache_key, $categories, 'erp-accounting' );
     }
@@ -34,7 +34,7 @@ function erp_acct_get_all_product_cats() {
 function erp_acct_get_product_cat( $product_cat_id ) {
     global $wpdb;
 
-    $row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}erp_acct_product_categories WHERE id = %d GROUP BY parent", $product_cat_id ), ARRAY_A );
+    $row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->get_blog_prefix()}erp_acct_product_categories WHERE id = %d GROUP BY parent", $product_cat_id ), ARRAY_A );
 
     return $row;
 }
@@ -58,7 +58,7 @@ function erp_acct_insert_product_cat( $data ) {
         $product_cat_data = erp_acct_get_formatted_product_cat_data( $data );
 
     $wpdb->insert(
-        $wpdb->prefix . 'erp_acct_product_categories',
+        $wpdb->get_blog_prefix() . 'erp_acct_product_categories',
             [
             'name'       => $product_cat_data['name'],
             'parent'     => isset($product_cat_data['parent']['id']) ? $product_cat_data['parent']['id'] : 0,
@@ -102,7 +102,7 @@ function erp_acct_update_product_cat( $data, $id ) {
         $product_cat_data = erp_acct_get_formatted_product_cat_data( $data );
 
         $wpdb->update(
-            $wpdb->prefix . 'erp_acct_product_categories',
+            $wpdb->get_blog_prefix() . 'erp_acct_product_categories',
             [
                 'name'       => $product_cat_data['name'],
                 'parent'     => $product_cat_data['parent'],
@@ -157,7 +157,7 @@ function erp_acct_get_formatted_product_cat_data( $data ) {
 function erp_acct_delete_product_cat( $product_cat_id ) {
     global $wpdb;
 
-    $wpdb->delete( $wpdb->prefix . 'erp_acct_product_categories', [ 'id' => $product_cat_id ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_product_categories', [ 'id' => $product_cat_id ] );
 
     erp_acct_purge_cache( ['key' => 'erp-get-product-categories'] );
 }

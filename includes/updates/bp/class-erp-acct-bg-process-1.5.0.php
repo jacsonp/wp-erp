@@ -35,18 +35,18 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
     protected function task( $trn_id ) {
         global $wpdb;
 
-        $exists = $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}erp_acct_voucher_no WHERE id = %d", $trn_id );
+        $exists = $wpdb->prepare( "SELECT id FROM {$wpdb->get_blog_prefix()}erp_acct_voucher_no WHERE id = %d", $trn_id );
 
         if ( $wpdb->get_var( $exists ) ) {
             return false;
         }
 
         $trn = $wpdb->get_row(
-                $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}erp_ac_transactions WHERE id = %d", $trn_id ),
+                $wpdb->prepare( "SELECT * FROM {$wpdb->get_blog_prefix()}erp_ac_transactions WHERE id = %d", $trn_id ),
             ARRAY_A );
 
         $product_ids = $wpdb->get_results(
-            $wpdb->prepare( "SELECT product_id FROM  {$wpdb->prefix}erp_ac_transaction_items where transaction_id = %d AND product_id <> 0", $trn_id ),
+            $wpdb->prepare( "SELECT product_id FROM  {$wpdb->get_blog_prefix()}erp_ac_transaction_items where transaction_id = %d AND product_id <> 0", $trn_id ),
         ARRAY_A );
 
         $has_inventory = ! empty( $product_ids ) ? true : false;
@@ -71,7 +71,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
         if ( 'invoice' === $trn['form_type'] ) {
             $wpdb->insert(
                 // `erp_acct_voucher_no`
-                "{$wpdb->prefix}erp_acct_voucher_no", [
+                "{$wpdb->get_blog_prefix()}erp_acct_voucher_no", [
                     'id'         => $trn_id,
                     'type'       => 'invoice',
                     'currency'   => $this->get_currecny_id( $trn['currency'] ),
@@ -82,7 +82,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
 
             $wpdb->insert(
                 // `erp_acct_invoices`
-                "{$wpdb->prefix}erp_acct_invoices", [
+                "{$wpdb->get_blog_prefix()}erp_acct_invoices", [
                     'voucher_no'      => $trn_id,
                     'customer_id'     => $trn['user_id'],
                     'customer_name'   => $people->first_name . ' ' . $people->last_name,
@@ -110,7 +110,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
         elseif ( 'payment' === $trn['form_type'] ) {
             $wpdb->insert(
                 // `erp_acct_voucher_no`
-                "{$wpdb->prefix}erp_acct_voucher_no", [
+                "{$wpdb->get_blog_prefix()}erp_acct_voucher_no", [
                     'id'         => $trn_id,
                     'type'       => 'payment',
                     'currency'   => $this->get_currecny_id( $trn['currency'] ),
@@ -121,7 +121,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
 
             $wpdb->insert(
                 // `erp_acct_invoice_receipts`
-                "{$wpdb->prefix}erp_acct_invoice_receipts", [
+                "{$wpdb->get_blog_prefix()}erp_acct_invoice_receipts", [
                     'voucher_no'       => $trn_id,
                     'customer_id'      => $trn['user_id'],
                     'customer_name'    => $people->first_name . ' ' . $people->last_name,
@@ -145,7 +145,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
         elseif ( 'payment_voucher' === $trn['form_type'] ) {
             $wpdb->insert(
                 // `erp_acct_voucher_no`
-                "{$wpdb->prefix}erp_acct_voucher_no", [
+                "{$wpdb->get_blog_prefix()}erp_acct_voucher_no", [
                     'id'         => $trn_id,
                     'type'       => 'pay_purchase',
                     'currency'   => $this->get_currecny_id( $trn['currency'] ),
@@ -156,7 +156,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
 
             $wpdb->insert(
                 // `erp_acct_pay_purchase`
-                "{$wpdb->prefix}erp_acct_pay_purchase", [
+                "{$wpdb->get_blog_prefix()}erp_acct_pay_purchase", [
                     'voucher_no'       => $trn_id,
                     'vendor_id'        => $trn['user_id'],
                     'vendor_name'      => $people->first_name . ' ' . $people->last_name,
@@ -180,7 +180,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
         elseif ( 'vendor_credit' === $trn['form_type'] ) {
             $wpdb->insert(
                 // `erp_acct_voucher_no`
-                "{$wpdb->prefix}erp_acct_voucher_no", [
+                "{$wpdb->get_blog_prefix()}erp_acct_voucher_no", [
                     'id'         => $trn_id,
                     'type'       => 'purchase',
                     'currency'   => $this->get_currecny_id( $trn['currency'] ),
@@ -191,7 +191,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
 
             $wpdb->insert(
                 // `erp_acct_purchase`
-                "{$wpdb->prefix}erp_acct_purchase", [
+                "{$wpdb->get_blog_prefix()}erp_acct_purchase", [
                     'voucher_no'     => $trn_id,
                     'vendor_id'      => $trn['user_id'],
                     'vendor_name'    => $people->first_name . ' ' . $people->last_name,
@@ -216,7 +216,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
         elseif ( 'bank' === $trn['form_type'] ) {
             $wpdb->insert(
                 // `erp_acct_voucher_no`
-                "{$wpdb->prefix}erp_acct_voucher_no", [
+                "{$wpdb->get_blog_prefix()}erp_acct_voucher_no", [
                     'id'         => $trn_id,
                     'type'       => 'transfer_voucher',
                     'currency'   => $this->get_currecny_id( $trn['currency'] ),
@@ -233,7 +233,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
             $trn['currency'] = empty( $trn['currency'] ) ? 'USD' : $trn['currency'];
 
             $wpdb->insert(
-                "{$wpdb->prefix}erp_acct_voucher_no", [
+                "{$wpdb->get_blog_prefix()}erp_acct_voucher_no", [
                     'id'         => $trn_id,
                     'type'       => $trn['type'],
                     'currency'   => $this->get_currecny_id( $trn['currency'] ),
@@ -245,7 +245,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
 
             // insert into erp_acct_journals table
             $wpdb->insert(
-                $wpdb->prefix . 'erp_acct_journals',
+                $wpdb->get_blog_prefix() . 'erp_acct_journals',
                 [
                     'voucher_no'     => $voucher_no,
                     'trn_date'       => $this->get_created_at( $trn['created_at'] ),
@@ -258,13 +258,13 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
 
             // get data from wp_erp_ac_journals
             $items = $wpdb->get_results(
-                $wpdb->prepare( "SELECT * FROM  {$wpdb->prefix}erp_ac_journals where transaction_id = %d", $trn_id ),
+                $wpdb->prepare( "SELECT * FROM  {$wpdb->get_blog_prefix()}erp_ac_journals where transaction_id = %d", $trn_id ),
                 ARRAY_A );
 
             // insert line items
             foreach ( $items as $key => $item ) {
                 $wpdb->insert(
-                    $wpdb->prefix . 'erp_acct_journal_details',
+                    $wpdb->get_blog_prefix() . 'erp_acct_journal_details',
                     [
                         'trn_no'      => $voucher_no,
                         'ledger_id'   => $item['ledger_id'],
@@ -277,7 +277,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
                 );
 
                 $wpdb->insert(
-                    $wpdb->prefix . 'erp_acct_ledger_details',
+                    $wpdb->get_blog_prefix() . 'erp_acct_ledger_details',
                     [
                         'ledger_id'   => $item['ledger_id'],
                         'trn_no'      => $voucher_no,
@@ -325,7 +325,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
             //=============================
             // get currencies info (new)
             //=============================
-            $this->currencies = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}erp_acct_currency_info", ARRAY_A );
+            $this->currencies = $wpdb->get_results( "SELECT * FROM {$wpdb->get_blog_prefix()}erp_acct_currency_info", ARRAY_A );
         }
 
         $currency = array_filter( $this->currencies, function ( $currency ) use ( $name ) {
@@ -362,7 +362,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
 
         $wpdb->insert(
             // `erp_acct_invoice_account_details`
-            "{$wpdb->prefix}erp_acct_invoice_account_details", [
+            "{$wpdb->get_blog_prefix()}erp_acct_invoice_account_details", [
                 'invoice_no'  => $trn_no,
                 'trn_no'      => $trn_no,
                 'trn_date'    => $trn['issue_date'],
@@ -397,7 +397,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
 
         $wpdb->insert(
             // `erp_acct_ledger_details`
-            "{$wpdb->prefix}erp_acct_ledger_details", [
+            "{$wpdb->get_blog_prefix()}erp_acct_ledger_details", [
                 'ledger_id'   => $sales_ledger_id,
                 'trn_no'      => $trn_no,
                 'trn_date'    => $trn['issue_date'],
@@ -411,7 +411,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
 
         $wpdb->insert(
             // `erp_acct_ledger_details`
-            "{$wpdb->prefix}erp_acct_ledger_details", [
+            "{$wpdb->get_blog_prefix()}erp_acct_ledger_details", [
                 'ledger_id'   => $sales_discount_ledger_id,
                 'trn_no'      => $trn_no,
                 'trn_date'    => $trn['issue_date'],
@@ -437,8 +437,8 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
         //=============================
         // get transaction items (old)
         //=============================
-        $sql = "SELECT tran.created_at, tran.created_by, tran_item.* FROM {$wpdb->prefix}erp_ac_transactions AS tran
-                LEFT JOIN {$wpdb->prefix}erp_ac_transaction_items AS tran_item ON tran.id = tran_item.transaction_id
+        $sql = "SELECT tran.created_at, tran.created_by, tran_item.* FROM {$wpdb->get_blog_prefix()}erp_ac_transactions AS tran
+                LEFT JOIN {$wpdb->get_blog_prefix()}erp_ac_transaction_items AS tran_item ON tran.id = tran_item.transaction_id
                 WHERE tran.id = %d";
 
         $transaction_items = $wpdb->get_results( $wpdb->prepare( $sql, $id ), ARRAY_A );
@@ -453,7 +453,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
 
             $wpdb->insert(
                 // `erp_acct_invoice_details`
-                "{$wpdb->prefix}erp_acct_invoice_details", [
+                "{$wpdb->get_blog_prefix()}erp_acct_invoice_details", [
                     'trn_no'      => $id,
                     'product_id'  => $trn_item['product_id'],
                     'qty'         => (int) $trn_item['qty'],
@@ -467,10 +467,10 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
             );
 
             $sqls = [
-                "UPDATE {$wpdb->prefix}erp_acct_invoices SET amount = amount + {$discount}, discount = discount + {$discount}, tax = tax + {$tax} WHERE voucher_no = %d",
-                "UPDATE {$wpdb->prefix}erp_acct_invoice_account_details SET debit = debit + {$amount} + {$tax} - {$discount} WHERE trn_no = %d",
-                "UPDATE {$wpdb->prefix}erp_acct_ledger_details SET debit = debit + {$discount} WHERE credit = 0.00 AND trn_no = %d",
-                "UPDATE {$wpdb->prefix}erp_acct_ledger_details SET credit = credit + {$discount} WHERE debit = 0.00 AND trn_no = %d",
+                "UPDATE {$wpdb->get_blog_prefix()}erp_acct_invoices SET amount = amount + {$discount}, discount = discount + {$discount}, tax = tax + {$tax} WHERE voucher_no = %d",
+                "UPDATE {$wpdb->get_blog_prefix()}erp_acct_invoice_account_details SET debit = debit + {$amount} + {$tax} - {$discount} WHERE trn_no = %d",
+                "UPDATE {$wpdb->get_blog_prefix()}erp_acct_ledger_details SET debit = debit + {$discount} WHERE credit = 0.00 AND trn_no = %d",
+                "UPDATE {$wpdb->get_blog_prefix()}erp_acct_ledger_details SET credit = credit + {$discount} WHERE debit = 0.00 AND trn_no = %d",
             ];
 
             foreach ( $sqls as $sql ) {
@@ -506,11 +506,11 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
 
         global $wpdb;
 
-        $sql1 = $wpdb->prepare( "SELECT child FROM {$wpdb->prefix}erp_ac_payments
+        $sql1 = $wpdb->prepare( "SELECT child FROM {$wpdb->get_blog_prefix()}erp_ac_payments
             WHERE transaction_id = %d", $trn_no );
         $res1 = $wpdb->get_results( $sql1, ARRAY_A );
 
-        $sql2 = $wpdb->prepare( "SELECT credit FROM {$wpdb->prefix}erp_ac_journals
+        $sql2 = $wpdb->prepare( "SELECT credit FROM {$wpdb->get_blog_prefix()}erp_ac_journals
             WHERE `type` = 'line_item' AND transaction_id = %d", $trn_no );
         $res2 = $wpdb->get_results( $sql2, ARRAY_A );
 
@@ -518,7 +518,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
 
         if ( empty( $res1 ) ) { // it's direct payment transaction
             // erp_acct_people_account_details
-            $wpdb->insert( $wpdb->prefix . 'erp_acct_people_account_details', [
+            $wpdb->insert( $wpdb->get_blog_prefix() . 'erp_acct_people_account_details', [
                 'people_id'    => $trn['user_id'],
                 'trn_no'       => $trn_no,
                 'trn_date'     => $trn['issue_date'],
@@ -533,7 +533,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
         } else {
             for ( $i = 0; $i < count( $res1 ); $i++ ) {
                 // erp_acct_invoice_account_details
-                $wpdb->insert( $wpdb->prefix . 'erp_acct_invoice_account_details', [
+                $wpdb->insert( $wpdb->get_blog_prefix() . 'erp_acct_invoice_account_details', [
                     'invoice_no'  => $res1[$i]['child'],
                     'trn_no'      => $trn_no,
                     'trn_date'    => $trn['issue_date'],
@@ -562,12 +562,12 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
 
         global $wpdb;
 
-        $ledger_id = $wpdb->get_var( $wpdb->prepare( "SELECT ledger_id FROM {$wpdb->prefix}erp_ac_journals
+        $ledger_id = $wpdb->get_var( $wpdb->prepare( "SELECT ledger_id FROM {$wpdb->get_blog_prefix()}erp_ac_journals
             WHERE transaction_id = %d AND `type` = 'main'", $trn_no ) );
 
         $wpdb->insert(
             // `erp_acct_ledger_details`
-            "{$wpdb->prefix}erp_acct_ledger_details", [
+            "{$wpdb->get_blog_prefix()}erp_acct_ledger_details", [
                 'ledger_id'   => $ledger_id,
                 'trn_no'      => $trn_no,
                 'trn_date'    => $trn['issue_date'],
@@ -593,9 +593,9 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
         //=============================
         // get transaction items (old)
         //=============================
-        $sql = "SELECT tran.created_at, tran.created_by, payment.child, tran_item.* FROM {$wpdb->prefix}erp_ac_transactions AS tran
-                LEFT JOIN {$wpdb->prefix}erp_ac_transaction_items AS tran_item ON tran.id = tran_item.transaction_id
-                LEFT JOIN {$wpdb->prefix}erp_ac_payments AS payment ON tran.id = payment.transaction_id
+        $sql = "SELECT tran.created_at, tran.created_by, payment.child, tran_item.* FROM {$wpdb->get_blog_prefix()}erp_ac_transactions AS tran
+                LEFT JOIN {$wpdb->get_blog_prefix()}erp_ac_transaction_items AS tran_item ON tran.id = tran_item.transaction_id
+                LEFT JOIN {$wpdb->get_blog_prefix()}erp_ac_payments AS payment ON tran.id = payment.transaction_id
                 WHERE tran.id = %d";
 
         $transaction_items = $wpdb->get_results( $wpdb->prepare( $sql, $id ), ARRAY_A );
@@ -605,7 +605,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
 
             $wpdb->insert(
                 // `erp_acct_invoice_receipts_details`
-                "{$wpdb->prefix}erp_acct_invoice_receipts_details", [
+                "{$wpdb->get_blog_prefix()}erp_acct_invoice_receipts_details", [
                     'voucher_no' => $id,
                     'invoice_no' => ! empty( $trn_item['child'] ) ? $trn_item['child'] : null,
                     'amount'     => $trn_item['line_total'],
@@ -642,7 +642,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
         // get transaction items (old)
         //=============================
         $sql = "SELECT tran.created_at, tran.created_by, tran.summary, tran.total, payment.child, tran_item.* FROM
-            {$wpdb->prefix}erp_ac_transactions AS tran LEFT JOIN {$wpdb->prefix}erp_ac_transaction_items AS tran_item ON tran.id = tran_item.transaction_id LEFT JOIN {$wpdb->prefix}erp_ac_payments AS payment ON tran.id = payment.transaction_id WHERE tran.id = %d";
+            {$wpdb->get_blog_prefix()}erp_ac_transactions AS tran LEFT JOIN {$wpdb->get_blog_prefix()}erp_ac_transaction_items AS tran_item ON tran.id = tran_item.transaction_id LEFT JOIN {$wpdb->get_blog_prefix()}erp_ac_payments AS payment ON tran.id = payment.transaction_id WHERE tran.id = %d";
 
         $transaction_items = $wpdb->get_results( $wpdb->prepare( $sql, $id ), ARRAY_A );
 
@@ -651,7 +651,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
 
             $wpdb->insert(
                 // `erp_acct_pay_purchase_details`
-                "{$wpdb->prefix}erp_acct_pay_purchase_details", [
+                "{$wpdb->get_blog_prefix()}erp_acct_pay_purchase_details", [
                     'voucher_no'  => $id,
                     'purchase_no' => ! empty( $trn_item['child'] ) ? $trn_item['child'] : null,
                     'amount'      => $trn_item['line_total'],
@@ -677,11 +677,11 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
 
         global $wpdb;
 
-        $sql1 = $wpdb->prepare( "SELECT child FROM {$wpdb->prefix}erp_ac_payments
+        $sql1 = $wpdb->prepare( "SELECT child FROM {$wpdb->get_blog_prefix()}erp_ac_payments
             WHERE transaction_id = %d", $trn_no );
         $res1 = $wpdb->get_results( $sql1, ARRAY_A );
 
-        $sql2 = $wpdb->prepare( "SELECT debit FROM {$wpdb->prefix}erp_ac_journals
+        $sql2 = $wpdb->prepare( "SELECT debit FROM {$wpdb->get_blog_prefix()}erp_ac_journals
             WHERE `type` = 'line_item' AND transaction_id = %d", $trn_no );
         $res2 = $wpdb->get_results( $sql2, ARRAY_A );
 
@@ -689,7 +689,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
 
         if ( empty( $res1 ) ) { // it's direct payment transaction
             // erp_acct_people_account_details
-            $wpdb->insert( $wpdb->prefix . 'erp_acct_people_account_details', [
+            $wpdb->insert( $wpdb->get_blog_prefix() . 'erp_acct_people_account_details', [
                 'people_id'    => $trn['user_id'],
                 'trn_no'       => $trn_no,
                 'trn_date'     => $trn['issue_date'],
@@ -704,7 +704,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
         } else {
             for ( $i = 0; $i < count( $res1 ); $i++ ) {
                 // erp_acct_purchase_account_details
-                $wpdb->insert( $wpdb->prefix . 'erp_acct_purchase_account_details', [
+                $wpdb->insert( $wpdb->get_blog_prefix() . 'erp_acct_purchase_account_details', [
                     'purchase_no'  => $res1[$i]['child'],
                     'trn_no'       => $trn_no,
                     'trn_date'     => $trn['issue_date'],
@@ -733,12 +733,12 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
 
         global $wpdb;
 
-        $ledger_id = $wpdb->get_var( $wpdb->prepare( "SELECT ledger_id FROM {$wpdb->prefix}erp_ac_journals
+        $ledger_id = $wpdb->get_var( $wpdb->prepare( "SELECT ledger_id FROM {$wpdb->get_blog_prefix()}erp_ac_journals
             WHERE transaction_id = %d AND `type` = 'main'", $trn_no ) );
 
         $wpdb->insert(
             // `erp_acct_ledger_details`
-            "{$wpdb->prefix}erp_acct_ledger_details", [
+            "{$wpdb->get_blog_prefix()}erp_acct_ledger_details", [
                 'ledger_id'   => $ledger_id,
                 'trn_no'      => $trn_no,
                 'trn_date'    => $trn['issue_date'],
@@ -784,7 +784,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
 
         $wpdb->insert(
             // `erp_acct_ledger_details`
-            "{$wpdb->prefix}erp_acct_ledger_details", [
+            "{$wpdb->get_blog_prefix()}erp_acct_ledger_details", [
                 'ledger_id'   => $purchase_ledger_id,
                 'trn_no'      => $trn_no,
                 'trn_date'    => $trn['issue_date'],
@@ -810,8 +810,8 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
         //=============================
         // get transaction items (old)
         //=============================
-        $sql = "SELECT tran.created_at, tran.created_by, tran_item.* FROM {$wpdb->prefix}erp_ac_transactions AS tran
-                LEFT JOIN {$wpdb->prefix}erp_ac_transaction_items AS tran_item ON tran.id = tran_item.transaction_id
+        $sql = "SELECT tran.created_at, tran.created_by, tran_item.* FROM {$wpdb->get_blog_prefix()}erp_ac_transactions AS tran
+                LEFT JOIN {$wpdb->get_blog_prefix()}erp_ac_transaction_items AS tran_item ON tran.id = tran_item.transaction_id
                 WHERE tran.id = %d";
 
         $transaction_items = $wpdb->get_results( $wpdb->prepare( $sql, $id ), ARRAY_A );
@@ -821,7 +821,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
 
             $wpdb->insert(
                 // `erp_acct_expense_details`
-                "{$wpdb->prefix}erp_acct_purchase_details", [
+                "{$wpdb->get_blog_prefix()}erp_acct_purchase_details", [
                     'trn_no'     => $id,
                     'product_id' => $trn_item['product_id'],
                     'qty'        => (int) $trn_item['qty'],
@@ -851,7 +851,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
 
         $wpdb->insert(
             // `erp_acct_purchase_account_details`
-            "{$wpdb->prefix}erp_acct_purchase_account_details", [
+            "{$wpdb->get_blog_prefix()}erp_acct_purchase_account_details", [
                 'purchase_no' => $trn_no,
                 'trn_no'      => $trn_no,
                 'trn_date'    => $trn['issue_date'],
@@ -888,14 +888,14 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
         global $wpdb;
 
         $trns = $wpdb->get_results(
-            $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}erp_ac_journals WHERE transaction_id = %d AND NOT(debit IS NULL AND credit IS NULL)", $trn_id ),
+            $wpdb->prepare( "SELECT * FROM {$wpdb->get_blog_prefix()}erp_ac_journals WHERE transaction_id = %d AND NOT(debit IS NULL AND credit IS NULL)", $trn_id ),
             ARRAY_A );
 
         foreach ( $trns as $trn ) {
             if ( 'main' == $trn['type'] ) {
                 $transfer['from_account_id'] = $trn['ledger_id'];
 
-                $wpdb->insert( $wpdb->prefix . 'erp_acct_ledger_details', [
+                $wpdb->insert( $wpdb->get_blog_prefix() . 'erp_acct_ledger_details', [
                     'ledger_id'   => $trn['ledger_id'],
                     'trn_no'      => $trn_id,
                     'particulars' => $transfer['summary'],
@@ -910,7 +910,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
             if ( 'line_item' == $trn['type'] ) {
                 $transfer['to_account_id'] = $trn['ledger_id'];
 
-                $wpdb->insert( $wpdb->prefix . 'erp_acct_ledger_details', [
+                $wpdb->insert( $wpdb->get_blog_prefix() . 'erp_acct_ledger_details', [
                     'ledger_id'   => $trn['ledger_id'],
                     'trn_no'      => $trn_id,
                     'particulars' => $transfer['summary'],
@@ -923,7 +923,7 @@ class ERP_ACCT_BG_Process extends WP_Background_Process {
             }
         }
 
-        $wpdb->insert( $wpdb->prefix . 'erp_acct_transfer_voucher', [
+        $wpdb->insert( $wpdb->get_blog_prefix() . 'erp_acct_transfer_voucher', [
             'voucher_no' => $trn_id,
             'amount'     => $transfer['total'],
             'ac_from'    => $transfer['from_account_id'],

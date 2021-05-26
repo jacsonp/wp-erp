@@ -49,8 +49,8 @@ function erp_acct_get_payables( $from, $to ) {
     $from_date = date( 'Y-m-d', strtotime( $from ) );
     $to_date   = date( 'Y-m-d', strtotime( $to ) );
 
-    $purchases             = $wpdb->prefix . 'erp_acct_purchase';
-    $purchase_acct_details = $wpdb->prefix . 'erp_acct_purchase_account_details';
+    $purchases             = $wpdb->get_blog_prefix() . 'erp_acct_purchase';
+    $purchase_acct_details = $wpdb->get_blog_prefix() . 'erp_acct_purchase_account_details';
 
     $purchase_query = $wpdb->prepare(
         "Select voucher_no, SUM(ad.debit - ad.credit) as due, due_date
@@ -63,8 +63,8 @@ function erp_acct_get_payables( $from, $to ) {
 
     $purchase_results = $wpdb->get_results( $purchase_query, ARRAY_A );
 
-    $bills             = $wpdb->prefix . 'erp_acct_bills';
-    $bill_acct_details = $wpdb->prefix . 'erp_acct_bill_account_details';
+    $bills             = $wpdb->get_blog_prefix() . 'erp_acct_bills';
+    $bill_acct_details = $wpdb->get_blog_prefix() . 'erp_acct_bill_account_details';
     $bills_query       = $wpdb->prepare(
         "Select voucher_no, SUM(ad.debit - ad.credit) as due, due_date
         FROM $bills LEFT JOIN $bill_acct_details as ad
@@ -160,7 +160,7 @@ function erp_acct_insert_check_data( $check_data ) {
     global $wpdb;
 
     $wpdb->insert(
-        $wpdb->prefix . 'erp_acct_expense_checks',
+        $wpdb->get_blog_prefix() . 'erp_acct_expense_checks',
         [
             'trn_no'       => $check_data['voucher_no'],
             'check_no'     => $check_data['check_no'],
@@ -189,7 +189,7 @@ function erp_acct_update_check_data( $check_data, $check_no ) {
     global $wpdb;
 
     $wpdb->insert(
-        $wpdb->prefix . 'erp_acct_expense_checks',
+        $wpdb->get_blog_prefix() . 'erp_acct_expense_checks',
         [
             'trn_no'       => $check_data['voucher_no'],
             'voucher_type' => $check_data['voucher_type'],
@@ -218,7 +218,7 @@ function erp_acct_update_check_data( $check_data, $check_no ) {
 function erp_acct_get_people_info_by_id( $people_id ) {
     global $wpdb;
 
-    $row = $wpdb->get_row( $wpdb->prepare( "SELECT first_name, last_name, email FROM {$wpdb->prefix}erp_peoples WHERE id = %d LIMIT 1", $people_id ) );
+    $row = $wpdb->get_row( $wpdb->prepare( "SELECT first_name, last_name, email FROM {$wpdb->get_blog_prefix()}erp_peoples WHERE id = %d LIMIT 1", $people_id ) );
 
     return $row;
 }
@@ -233,7 +233,7 @@ function erp_acct_get_people_info_by_id( $people_id ) {
 function erp_acct_get_ledger_by_id( $ledger_id ) {
     global $wpdb;
 
-    $row = $wpdb->get_row( $wpdb->prepare( "SELECT name, slug, code FROM {$wpdb->prefix}erp_acct_ledgers WHERE id = %d LIMIT 1", $ledger_id ) );
+    $row = $wpdb->get_row( $wpdb->prepare( "SELECT name, slug, code FROM {$wpdb->get_blog_prefix()}erp_acct_ledgers WHERE id = %d LIMIT 1", $ledger_id ) );
 
     return $row;
 }
@@ -262,7 +262,7 @@ function erp_acct_get_ledger_by( $field = 'id', $value = '' ) {
     }
 
     return $wpdb->get_row(
-        $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}erp_acct_ledgers WHERE $field = %s LIMIT 1", $value ),
+        $wpdb->prepare( "SELECT * FROM {$wpdb->get_blog_prefix()}erp_acct_ledgers WHERE $field = %s LIMIT 1", $value ),
         ARRAY_A
     );
 }
@@ -277,7 +277,7 @@ function erp_acct_get_ledger_by( $field = 'id', $value = '' ) {
 function erp_acct_get_product_type_by_id( $product_type_id ) {
     global $wpdb;
 
-    $row = $wpdb->get_row( $wpdb->prepare( "SELECT name FROM {$wpdb->prefix}erp_acct_product_types WHERE id = %d LIMIT 1", $product_type_id ) );
+    $row = $wpdb->get_row( $wpdb->prepare( "SELECT name FROM {$wpdb->get_blog_prefix()}erp_acct_product_types WHERE id = %d LIMIT 1", $product_type_id ) );
 
     return $row;
 }
@@ -292,7 +292,7 @@ function erp_acct_get_product_type_by_id( $product_type_id ) {
 function erp_acct_get_product_category_by_id( $cat_id ) {
     global $wpdb;
 
-    $row = $wpdb->get_row( $wpdb->prepare( "SELECT name FROM {$wpdb->prefix}erp_acct_product_categories WHERE id = %d LIMIT 1", $cat_id ) );
+    $row = $wpdb->get_row( $wpdb->prepare( "SELECT name FROM {$wpdb->get_blog_prefix()}erp_acct_product_categories WHERE id = %d LIMIT 1", $cat_id ) );
 
     return $row;
 }
@@ -307,7 +307,7 @@ function erp_acct_get_product_category_by_id( $cat_id ) {
 function erp_acct_get_tax_agency_by_id( $agency_id ) {
     global $wpdb;
 
-    $row = $wpdb->get_row( $wpdb->prepare( "SELECT name FROM {$wpdb->prefix}erp_acct_tax_agencies WHERE id = %d LIMIT 1", $agency_id ) );
+    $row = $wpdb->get_row( $wpdb->prepare( "SELECT name FROM {$wpdb->get_blog_prefix()}erp_acct_tax_agencies WHERE id = %d LIMIT 1", $agency_id ) );
 
     return $row->name;
 }
@@ -323,7 +323,7 @@ function erp_acct_get_tax_category_by_id( $cat_id ) {
     global $wpdb;
 
     if ( null !== $cat_id ) {
-        return $wpdb->get_var( $wpdb->prepare( "SELECT name FROM {$wpdb->prefix}erp_acct_tax_categories WHERE id = %d", $cat_id ) );
+        return $wpdb->get_var( $wpdb->prepare( "SELECT name FROM {$wpdb->get_blog_prefix()}erp_acct_tax_categories WHERE id = %d", $cat_id ) );
     }
 
     return '';
@@ -343,7 +343,7 @@ function erp_acct_get_trn_status_by_id( $trn_id ) {
         return 'pending';
     }
 
-    $row = $wpdb->get_row( $wpdb->prepare( "SELECT type_name FROM {$wpdb->prefix}erp_acct_trn_status_types WHERE id = %d", $trn_id ) );
+    $row = $wpdb->get_row( $wpdb->prepare( "SELECT type_name FROM {$wpdb->get_blog_prefix()}erp_acct_trn_status_types WHERE id = %d", $trn_id ) );
 
     return ucfirst( str_replace( '_', ' ', $row->type_name ) );
 }
@@ -358,7 +358,7 @@ function erp_acct_get_trn_status_by_id( $trn_id ) {
 function erp_acct_get_payment_method_by_id( $method_id ) {
     global $wpdb;
 
-    $row = $wpdb->get_row( $wpdb->prepare( "SELECT name FROM {$wpdb->prefix}erp_acct_payment_methods WHERE id = %d LIMIT 1", $method_id ) );
+    $row = $wpdb->get_row( $wpdb->prepare( "SELECT name FROM {$wpdb->get_blog_prefix()}erp_acct_payment_methods WHERE id = %d LIMIT 1", $method_id ) );
 
     return $row;
 }
@@ -373,7 +373,7 @@ function erp_acct_get_payment_method_by_id( $method_id ) {
 function erp_acct_get_payment_method_name_by_id( $method_id ) {
     global $wpdb;
 
-    $row = $wpdb->get_row( $wpdb->prepare( "SELECT name FROM {$wpdb->prefix}erp_acct_payment_methods WHERE id = %d LIMIT 1", $method_id ) );
+    $row = $wpdb->get_row( $wpdb->prepare( "SELECT name FROM {$wpdb->get_blog_prefix()}erp_acct_payment_methods WHERE id = %d LIMIT 1", $method_id ) );
 
     return $row->name;
 }
@@ -388,7 +388,7 @@ function erp_acct_get_payment_method_name_by_id( $method_id ) {
 function erp_acct_get_check_trn_type_by_id( $trn_type_id ) {
     global $wpdb;
 
-    $row = $wpdb->get_row( $wpdb->prepare( "SELECT name FROM {$wpdb->prefix}erp_acct_check_trn_tables WHERE id = %d LIMIT 1", $trn_type_id ) );
+    $row = $wpdb->get_row( $wpdb->prepare( "SELECT name FROM {$wpdb->get_blog_prefix()}erp_acct_check_trn_tables WHERE id = %d LIMIT 1", $trn_type_id ) );
 
     return $row;
 }
@@ -490,7 +490,7 @@ function slugify( $str ) {
 function erp_acct_check_voucher_edit_state( $id ) {
     global $wpdb;
 
-    $res = $wpdb->get_var( $wpdb->prepare( "SELECT editable FROM {$wpdb->prefix}erp_acct_voucher_no WHERE id = %d", $id ) );
+    $res = $wpdb->get_var( $wpdb->prepare( "SELECT editable FROM {$wpdb->get_blog_prefix()}erp_acct_voucher_no WHERE id = %d", $id ) );
 
     return ! empty( $res ) ? true : false;
 }
@@ -527,7 +527,7 @@ function erp_acct_check_people_exists( $email ) {
 function erp_acct_trn_status_by_id( $slug ) {
     global $wpdb;
 
-    return $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}erp_acct_trn_status_types WHERE slug = %s", $slug ) );
+    return $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->get_blog_prefix()}erp_acct_trn_status_types WHERE slug = %s", $slug ) );
 }
 
 /**
@@ -538,7 +538,7 @@ function erp_acct_trn_status_by_id( $slug ) {
 function erp_acct_get_all_trn_statuses() {
     global $wpdb;
 
-    return $wpdb->get_results( "SELECT id,type_name as name, slug FROM {$wpdb->prefix}erp_acct_trn_status_types", ARRAY_A );
+    return $wpdb->get_results( "SELECT id,type_name as name, slug FROM {$wpdb->get_blog_prefix()}erp_acct_trn_status_types", ARRAY_A );
 }
 
 // accounting customer auto create
@@ -623,7 +623,7 @@ function erp_acct_insert_bank_transaction_charge_into_ledger( $payment_data ) {
     }
 
     $wpdb->insert(
-        $wpdb->prefix . 'erp_acct_ledger_details',
+        $wpdb->get_blog_prefix() . 'erp_acct_ledger_details',
         array(
             'ledger_id'   => $ledger_data['id'],
             'trn_no'      => $payment_data['voucher_no'],
@@ -639,7 +639,7 @@ function erp_acct_insert_bank_transaction_charge_into_ledger( $payment_data ) {
     );
 
     $wpdb->insert(
-        $wpdb->prefix . 'erp_acct_ledger_details',
+        $wpdb->get_blog_prefix() . 'erp_acct_ledger_details',
         array(
             'ledger_id'   => $payment_data['trn_by_ledger_id'],
             'trn_no'      => $payment_data['voucher_no'],

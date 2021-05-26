@@ -102,7 +102,7 @@ class System_Status {
     protected function add_db_table_prefix( $table ) {
         global $wpdb;
 
-        return $wpdb->prefix . $table;
+        return $wpdb->get_blog_prefix() . $table;
     }
 
     /**
@@ -166,7 +166,7 @@ class System_Status {
         // Return all database info. Described by JSON Schema.
         return [
             'wp_erp_db_version'      => get_option( 'wp_erp_db_version' ),
-            'database_prefix'        => $wpdb->prefix,
+            'database_prefix'        => $wpdb->get_blog_prefix(),
             'database_tables'        => $tables,
             'database_size'          => $database_size,
         ];
@@ -377,7 +377,7 @@ class System_Status {
     public function erp_hr_get_employees() {
         global $wpdb;
 
-        $employee_tbl = $wpdb->prefix . 'erp_hr_employees';
+        $employee_tbl = $wpdb->get_blog_prefix() . 'erp_hr_employees';
 
         $query = $wpdb->prepare(
             "select $employee_tbl.user_id from $employee_tbl

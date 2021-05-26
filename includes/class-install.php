@@ -418,7 +418,7 @@ Account Manager
         $charset_collate = $wpdb->get_charset_collate();
 
         $table_schema = [
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_company_locations` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_company_locations` (
                 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                 `company_id` int(11) unsigned DEFAULT NULL,
                 `name` varchar(255) DEFAULT NULL,
@@ -436,7 +436,7 @@ Account Manager
                 KEY `company_id` (`company_id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_hr_depts` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_hr_depts` (
                 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                 `title` varchar(200) NOT NULL DEFAULT '',
                 `description` text,
@@ -448,7 +448,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_hr_designations` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_hr_designations` (
                 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                 `title` varchar(200) NOT NULL DEFAULT '',
                 `description` text,
@@ -458,7 +458,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_hr_employees` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_hr_employees` (
                 `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
                 `user_id` bigint(20) unsigned NOT NULL DEFAULT '0',
                 `employee_id` varchar(20) DEFAULT NULL,
@@ -483,7 +483,7 @@ Account Manager
                 KEY `status` (`status`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_hr_employee_history` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_hr_employee_history` (
                 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                 `user_id` bigint(20) unsigned NOT NULL DEFAULT '0',
                 `module` varchar(20) DEFAULT NULL,
@@ -497,7 +497,7 @@ Account Manager
                 KEY `module` (`module`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_hr_employee_notes` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_hr_employee_notes` (
                 `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
                 `user_id` bigint(20) unsigned NOT NULL DEFAULT '0',
                 `comment` text NOT NULL,
@@ -507,7 +507,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE {$wpdb->prefix}erp_hr_leaves (
+            "CREATE TABLE {$wpdb->get_blog_prefix()}erp_hr_leaves (
                   id smallint(6) NOT NULL AUTO_INCREMENT,
                   name varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                   description text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -516,7 +516,7 @@ Account Manager
                   PRIMARY KEY  (id)
               ) $charset_collate;",
 
-            "CREATE TABLE {$wpdb->prefix}erp_hr_leave_policies (
+            "CREATE TABLE {$wpdb->get_blog_prefix()}erp_hr_leave_policies (
                   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                   leave_id smallint(5) UNSIGNED NOT NULL,
                   description text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -547,7 +547,7 @@ Account Manager
                   KEY f_year (f_year)
             ) $charset_collate;",
 
-            "CREATE TABLE {$wpdb->prefix}erp_hr_leave_policies_segregation (
+            "CREATE TABLE {$wpdb->get_blog_prefix()}erp_hr_leave_policies_segregation (
                   id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
                   leave_policy_id bigint(20) UNSIGNED NOT NULL,
                   jan tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
@@ -568,7 +568,7 @@ Account Manager
                   KEY leave_policy_id (leave_policy_id)
             ) $charset_collate;",
 
-            "CREATE TABLE {$wpdb->prefix}erp_hr_leave_entitlements (
+            "CREATE TABLE {$wpdb->get_blog_prefix()}erp_hr_leave_entitlements (
                   id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
                   user_id bigint(20) UNSIGNED NOT NULL,
                   leave_id smallint(6) UNSIGNED NOT NULL,
@@ -587,7 +587,7 @@ Account Manager
                   KEY leave_id (leave_id)
             ) $charset_collate;",
 
-            "CREATE TABLE {$wpdb->prefix}erp_hr_leave_requests (
+            "CREATE TABLE {$wpdb->get_blog_prefix()}erp_hr_leave_requests (
                   id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
                   user_id bigint(20) UNSIGNED NOT NULL,
                   leave_id smallint(6) UNSIGNED NOT NULL,
@@ -609,7 +609,7 @@ Account Manager
                   KEY leave_entitlement_id (leave_entitlement_id)
             ) $charset_collate;",
 
-            "CREATE TABLE {$wpdb->prefix}erp_hr_leave_approval_status (
+            "CREATE TABLE {$wpdb->get_blog_prefix()}erp_hr_leave_approval_status (
                   id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
                   leave_request_id bigint(20) UNSIGNED NOT NULL,
                   approval_status_id tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
@@ -622,7 +622,7 @@ Account Manager
                   KEY approval_status_id (approval_status_id)
             ) $charset_collate;",
 
-            "CREATE TABLE {$wpdb->prefix}erp_hr_leave_request_details (
+            "CREATE TABLE {$wpdb->get_blog_prefix()}erp_hr_leave_request_details (
                   id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
                   leave_request_id bigint(20) UNSIGNED NOT NULL,
                   leave_approval_status_id bigint(20) UNSIGNED NOT NULL,
@@ -638,7 +638,7 @@ Account Manager
                   KEY user_fyear_leave (user_id,f_year,leave_date)
             ) $charset_collate;",
 
-            "CREATE TABLE {$wpdb->prefix}erp_hr_leave_encashment_requests (
+            "CREATE TABLE {$wpdb->get_blog_prefix()}erp_hr_leave_encashment_requests (
                   id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
                   user_id bigint(20) UNSIGNED NOT NULL,
                   leave_id smallint(6) UNSIGNED NOT NULL,
@@ -657,7 +657,7 @@ Account Manager
                   KEY f_year (f_year)
             ) $charset_collate;",
 
-            "CREATE TABLE {$wpdb->prefix}erp_hr_leaves_unpaid (
+            "CREATE TABLE {$wpdb->get_blog_prefix()}erp_hr_leaves_unpaid (
                   id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
                   leave_id smallint(6) UNSIGNED NOT NULL,
                   leave_request_id bigint(20) UNSIGNED NOT NULL,
@@ -677,7 +677,7 @@ Account Manager
                   KEY leave_approval_status_id (leave_approval_status_id)
             ) $charset_collate;",
 
-            "CREATE TABLE {$wpdb->prefix}erp_hr_financial_years (
+            "CREATE TABLE {$wpdb->get_blog_prefix()}erp_hr_financial_years (
                   id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
                   fy_name varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
                   start_date int(11) DEFAULT NULL,
@@ -693,7 +693,7 @@ Account Manager
                   KEY end_date (end_date)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_user_leaves` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_user_leaves` (
                 `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
                 `user_id` int(11) DEFAULT NULL,
                 `request_id` int(11) DEFAULT NULL,
@@ -704,7 +704,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_holidays_indv` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_holidays_indv` (
                 `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
                 `holiday_id` int(11) DEFAULT NULL,
                 `title` varchar(255) DEFAULT NULL,
@@ -714,7 +714,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_hr_holiday` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_hr_holiday` (
                 `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
                 `title` varchar(200) NOT NULL,
                 `start` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -726,7 +726,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_hr_work_exp` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_hr_work_exp` (
                 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                 `employee_id` int(11) DEFAULT NULL,
                 `company_name` varchar(100) DEFAULT NULL,
@@ -740,7 +740,7 @@ Account Manager
                 KEY `employee_id` (`employee_id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_hr_education` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_hr_education` (
                 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                 `employee_id` int(11) unsigned DEFAULT NULL,
                 `school` varchar(100) DEFAULT NULL,
@@ -757,7 +757,7 @@ Account Manager
                 KEY `employee_id` (`employee_id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_hr_dependents` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_hr_dependents` (
                 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                 `employee_id` int(11) DEFAULT NULL,
                 `name` varchar(100) DEFAULT NULL,
@@ -769,7 +769,7 @@ Account Manager
                 KEY `employee_id` (`employee_id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_hr_employee_performance` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_hr_employee_performance` (
                 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                 `employee_id` int(11) unsigned DEFAULT NULL,
                 `reporting_to` int(11) unsigned DEFAULT NULL,
@@ -791,7 +791,7 @@ Account Manager
                 KEY `employee_id` (`employee_id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_hr_announcement` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_hr_announcement` (
                 `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
                 `user_id` bigint(20) unsigned NOT NULL,
                 `post_id` bigint(11) NOT NULL,
@@ -803,7 +803,7 @@ Account Manager
                 KEY `status` (`status`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_peoples` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_peoples` (
                 `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
                 `user_id` bigint(20) unsigned DEFAULT '0',
                 `first_name` varchar(60) DEFAULT NULL,
@@ -835,7 +835,7 @@ Account Manager
                 KEY `email` (`email`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_peoplemeta` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_peoplemeta` (
                 `meta_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
                 `erp_people_id` bigint(20) DEFAULT NULL,
                 `meta_key` varchar(255) DEFAULT NULL,
@@ -845,14 +845,14 @@ Account Manager
                 KEY `meta_key` (`meta_key`(191))
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_people_types` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_people_types` (
                 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                 `name` varchar(20) DEFAULT NULL,
                 PRIMARY KEY (`id`),
                 UNIQUE KEY `name` (`name`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_people_type_relations` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_people_type_relations` (
                 `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
                 `people_id` bigint(20) unsigned DEFAULT NULL,
                 `people_types_id` int(11) unsigned DEFAULT NULL,
@@ -862,7 +862,7 @@ Account Manager
                 KEY `people_types_id` (`people_types_id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_audit_log` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_audit_log` (
                 `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
                 `component` varchar(50) NOT NULL DEFAULT '',
                 `sub_component` varchar(50) NOT NULL DEFAULT '',
@@ -881,7 +881,7 @@ Account Manager
                 KEY `created_by` (`created_by`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_crm_customer_companies` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_crm_customer_companies` (
                 `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
                 `customer_id` bigint(20) DEFAULT NULL,
                 `company_id` bigint(50) DEFAULT NULL,
@@ -890,7 +890,7 @@ Account Manager
                 KEY `company_id` (`company_id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_crm_customer_activities` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_crm_customer_activities` (
                 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                 `user_id` int(11) DEFAULT NULL,
                 `type` varchar(255) DEFAULT NULL,
@@ -911,7 +911,7 @@ Account Manager
                 KEY `created_by` (`created_by`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_crm_activities_task` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_crm_activities_task` (
                 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                 `activity_id` int(11) DEFAULT NULL,
                 `user_id` int(11) DEFAULT NULL,
@@ -920,7 +920,7 @@ Account Manager
                 KEY `user_id` (`user_id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_crm_contact_group` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_crm_contact_group` (
                 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                 `name` varchar(255) DEFAULT NULL,
                 `description` text,
@@ -930,7 +930,7 @@ Account Manager
                 PRIMARY KEY  (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_crm_contact_subscriber` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_crm_contact_subscriber` (
                 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                 `user_id` int(11) DEFAULT NULL,
                 `group_id` int(11) DEFAULT NULL,
@@ -944,7 +944,7 @@ Account Manager
                 KEY `hash` (`hash`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_crm_save_search` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_crm_save_search` (
               `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
               `user_id` int(11) DEFAULT NULL,
               `type` VARCHAR(255) DEFAULT NULL,
@@ -956,7 +956,7 @@ Account Manager
               PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_crm_save_email_replies` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_crm_save_email_replies` (
               `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
               `name` text,
               `subject` text,
@@ -964,7 +964,7 @@ Account Manager
               PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_voucher_no` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_voucher_no` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `type` varchar(255) DEFAULT NULL,
                 `currency` varchar(50) DEFAULT NULL,
@@ -976,7 +976,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_bill_account_details` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_bill_account_details` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `bill_no` int(11) DEFAULT NULL,
                 `trn_no` int(11) DEFAULT NULL,
@@ -991,7 +991,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_bill_details` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_bill_details` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `trn_no` int(11) DEFAULT NULL,
                 `ledger_id` int(11) DEFAULT NULL,
@@ -1004,7 +1004,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_bills` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_bills` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `voucher_no` int(11) DEFAULT NULL,
                 `vendor_id` int(11) DEFAULT NULL,
@@ -1024,7 +1024,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_chart_of_accounts` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_chart_of_accounts` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `name` varchar(255) DEFAULT NULL,
                 `slug` varchar(255) DEFAULT NULL,
@@ -1035,7 +1035,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_currency_info` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_currency_info` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `name` varchar(255) DEFAULT NULL,
                 `sign` varchar(255) DEFAULT NULL,
@@ -1046,7 +1046,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_invoice_account_details` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_invoice_account_details` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `invoice_no` int(11) DEFAULT NULL,
                 `trn_no` int(11) DEFAULT NULL,
@@ -1061,7 +1061,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_invoice_details` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_invoice_details` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `trn_no` int(11) DEFAULT NULL,
                 `product_id` int(11) DEFAULT NULL,
@@ -1078,7 +1078,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_invoice_receipts` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_invoice_receipts` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `voucher_no` int(11) DEFAULT NULL,
                 `customer_id` int(11) DEFAULT NULL,
@@ -1099,7 +1099,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_invoice_receipts_details` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_invoice_receipts_details` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `voucher_no` int(11) DEFAULT NULL,
                 `invoice_no` int(11) DEFAULT NULL,
@@ -1111,7 +1111,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_invoices` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_invoices` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `voucher_no` int(11) DEFAULT NULL,
                 `customer_id` int(11) DEFAULT NULL,
@@ -1135,7 +1135,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_journal_details` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_journal_details` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `trn_no` int(11) DEFAULT NULL,
                 `ledger_id` int(11) DEFAULT NULL,
@@ -1149,7 +1149,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_journals` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_journals` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `trn_date` date DEFAULT NULL,
                 `ref` varchar(255) DEFAULT NULL,
@@ -1164,7 +1164,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_ledger_categories` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_ledger_categories` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `name` varchar(255) DEFAULT NULL,
                 `slug` varchar(255) DEFAULT NULL,
@@ -1178,7 +1178,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_ledger_details` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_ledger_details` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `ledger_id` int(11) DEFAULT NULL,
                 `trn_no` int(11) DEFAULT NULL,
@@ -1193,7 +1193,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_ledger_settings` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_ledger_settings` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `ledger_id` int(11) DEFAULT NULL,
                 `short_code` varchar(255) DEFAULT NULL,
@@ -1204,7 +1204,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_ledgers` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_ledgers` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `chart_id` int(11) DEFAULT NULL,
                 `category_id` int(11) DEFAULT NULL,
@@ -1220,7 +1220,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_cash_at_banks` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_cash_at_banks` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `ledger_id` int(11) DEFAULT NULL,
                 `name` varchar(255) DEFAULT NULL,
@@ -1232,7 +1232,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_transfer_voucher` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_transfer_voucher` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `voucher_no` int(11) DEFAULT NULL,
                 `trn_date` date DEFAULT NULL,
@@ -1247,7 +1247,7 @@ Account Manager
                 PRIMARY KEY  (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_opening_balances` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_opening_balances` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `financial_year_id` int(11) DEFAULT NULL,
                 `chart_id` int(11) DEFAULT NULL,
@@ -1262,7 +1262,7 @@ Account Manager
                 PRIMARY KEY  (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_financial_years` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_financial_years` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(255) DEFAULT NULL,
                 `start_date` date DEFAULT NULL,
@@ -1275,7 +1275,7 @@ Account Manager
                 PRIMARY KEY  (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_pay_bill` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_pay_bill` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `voucher_no` int(11) DEFAULT NULL,
                 `vendor_id` int(11) DEFAULT NULL,
@@ -1295,7 +1295,7 @@ Account Manager
                 PRIMARY KEY  (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_pay_bill_details` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_pay_bill_details` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `voucher_no` int(11) DEFAULT NULL,
                 `bill_no` int(11) DEFAULT NULL,
@@ -1307,7 +1307,7 @@ Account Manager
                 PRIMARY KEY  (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_pay_purchase` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_pay_purchase` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `voucher_no` int(11) DEFAULT NULL,
                 `vendor_id` int(11) DEFAULT NULL,
@@ -1328,7 +1328,7 @@ Account Manager
                 PRIMARY KEY  (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_pay_purchase_details` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_pay_purchase_details` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `voucher_no` int(11) DEFAULT NULL,
                 `purchase_no` int(11) DEFAULT NULL,
@@ -1340,7 +1340,7 @@ Account Manager
                 PRIMARY KEY  (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_people_account_details` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_people_account_details` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `people_id` varchar(255) DEFAULT NULL,
                 `trn_no` int(11) DEFAULT NULL,
@@ -1357,7 +1357,7 @@ Account Manager
                 PRIMARY KEY  (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_people_trn` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_people_trn` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `people_id` varchar(255) DEFAULT NULL,
                 `voucher_no` int(11) DEFAULT NULL,
@@ -1373,7 +1373,7 @@ Account Manager
                 PRIMARY KEY  (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_people_trn_details` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_people_trn_details` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `people_id` varchar(255) DEFAULT NULL,
                 `voucher_no` int(11) DEFAULT NULL,
@@ -1388,7 +1388,7 @@ Account Manager
                 PRIMARY KEY  (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_product_categories` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_product_categories` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `name` varchar(255) DEFAULT NULL,
                 `parent` int(11) NOT NULL DEFAULT 0,
@@ -1399,7 +1399,7 @@ Account Manager
                 PRIMARY KEY  (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_product_types` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_product_types` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `name` varchar(255) DEFAULT NULL,
                 `slug` varchar(255) DEFAULT NULL,
@@ -1410,7 +1410,7 @@ Account Manager
                 PRIMARY KEY  (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_products` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_products` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `name` varchar(255) DEFAULT NULL,
                 `product_type_id` int(11) DEFAULT NULL,
@@ -1426,7 +1426,7 @@ Account Manager
                 PRIMARY KEY  (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_product_details` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_product_details` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `product_id` int(11) DEFAULT NULL,
                 `trn_no` int(11) DEFAULT NULL,
@@ -1439,7 +1439,7 @@ Account Manager
                 PRIMARY KEY  (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_purchase` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_purchase` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `voucher_no` int(11) DEFAULT NULL,
                 `vendor_id` int(11) DEFAULT NULL,
@@ -1462,7 +1462,7 @@ Account Manager
                 PRIMARY KEY  (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_purchase_account_details` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_purchase_account_details` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `purchase_no` int(11) DEFAULT NULL,
                 `trn_no` int(11) DEFAULT NULL,
@@ -1477,7 +1477,7 @@ Account Manager
                 PRIMARY KEY  (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_purchase_details` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_purchase_details` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `trn_no` int(11) DEFAULT NULL,
                 `product_id` int(11) DEFAULT NULL,
@@ -1492,7 +1492,7 @@ Account Manager
                 PRIMARY KEY  (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}erp_acct_purchase_details_tax (
+            "CREATE TABLE IF NOT EXISTS {$wpdb->get_blog_prefix()}erp_acct_purchase_details_tax (
                 `id` int(20) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `invoice_details_id` int(20) NOT NULL,
                 `agency_id` int(20) DEFAULT NULL,
@@ -1504,7 +1504,7 @@ Account Manager
                 PRIMARY KEY  (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_tax_categories` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_tax_categories` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `name` varchar(100) DEFAULT NULL,
                 `description` varchar(255) DEFAULT NULL,
@@ -1515,7 +1515,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_taxes` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_taxes` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `tax_rate_name` varchar(255) DEFAULT NULL,
                 `tax_number` varchar(100) DEFAULT NULL,
@@ -1527,7 +1527,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_tax_cat_agency` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_tax_cat_agency` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `tax_id` int(11) DEFAULT NULL,
                 `component_name` varchar(255) DEFAULT NULL,
@@ -1541,7 +1541,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_tax_agencies` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_tax_agencies` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `name` varchar(255) DEFAULT NULL,
                 `ecommerce_type` varchar(255) DEFAULT NULL,
@@ -1552,7 +1552,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_tax_pay` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_tax_pay` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `voucher_no` int(11) DEFAULT NULL,
                 `trn_date` date DEFAULT NULL,
@@ -1569,7 +1569,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_tax_agency_details` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_tax_agency_details` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `agency_id` int(11) DEFAULT NULL,
                 `trn_no` int(11) DEFAULT NULL,
@@ -1584,7 +1584,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_invoice_details_tax` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_invoice_details_tax` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `invoice_details_id` int(11) DEFAULT NULL,
                 `agency_id` int(11) DEFAULT NULL,
@@ -1597,7 +1597,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_trn_status_types` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_trn_status_types` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `type_name` varchar(255) DEFAULT NULL,
                 `slug` varchar(255) DEFAULT NULL,
@@ -1608,7 +1608,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_payment_methods` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_payment_methods` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `name` varchar(255) DEFAULT NULL,
                 `created_at` date DEFAULT NULL,
@@ -1618,7 +1618,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_expenses` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_expenses` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `voucher_no` int(11) DEFAULT NULL,
                 `people_id` int(11) DEFAULT NULL,
@@ -1641,7 +1641,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_expense_details` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_expense_details` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `trn_no` int(11) DEFAULT NULL,
                 `ledger_id` int(11) DEFAULT NULL,
@@ -1654,7 +1654,7 @@ Account Manager
                 PRIMARY KEY (`id`)
             ) $charset_collate;",
 
-            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_acct_expense_checks` (
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_acct_expense_checks` (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `trn_no` int(11) DEFAULT NULL,
                 `check_no` varchar(255) DEFAULT NULL,
@@ -1721,15 +1721,15 @@ Account Manager
         }
 
         // check if people_types exists
-        if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->prefix}erp_people_types` LIMIT 0, 1" ) ) {
-            $wpdb->query( "INSERT INTO `{$wpdb->prefix}erp_people_types` (`id`, `name`)
+        if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->get_blog_prefix()}erp_people_types` LIMIT 0, 1" ) ) {
+            $wpdb->query( "INSERT INTO `{$wpdb->get_blog_prefix()}erp_people_types` (`id`, `name`)
             VALUES (1, 'contact'), (2, 'company'), (3, 'customer'), (4, 'vendor'), (5, 'employee')" );
         }
 
         // Add Standard Preset Data for Department in erp_hr_depts
-        if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->prefix}erp_hr_depts` LIMIT 0, 1" ) ) {
+        if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->get_blog_prefix()}erp_hr_depts` LIMIT 0, 1" ) ) {
             $wpdb->query(
-                "INSERT INTO `{$wpdb->prefix}erp_hr_depts` (`id`, `title`, `created_at`, `updated_at`)
+                "INSERT INTO `{$wpdb->get_blog_prefix()}erp_hr_depts` (`id`, `title`, `created_at`, `updated_at`)
                 VALUES (1, 'General Management', '{$current_date}', '{$current_date}'),
                 (2, 'Operations Department', '{$current_date}', '{$current_date}'),
                 (3, 'Finance Department', '{$current_date}', '{$current_date}'),
@@ -1743,9 +1743,9 @@ Account Manager
         }
 
         // Add Standard Preset Data for Designation in erp_hr_designations
-        if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->prefix}erp_hr_designations` LIMIT 0, 1" ) ) {
+        if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->get_blog_prefix()}erp_hr_designations` LIMIT 0, 1" ) ) {
             $wpdb->query(
-                "INSERT INTO `{$wpdb->prefix}erp_hr_designations` (`id`, `title`, `created_at`, `updated_at`)
+                "INSERT INTO `{$wpdb->get_blog_prefix()}erp_hr_designations` (`id`, `title`, `created_at`, `updated_at`)
                 VALUES (1, 'President', '{$current_date}', '{$current_date}'),
                 (2, 'Vice President', '{$current_date}', '{$current_date}'),
                 (3, 'CEO', '{$current_date}', '{$current_date}'),
@@ -1775,11 +1775,11 @@ Account Manager
          */
 
         // insert chart of accounts
-        if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->prefix}erp_acct_chart_of_accounts` LIMIT 0, 1" ) ) {
+        if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->get_blog_prefix()}erp_acct_chart_of_accounts` LIMIT 0, 1" ) ) {
             $charts = ['Asset', 'Liability', 'Equity', 'Income', 'Expense', 'Asset & Liability', 'Bank'];
 
             for ( $i = 0; $i < count( $charts ); $i++ ) {
-                $wpdb->insert( "{$wpdb->prefix}erp_acct_chart_of_accounts", [
+                $wpdb->insert( "{$wpdb->get_blog_prefix()}erp_acct_chart_of_accounts", [
                     'name' => $charts[$i],
                     'slug' => slugify( $charts[$i] ),
                 ] );
@@ -1793,14 +1793,14 @@ Account Manager
         require_once WPERP_INCLUDES . '/ledgers.php';
 
         // insert ledgers
-        if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->prefix}erp_acct_ledgers` LIMIT 0, 1" ) ) {
+        if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->get_blog_prefix()}erp_acct_ledgers` LIMIT 0, 1" ) ) {
             $old_codes = [];
 
             foreach ( $old_ledgers as $value ) {
                 $old_codes[] = $value['code'];
 
                 $wpdb->insert(
-                    "{$wpdb->prefix}erp_acct_ledgers",
+                    "{$wpdb->get_blog_prefix()}erp_acct_ledgers",
                     [
                         'chart_id' => $value['chart_id'],
                         'name'     => $value['name'],
@@ -1819,7 +1819,7 @@ Account Manager
                     }
 
                     $wpdb->insert(
-                        "{$wpdb->prefix}erp_acct_ledgers",
+                        "{$wpdb->get_blog_prefix()}erp_acct_ledgers",
                         [
                             'chart_id' => erp_acct_get_chart_id_by_slug( $array_key ),
                             'name'     => $value['name'],
@@ -1834,8 +1834,8 @@ Account Manager
         }
 
         // insert ledger categories
-        if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->prefix}erp_acct_ledger_categories` LIMIT 0, 1" ) ) {
-            $wpdb->query( "INSERT INTO `{$wpdb->prefix}erp_acct_ledger_categories`
+        if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->get_blog_prefix()}erp_acct_ledger_categories` LIMIT 0, 1" ) ) {
+            $wpdb->query( "INSERT INTO `{$wpdb->get_blog_prefix()}erp_acct_ledger_categories`
                 (id,name,chart_id)
                     VALUES
                 (1,'Current Asset',1),
@@ -1857,18 +1857,18 @@ Account Manager
         }
 
         // insert payment methods
-        if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->prefix}erp_acct_payment_methods` LIMIT 0, 1" ) ) {
+        if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->get_blog_prefix()}erp_acct_payment_methods` LIMIT 0, 1" ) ) {
             $methods = ['Cash', 'Bank', 'Check'];
 
             for ( $i = 0; $i < count( $methods ); $i++ ) {
-                $wpdb->insert( "{$wpdb->prefix}erp_acct_payment_methods", [
+                $wpdb->insert( "{$wpdb->get_blog_prefix()}erp_acct_payment_methods", [
                     'name' => $methods[$i],
                 ] );
             }
         }
 
         // insert status types
-        if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->prefix}erp_acct_trn_status_types` LIMIT 0, 1" ) ) {
+        if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->get_blog_prefix()}erp_acct_trn_status_types` LIMIT 0, 1" ) ) {
             $statuses = [
                 'Draft',
                 'Awaiting Payment',
@@ -1883,7 +1883,7 @@ Account Manager
             ];
 
             for ( $i = 0; $i < count( $statuses ); $i++ ) {
-                $wpdb->insert( "{$wpdb->prefix}erp_acct_trn_status_types", [
+                $wpdb->insert( "{$wpdb->get_blog_prefix()}erp_acct_trn_status_types", [
                     'type_name' => $statuses[$i],
                     'slug'      => slugify( $statuses[$i] ),
                 ] );
@@ -1891,13 +1891,13 @@ Account Manager
         }
 
         // insert product types
-        if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->prefix}erp_acct_product_types` LIMIT 0, 1" ) ) {
-            $wpdb->query( "INSERT INTO `{$wpdb->prefix}erp_acct_product_types` (`id`, `name`, `slug`)
+        if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->get_blog_prefix()}erp_acct_product_types` LIMIT 0, 1" ) ) {
+            $wpdb->query( "INSERT INTO `{$wpdb->get_blog_prefix()}erp_acct_product_types` (`id`, `name`, `slug`)
             VALUES (1, 'Inventory', 'inventory'), (2, 'Service', 'service')" );
         }
 
         // insert currency info
-        if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->prefix}erp_acct_currency_info` LIMIT 0, 1" ) ) {
+        if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->get_blog_prefix()}erp_acct_currency_info` LIMIT 0, 1" ) ) {
             $currency_symbols = [
                 'AED' => 'د.إ',
                 'AFN' => '؋',
@@ -2064,13 +2064,13 @@ Account Manager
             ];
 
             foreach ( $currency_symbols as $key => $val ) {
-                $wpdb->query( $wpdb->prepare( "INSERT INTO `{$wpdb->prefix}erp_acct_currency_info` (`name`, `sign`)
+                $wpdb->query( $wpdb->prepare( "INSERT INTO `{$wpdb->get_blog_prefix()}erp_acct_currency_info` (`name`, `sign`)
                 VALUES ( %s, %s )", $key, $val ) );
             }
         }
 
         //Insert default financial years
-        if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->prefix}erp_acct_financial_years` LIMIT 0, 1" ) ) {
+        if ( ! $wpdb->get_var( "SELECT id FROM `{$wpdb->get_blog_prefix()}erp_acct_financial_years` LIMIT 0, 1" ) ) {
             $general         = get_option( 'erp_settings_general', [] );
             $financial_month = isset( $general['gen_financial_month'] ) ? $general['gen_financial_month'] : '1';
 
@@ -2084,7 +2084,7 @@ Account Manager
 
             $end_date = $end_date->format( 'Y-m-d' );
 
-            $wpdb->insert( $wpdb->prefix . 'erp_acct_financial_years', [
+            $wpdb->insert( $wpdb->get_blog_prefix() . 'erp_acct_financial_years', [
                 'name'       => date( 'Y' ),
                 'start_date' => $start_date,
                 'end_date'   => $end_date,

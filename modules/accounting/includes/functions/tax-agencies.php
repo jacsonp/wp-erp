@@ -40,7 +40,7 @@ function erp_acct_get_all_tax_agencies( $args = [] ) {
 
         $sql  = 'SELECT';
         $sql .= $args['count'] ? ' COUNT( id ) as total_number ' : ' * ';
-        $sql .= "FROM {$wpdb->prefix}erp_acct_tax_agencies ORDER BY {$args['orderby']} {$args['order']} {$limit}";
+        $sql .= "FROM {$wpdb->get_blog_prefix()}erp_acct_tax_agencies ORDER BY {$args['orderby']} {$args['order']} {$limit}";
 
         if ( $args['count'] ) {
             $tax_agencies_count = $wpdb->get_var( $sql );
@@ -70,7 +70,7 @@ function erp_acct_get_all_tax_agencies( $args = [] ) {
 function erp_acct_get_tax_agency( $tax_no ) {
     global $wpdb;
 
-    $row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}erp_acct_tax_agencies WHERE id = %d LIMIT 1", $tax_no ), ARRAY_A );
+    $row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->get_blog_prefix()}erp_acct_tax_agencies WHERE id = %d LIMIT 1", $tax_no ), ARRAY_A );
 
     return $row;
 }
@@ -92,7 +92,7 @@ function erp_acct_insert_tax_agency( $data ) {
     $tax_data = erp_acct_get_formatted_tax_data( $data );
 
     $wpdb->insert(
-        $wpdb->prefix . 'erp_acct_tax_agencies',
+        $wpdb->get_blog_prefix() . 'erp_acct_tax_agencies',
         [
             'name'       => $tax_data['agency_name'],
             'created_at' => $tax_data['created_at'],
@@ -126,7 +126,7 @@ function erp_acct_update_tax_agency( $data, $id ) {
     $tax_data = erp_acct_get_formatted_tax_data( $data );
 
     $wpdb->update(
-        $wpdb->prefix . 'erp_acct_tax_agencies',
+        $wpdb->get_blog_prefix() . 'erp_acct_tax_agencies',
         [
             'name'       => $tax_data['agency_name'],
             'created_at' => $tax_data['created_at'],
@@ -154,7 +154,7 @@ function erp_acct_update_tax_agency( $data, $id ) {
 function erp_acct_delete_tax_agency( $id ) {
     global $wpdb;
 
-    $wpdb->delete( $wpdb->prefix . 'erp_acct_tax_agencies', [ 'id' => $id ] );
+    $wpdb->delete( $wpdb->get_blog_prefix() . 'erp_acct_tax_agencies', [ 'id' => $id ] );
 
     erp_acct_purge_cache( ['list' => 'tax_agencies'] );
 
@@ -173,7 +173,7 @@ function erp_acct_get_tax_agency_name_by_id( $agency_id ) {
 
     $row = $wpdb->get_row(
         $wpdb->prepare(
-            "SELECT name FROM {$wpdb->prefix}erp_acct_tax_agencies WHERE id = %d LIMIT 1",
+            "SELECT name FROM {$wpdb->get_blog_prefix()}erp_acct_tax_agencies WHERE id = %d LIMIT 1",
             $agency_id
         ),
         ARRAY_A
@@ -192,5 +192,5 @@ function erp_acct_get_tax_agency_name_by_id( $agency_id ) {
 function erp_acct_get_agency_due( $agency_id ) {
     global $wpdb;
 
-    return $wpdb->get_var( $wpdb->prepare( "SELECT SUM( credit - debit ) as tax_due From {$wpdb->prefix}erp_acct_tax_agency_details WHERE agency_id = %d", $agency_id ) );
+    return $wpdb->get_var( $wpdb->prepare( "SELECT SUM( credit - debit ) as tax_due From {$wpdb->get_blog_prefix()}erp_acct_tax_agency_details WHERE agency_id = %d", $agency_id ) );
 }

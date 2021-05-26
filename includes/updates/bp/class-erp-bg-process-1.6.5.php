@@ -47,7 +47,7 @@ class ERP_BG_PROCESS_1_6_5 extends \WP_Background_Process {
         if ( isset( $db_data['fields'] ) && is_array( $db_data['fields'] ) ) {
 
             // get required data from input array
-            $table_name     = $wpdb->prefix . $db_data['table'];
+            $table_name     = $wpdb->get_blog_prefix() . $db_data['table'];
             $col_type       = $db_data['type'];
             $null           = $db_data['null'];
             $is_null        = $null === 'NULL' ? 'YES' : 'NO';

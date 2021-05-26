@@ -39,7 +39,7 @@ function wperp_update_1_0_create_table() {
         }
     }
 
-    $schema = "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_crm_save_email_replies` (
+    $schema = "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_crm_save_email_replies` (
               `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
               `name` text,
               `subject` text,
@@ -73,14 +73,14 @@ function wperp_update_1_0_create_people_types_table() {
         }
     }
 
-    $types_table = "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_people_types` (
+    $types_table = "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_people_types` (
                 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                 `name` varchar(20) DEFAULT NULL,
                 PRIMARY KEY (`id`),
                 UNIQUE KEY `name` (`name`)
             ) $collate;";
 
-    $relations_table = "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}erp_people_type_relations` (
+    $relations_table = "CREATE TABLE IF NOT EXISTS `{$wpdb->get_blog_prefix()}erp_people_type_relations` (
                 `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
                 `people_id` bigint(20) unsigned DEFAULT NULL,
                 `people_types_id` int(11) unsigned DEFAULT NULL,
@@ -95,7 +95,7 @@ function wperp_update_1_0_create_people_types_table() {
     dbDelta( $relations_table );
 
     // seed the types table
-    $seed_types = 'INSERT INTO ' . $wpdb->prefix . "erp_people_types (name) VALUES ('contact'), ('company'), ('customer'), ('vendor');";
+    $seed_types = 'INSERT INTO ' . $wpdb->get_blog_prefix() . "erp_people_types (name) VALUES ('contact'), ('company'), ('customer'), ('vendor');";
     $wpdb->query( $seed_types );
 }
 
@@ -125,7 +125,7 @@ function wperp_update_1_0_schedules() {
 function wperp_update_1_0_populate_types_table() {
     global $wpdb;
 
-    $query   = "SELECT * FROM {$wpdb->prefix}erp_peoples";
+    $query   = "SELECT * FROM {$wpdb->get_blog_prefix()}erp_peoples";
     $peoples = $wpdb->get_results( $query );
 
     if ( ! $peoples ) {
@@ -140,7 +140,7 @@ function wperp_update_1_0_populate_types_table() {
         'vendor'   => 4,
     ];
 
-    $table_name     = 'INSERT INTO ' . $wpdb->prefix . 'erp_people_type_relations (people_id, people_types_id, deleted_at ) VALUES';
+    $table_name     = 'INSERT INTO ' . $wpdb->get_blog_prefix() . 'erp_people_type_relations (people_id, people_types_id, deleted_at ) VALUES';
     $insert_queries = [];
 
     foreach ( $peoples as $people ) {
@@ -161,7 +161,7 @@ function wperp_update_1_0_populate_types_table() {
  */
 function wperp_update_1_0_drop_types_column() {
     global $wpdb;
-    $wpdb->query( "ALTER TABLE {$wpdb->prefix}erp_peoples DROP COLUMN `type`, `deleted_at`" );
+    $wpdb->query( "ALTER TABLE {$wpdb->get_blog_prefix()}erp_peoples DROP COLUMN `type`, `deleted_at`" );
 }
 
 wperp_update_1_0_set_role();

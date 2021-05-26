@@ -196,7 +196,7 @@ class People_Controller extends \WeDevs\ERP\API\REST_Controller {
             return new WP_Error( 'rest_people_invalid_id', __( 'Invalid resource id.' ), [ 'status' => 404 ] );
         }
 
-        $row = $wpdb->get_row( $wpdb->prepare( "SELECT street_1, street_2, city, state, postal_code, country FROM {$wpdb->prefix}erp_peoples WHERE id = %d", $id ), ARRAY_A );
+        $row = $wpdb->get_row( $wpdb->prepare( "SELECT street_1, street_2, city, state, postal_code, country FROM {$wpdb->get_blog_prefix()}erp_peoples WHERE id = %d", $id ), ARRAY_A );
 
         return new WP_REST_Response( erp_acct_format_people_address( $row ), 200 );
     }

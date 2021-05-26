@@ -80,7 +80,7 @@ class People extends Model {
     public function types() {
         global $wpdb;
 
-        return $this->belongsToMany( '\WeDevs\ERP\Framework\Models\PeopleTypes', $wpdb->prefix . 'erp_people_type_relations' );
+        return $this->belongsToMany( '\WeDevs\ERP\Framework\Models\PeopleTypes', $wpdb->get_blog_prefix() . 'erp_people_type_relations' );
     }
 
     /**
